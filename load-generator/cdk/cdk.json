@@ -1,0 +1,9 @@
+{
+  "app": "python3 app.py",
+  "context": {
+    "@aws-cdk/aws-lambda:recognizeLayerVersion": true,
+    "@aws-cdk/core:newStyleStackSynthesis": true,
+    "badTable": "kiro-roasters-inventory-bad",
+    "goodTable": "kiro-roasters-inventory-good"
+  }
+}

@@ -1,0 +1,469 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 DynamoDB テーブル CDK Construct を作成する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220316717
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220360177
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220814654
+      }
+    ],
+    "1.2 Lambda 関数の CDK 定義と共通型を作成する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220316758
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220820628
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221082479
+      }
+    ],
+    "1.3 API Gateway REST API の CDK Construct を作成する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220316783
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220821645
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221083387
+      }
+    ],
+    "1.4 `amplify/backend.ts` にカスタムリソースを統合する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220316816
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221088900
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221160541
+      }
+    ],
+    "2. Checkpoint - インフラ定義の確認": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220316856
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221171840
+      }
+    ],
+    "3.1 SKU 生成ロジックを実装する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220316883
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221177441
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221493611
+      }
+    ],
+    "3.2 Seed Lambda ハンドラーを実装する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220316907
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221503770
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221774199
+      }
+    ],
+    "4.1 inventory-query Lambda ハンドラーを実装する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220316947
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221504583
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221772747
+      }
+    ],
+    "5.1 inventory-ship Lambda ハンドラーを実装する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220316969
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221505145
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221773555
+      }
+    ],
+    "6.1 load-test-start Lambda ハンドラーを実装する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220316993
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221787020
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222021879
+      }
+    ],
+    "6.2 負荷生成ワーカーを実装する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220317024
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222083444
+      }
+    ],
+    "6.3 load-test-status Lambda ハンドラーを実装する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220317050
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221506081
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221775106
+      }
+    ],
+    "7. Checkpoint - バックエンド API の確認": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220317075
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222089473
+      }
+    ],
+    "8.1 API クライアントと共通型を作成する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220317100
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221178088
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221492072
+      }
+    ],
+    "9.1 InventoryDashboard（メインコンテナ）を実装する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220317123
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222095181
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222532978
+      }
+    ],
+    "9.2 InventoryQueryPanel（在庫照会パネル）を実装する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220317148
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222538444
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222909107
+      }
+    ],
+    "9.3 LoadTestPanel（負荷テスト制御パネル）を実装する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220317174
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222539294
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222911940
+      }
+    ],
+    "9.4 ResultsDashboard（結果ダッシュボードパネル）を実装する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220317206
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222540209
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222910955
+      }
+    ],
+    "10.1 globals.css にカラーパレットを追加する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220317233
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222096272
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222531762
+      }
+    ],
+    "10.2 トップページ（page.tsx）を在庫管理 UI に差し替える": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220317256
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222541063
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222910141
+      }
+    ],
+    "11. Checkpoint - 全体統合確認": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220317283
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222918656
+      }
+    ],
+    "12.1 X-Ray トレーシングと CloudWatch メトリクスの動作確認タスク": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220317308
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222924132
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782223215291
+      }
+    ],
+    "13. Final Checkpoint - 全テスト通過確認": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782220317335
+      },
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782223221422
+      }
+    ],
+    "1. インフラ基盤の構築（DynamoDB + Lambda + API Gateway）": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221160579
+      }
+    ],
+    "8. フロントエンド API クライアントの実装": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221492142
+      }
+    ],
+    "4. 在庫照会 API の実装": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221772811
+      }
+    ],
+    "5. 出庫処理 API の実装": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221773694
+      }
+    ],
+    "3. Seed スクリプトの実装": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782221774240
+      }
+    ],
+    "3.3 Seed スクリプトのプロパティテストを作成する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222065001
+      }
+    ],
+    "4.2 在庫照会のプロパティテストを作成する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222065736
+      }
+    ],
+    "5.2 出庫処理のプロパティテストを作成する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222066487
+      }
+    ],
+    "6.4 負荷生成のプロパティテストを作成する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222067345
+      }
+    ],
+    "12.2 CDK インフラテストを作成する": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222068444
+      }
+    ],
+    "6. 負荷生成 API の実装": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222083496
+      }
+    ],
+    "10. グローバルスタイルとトップページの統合": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222910174
+      }
+    ],
+    "9. フロントエンド UI コンポーネントの実装": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782222911974
+      }
+    ],
+    "12. 可観測性の設定確認とテスト": [
+      {
+        "executionId": "ac82b686-4614-4fb5-aead-dc0fbc706e1b",
+        "chatSessionId": "sess_6d014200-c69d-4da4-9ccf-a3baff0b3d4d",
+        "timestamp": 1782223215322
+      }
+    ]
+  }
+}

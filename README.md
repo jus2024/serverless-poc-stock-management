@@ -1,50 +1,82 @@
-# Amplify Gen 2 業務 Web アプリテンプレート
+# Kiro Roasters 在庫管理システム
 
-AWS Amplify Gen 2 を中核にした業務 Web アプリケーション用のスターターテンプレートです。
-オプションで Strands Agents による AI エージェント機能を追加できます。
+DynamoDB のパーティションキー設計がオンラインリクエストのレスポンスに与える影響を実測検証するアプリケーションです。
+
+架空のコーヒーロースター「Kiro Roasters」の在庫管理を題材に、同一データを「悪い設計」と「良い設計」の 2 テーブルに保持し、朝の出荷ラッシュ（書き込み集中）の状況下でレスポンスタイムとエラー率を比較します。
+
+## 検証テーマ
+
+| テーブル | PK | パーティション数 | 特徴 |
+|---------|-----|----------------|------|
+| Bad Table | `warehouseId` | 3（倉庫数） | ホットスポット発生 |
+| Good Table | `itemId` | 5,000（SKU 数） | 均等分散 |
+
+- **データ量**: 5,000 SKU × 3 倉庫 = 15,000 レコード/テーブル
+- **負荷パターン**: 朝の出荷ラッシュ（東京倉庫 70% 集中）
+- **比較項目**: レスポンスタイム（p50/p95/p99）、スロットリング率、エラー率
 
 ## 技術スタック
 
 | レイヤー | 技術 |
 |---------|------|
 | フロントエンド | Next.js + TypeScript |
-| バックエンド | AWS Amplify Gen 2 |
-| エージェント UI（任意） | CopilotKit（`@copilotkit/react-core/v2`）+ AG-UI プロトコル |
-| エージェント（任意） | Python 3.12〜3.13 / Strands Agents SDK + ag-ui-strands |
-| エージェント実行基盤（任意） | Amazon Bedrock AgentCore Runtime |
-| エージェント管理（任意） | AgentCore CLI (`@aws/agentcore`) |
+| バックエンド | AWS Amplify Gen 2 + CDK |
+| コンピュート | AWS Lambda (Node.js 20.x) |
+| API | Amazon API Gateway REST API |
+| データベース | Amazon DynamoDB (プロビジョンドキャパシティ) |
+| 可観測性 | X-Ray, CloudWatch Metrics/Logs, Contributor Insights |
 | ホスティング | Amplify Hosting |
 | IDE 支援 | Kiro + Agent Toolkit for AWS |
 
 ## ディレクトリ構成
 
 ```
-src/                    # フロントエンド（Next.js App Router）
-  app/api/copilotkit/   # CopilotKit Runtime API Route（SigV4 → AgentCore プロキシ）
-  lib/agent/            # CopilotProvider（認証 + CopilotKit 接続）
-  components/agent/     # AgentChatSection（CopilotChat UI）
-amplify/                # Amplify Gen 2 バックエンド定義
-agents/                 # エージェント（任意、AgentCore CLI 管理）
-  agentcore/            # AgentCore CLI 設定
-  app/                  # エージェントコード
-docs/                   # 詳細ドキュメント
-.kiro/                  # Kiro ワークスペース設定
-.github/                # CI/CD
+src/
+  app/page.tsx                  # メインページ（タブ UI）
+  components/inventory/         # 在庫管理 UI コンポーネント
+    InventoryDashboard.tsx       #   タブコンテナ（ヘッダーに Good/Bad トグル）
+    InventoryListView.tsx        #   倉庫別在庫一覧（ページネーション付き）
+    InventoryTable.tsx           #   在庫テーブル表示
+    TableToggle.tsx              #   Good/Bad テーブル切替トグル
+    InventoryQueryPanel.tsx      #   在庫照会パネル（個別照会・出庫）
+    LoadTestPanel.tsx            #   負荷テスト制御パネル
+    ResultsDashboard.tsx         #   結果ダッシュボード
+  lib/inventory/                # API クライアント
+    api.ts                      #   REST API 呼び出し
+    types.ts                    #   型定義
+amplify/
+  custom/                       # CDK Construct
+    dynamodb-tables.ts          #   DynamoDB テーブル定義
+    lambda-functions.ts         #   Lambda 関数定義
+    api-gateway.ts              #   API Gateway 定義
+  functions/                    # Lambda ハンドラー
+    inventory-query/            #   在庫照会
+    inventory-ship/             #   出庫処理
+    load-test-start/            #   負荷生成開始
+    load-test-status/           #   負荷テストステータス
+    seed/                       #   初期データ投入
+    shared/                     #   共有ユーティリティ
+docs/
+  observability.md              # 可観測性ドキュメント
+.kiro/                          # Kiro ワークスペース設定
+.github/                        # CI/CD
 ```
 
 ---
 
 ## クイックスタート
 
-### Web アプリを動かす（全員共通、5 分）
+### 1. セットアップ
 
 ```bash
 git clone <リポジトリURL>
-cd <プロジェクト名>
+cd serverless-poc-stock-management
 npm ci
 ```
 
-ターミナルを2つ開いて:
+### 2. Amplify sandbox デプロイ
+
+ターミナルを 2 つ開いて:
 
 ```bash
 # ターミナル 1: Amplify sandbox 起動（初回は数分）
@@ -54,128 +86,69 @@ npx ampx sandbox
 npm run dev
 ```
 
-`http://localhost:3000/sample` で Todo リストが動けば成功です。
+sandbox デプロイが完了すると `amplify_outputs.json` が生成され、API Gateway URL が自動設定されます。
+
+### 3. 初期データ投入（Seed）
+
+API を直接呼び出してデータを投入します:
+
+```bash
+curl -X POST ${API_URL}/seed
+```
+
+5,000 SKU × 3 倉庫 = 15,000 レコードが Bad Table / Good Table の両方に投入されます。
+
+> **注意**: Seed 実行時に `ProvisionedThroughputExceededException` が発生する場合があります。その場合はしばらく待ってリトライするか、DynamoDB コンソールで一時的に WCU を引き上げてください。
+
+### 4. 在庫照会・負荷テスト
+
+Web UI (`http://localhost:3000`) の 3 つのタブで操作します:
+
+1. **在庫管理** — 倉庫別在庫一覧表示（ページネーション付き）、個別照会、出庫処理。ヘッダーの Good/Bad トグルでテーブルを切替
+2. **負荷テスト** — 朝の出荷ラッシュをシミュレート（東京 70% 集中）
+3. **結果ダッシュボード** — レスポンスタイム・エラー率の比較表示
 
 ---
 
-### エージェントを動かす（任意）
+## アーキテクチャ
 
-エージェント機能は段階的に試せます。Web アプリとの結合にはデプロイが必要ですが、エージェント単体はローカルで確認できます。
+### API エンドポイント
 
-#### Step 1: エージェントプロジェクトを作成する
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/inventory/{warehouseId}?table=bad\|good&nextToken=...` | 倉庫別在庫一覧 |
+| GET | `/inventory/{warehouseId}/{itemId}?table=bad\|good` | 在庫照会 |
+| POST | `/inventory/ship` | 出庫処理 |
+| POST | `/load-test/start` | 負荷生成開始 |
+| GET | `/load-test/status/{executionId}` | 負荷テストステータス |
+| POST | `/seed` | 初期データ投入 |
 
-リポジトリルートで AgentCore CLI を使ってエージェントプロジェクトを生成します。
+### DynamoDB テーブル設計
 
-```bash
-# AgentCore CLI インストール（未インストールの場合）
-npm install -g @aws/agentcore
+**Bad Table** (`kiro-roasters-inventory-bad`):
+- PK: `warehouseId` / SK: `itemId`
+- 3 パーティションに全リクエストが集中 → ホットスポット
 
-# リポジトリルートで実行
-agentcore create
-```
+**Good Table** (`kiro-roasters-inventory-good`):
+- PK: `itemId` / SK: `warehouseId`
+- GSI: `byWarehouse`（warehouseId → itemId）
+- 5,000 パーティションに均等分散
 
-対話 UI で以下を選択:
-- Project name: **`agents`**
-- Add agent: **Yes**
-- Agent name: 任意（例: `my_agent`）
-- Type: **Create new agent**
-- Language: **Python**
-- Build: **Container**
-- Protocol: **AG-UI**
-- Framework: **Strands Agents SDK**
-- Model: **Amazon Bedrock**
-- Memory: **None**（サンプルでは不要）
-- Advanced: スキップ（JWT 認証は不要 — SigV4 を使用）
+### 可観測性
 
-#### Step 2: エージェントをローカルで試す
+- **X-Ray**: Lambda → DynamoDB のトレース
+- **CloudWatch Metrics**: カスタムメトリクス（レイテンシ、エラー率）
+- **Contributor Insights**: パーティションキーレベルのアクセスパターン可視化
 
-生成されたエージェントの動作確認:
-
-```bash
-cd agents
-agentcore dev
-```
-
-ブラウザで `http://localhost:8080/invocations` を開くと、Dev 用の AI チャット画面が表示されます（Docker が起動している必要があります）。
-
-別ターミナルから curl で直接リクエストを送ることもできます:
-
-```bash
-curl -N -X POST http://localhost:8080/invocations \
-  -H "Content-Type: application/json" \
-  -H "X-Agentcore-Local: true" \
-  -d '{
-    "threadId": "test-1",
-    "runId": "run-1",
-    "prompt": "1+2は？",
-    "messages": [{"id": "m1", "role": "user", "content": "1+2は？"}],
-    "tools": [], "context": [], "state": {}, "forwardedProps": {}
-  }'
-```
-
-AG-UI イベント（`RUN_STARTED`, `TEXT_MESSAGE_CONTENT`, `RUN_FINISHED`）が返れば成功です。
-
-#### Step 3: Web アプリとエージェントを接続する（要デプロイ）
-
-ローカルでの結合テストはできません（SigV4 署名に Amplify Hosting のコンピューティングロールが必要なため）。接続には以下の手順が必要です:
-
-1. **Amplify Hosting にリポジトリ接続** → Web アプリ + Cognito をデプロイ
-2. **AgentCore Runtime にデプロイ** → `cd agents && agentcore deploy`
-3. **コンピューティングロールに権限追加** → `bedrock-agentcore:InvokeAgentRuntime` ポリシーをアタッチ
-4. **環境変数を設定** → Amplify コンソールで `NEXT_PUBLIC_AGENTCORE_RUNTIME_ARN` を設定
-5. **再デプロイ** → 環境変数反映のためビルドをトリガー
-
-詳細な手順は [docs/deployment.md](docs/deployment.md) を参照してください。
-
-**接続の仕組み:**
-
-```
-ブラウザ (CopilotKit + Cognito トークン)
-  → /api/copilotkit (Next.js API Route, Amplify Hosting SSR Lambda)
-    → CopilotRuntime + ExperimentalEmptyAdapter
-      → HttpAgent (SigV4 署名、コンピューティングロールの権限で署名)
-        → AgentCore Runtime (IAM 認証, AG-UI プロトコル)
-```
+詳細は [docs/observability.md](docs/observability.md) を参照してください。
 
 ---
 
-## 更新時のデプロイ
+## 環境変数
 
-### Web アプリの更新
-
-```bash
-git push origin <ブランチ名>
-```
-
-Amplify Hosting が自動デプロイします。
-
-### エージェントの更新
-
-```bash
-cd agents
-agentcore deploy
-```
-
-### 両方を更新する場合
-
-エージェント → フロントエンドの順にデプロイしてください。
-
----
-
-## お片付け（リソース削除）
-
-```bash
-# 1. AgentCore Runtime の削除
-cd agents
-agentcore remove all --yes
-agentcore deploy
-
-# 2. Amplify Hosting の削除（コンソールから）
-# AWS コンソール → Amplify → アプリを削除
-
-# 3. sandbox の停止（残っている場合）
-npx ampx sandbox delete
-```
+| 変数名 | 説明 |
+|--------|------|
+| `NEXT_PUBLIC_INVENTORY_API_URL` | API Gateway URL。sandbox デプロイ後、`amplify_outputs.json` または CDK 出力から URL を手動で `.env.local` にコピーしてください（ステージ名: `api`） |
 
 ---
 
@@ -193,36 +166,26 @@ npx ampx sandbox delete
 |------|------|------|
 | Web アプリ（品質ゲート） | GitHub Actions | lint、型チェック |
 | Web アプリ（デプロイ） | Amplify Hosting | Git push で自動 |
-| エージェント（品質ゲート） | GitHub Actions | lint、インポート確認 |
-| エージェント（デプロイ） | AgentCore CLI | `agentcore deploy` |
 
 ## Kiro + Agent Toolkit for AWS
 
-[Agent Toolkit for AWS](https://github.com/aws/agent-toolkit-for-aws) の MCP サーバーを設定済みです。Kiro から AWS ドキュメント検索、スキル検索、CLI 実行が利用できます。Skills はオンデマンド検索されるためローカルインストール不要です。
+[Agent Toolkit for AWS](https://github.com/aws/agent-toolkit-for-aws) の MCP サーバーを設定済みです。Kiro から AWS ドキュメント検索、スキル検索、CLI 実行が利用できます。
 
 ---
 
-## サンプルの除去
+## お片付け（リソース削除）
 
-テンプレートから自分のプロジェクトを始める際:
+```bash
+# sandbox の停止・削除
+npx ampx sandbox delete
+```
 
-**フロントエンド:**
-1. `src/app/sample/` を削除
-2. `src/components/agent/` を削除（エージェント不使用の場合）
-3. `src/lib/agent/` を削除（エージェント不使用の場合）
-4. `src/app/api/copilotkit/` を削除（エージェント不使用の場合）
-5. `amplify/data/resource.ts` の `Todo` モデルを自分のモデルに置き換え
+Amplify Hosting を使用している場合は、AWS コンソール → Amplify → アプリを削除してください。
 
-**エージェント（使わない場合）:** `agents/` ディレクトリごと削除
-
-**エージェント（使う場合）:** `agents/app/sample_agent/` を参考に新規エージェントを作成
+---
 
 ## 詳細ドキュメント
 
 | ドキュメント | 内容 |
 |-------------|------|
-| [docs/setup.md](docs/setup.md) | セットアップ詳細・前提条件 |
-| [docs/deployment.md](docs/deployment.md) | デプロイ手順の詳細（Amplify + AgentCore + コンピューティングロール） |
-| [docs/kiro-usage.md](docs/kiro-usage.md) | Kiro の steering/skills の使い方 |
-| [docs/sample/](docs/sample/) | サンプルページの仕組み |
-| [agents/README.md](agents/README.md) | エージェント開発の詳細 |
+| [docs/observability.md](docs/observability.md) | 可観測性の設定と確認方法 |

@@ -1,0 +1,156 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Form Section */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.radioGroup {
+  display: flex;
+  gap: 16px;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.radioLabel input[type="radio"] {
+  accent-color: var(--color-brand);
+}
+
+.numberInput {
+  max-width: 160px;
+}
+
+.hint {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+/* Warehouse Distribution */
+.distributionGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.distributionRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.distributionLabel {
+  font-size: 0.8125rem;
+  min-width: 100px;
+  color: var(--color-text);
+}
+
+.distributionInput {
+  width: 80px;
+}
+
+.distributionSum {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+.distributionSumWarn {
+  color: var(--color-warning);
+}
+
+/* Start Button */
+.startButton {
+  align-self: flex-start;
+  margin-top: 8px;
+}
+
+/* Progress Card */
+.progressCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.progressHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progressTitle {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.progressStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.statValue {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.statDanger {
+  color: var(--color-danger);
+}
+
+/* Error */
+.errorMessage {
+  font-size: 0.875rem;
+  color: var(--color-danger);
+}
+
+@media (max-width: 768px) {
+  .radioGroup {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .distributionRow {
+    flex-wrap: wrap;
+  }
+
+  .progressStats {
+    grid-template-columns: 1fr 1fr;
+  }
+}

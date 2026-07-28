@@ -55,3 +55,8 @@ notes/
 # Legacy (Starter Toolkit)
 agents/.bedrock_agentcore.yaml
 agents/.bedrock_agentcore/
+
+# Load Generator CDK
+load-generator/cdk/cdk.out/
+load-generator/cdk/cdk.context.json
+load-generator/cdk/.venv/

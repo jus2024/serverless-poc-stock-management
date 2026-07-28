@@ -1,0 +1,292 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 inventory-query Lambda に handleListInventory 関数を実装する": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256515201
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256528234
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256665158
+      }
+    ],
+    "2.1 api-gateway.ts に warehouseId リソースへの GET メソッドを追加する": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256515241
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256529936
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256666168
+      }
+    ],
+    "3.1 types.ts に ListInventoryResponse 型を追加する": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256515266
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256530333
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256667216
+      }
+    ],
+    "3.2 api.ts に listInventory 関数を追加する": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256515293
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256681116
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256769777
+      }
+    ],
+    "4. Checkpoint - バックエンドと API クライアントの検証": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256515335
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256790348
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256841256
+      }
+    ],
+    "5.1 TableToggle コンポーネントを実装する": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256515362
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256862530
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256985940
+      }
+    ],
+    "5.2 TableToggle.module.css を作成する": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256515386
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256863365
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256986555
+      }
+    ],
+    "6.1 InventoryTable コンポーネントを実装する": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256515410
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256864182
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256987370
+      }
+    ],
+    "6.2 InventoryTable.module.css を作成する": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256515443
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256866915
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256988603
+      }
+    ],
+    "7.1 InventoryListView コンポーネントを実装する": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256515476
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782257002897
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782257158916
+      }
+    ],
+    "7.2 InventoryListView.module.css を作成する": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256515504
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782257003855
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782257160020
+      }
+    ],
+    "8.1 InventoryDashboard.tsx のヘッダー・タブ・状態管理を更新する": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256515534
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782257167349
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782257288243
+      }
+    ],
+    "8.2 InventoryDashboard.module.css のヘッダーレイアウトを調整する": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256515558
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782257168514
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782257289536
+      }
+    ],
+    "9. Final checkpoint - 全体検証": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256515584
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782257296650
+      },
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782257355371
+      }
+    ],
+    "1. バックエンド: Lambda ハンドラーに在庫一覧取得ロジックを追加": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256665183
+      }
+    ],
+    "2. バックエンド: API Gateway に GET /inventory/{warehouseId} エンドポイントを追加": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256666201
+      }
+    ],
+    "3. フロントエンド: API クライアントと型定義を拡張": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256769806
+      }
+    ],
+    "5. フロントエンド: TableToggle コンポーネントを新規作成": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256986579
+      }
+    ],
+    "6. フロントエンド: InventoryTable コンポーネントを新規作成": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782256988634
+      }
+    ],
+    "7. フロントエンド: InventoryListView コンポーネントを新規作成": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782257160074
+      }
+    ],
+    "8. フロントエンド: InventoryDashboard を変更（ヘッダー・タブ・トグル統合）": [
+      {
+        "executionId": "7f91bf71-9a38-45d9-973e-156969d3a5f3",
+        "chatSessionId": "sess_084775fd-3c66-48da-abd2-a6a5e45e9233",
+        "timestamp": 1782257289570
+      }
+    ]
+  }
+}

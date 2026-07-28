@@ -1,0 +1,219 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* Comparison Header */
+.comparisonHeader {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.tableIndicatorBad {
+  background: var(--color-bad-table-bg);
+  border: 1px solid var(--color-bad-table-border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.tableIndicatorGood {
+  background: var(--color-good-table-bg);
+  border: 1px solid var(--color-good-table-border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.indicatorTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.indicatorIcon {
+  font-size: 1.25rem;
+}
+
+.indicatorLabelBad {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-bad-table);
+}
+
+.indicatorLabelGood {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-good-table);
+}
+
+.indicatorStats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.statValue {
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--color-text);
+}
+
+.statValueDanger {
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--color-danger);
+}
+
+.statValueSuccess {
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--color-success);
+}
+
+/* Metrics Comparison Grid */
+.metricsSection {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  padding: 20px;
+}
+
+.metricsSectionTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 16px;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px 16px;
+  align-items: center;
+}
+
+.metricsGridHeader {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-align: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.metricRow {
+  display: contents;
+}
+
+.metricValueBad {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-bad-table);
+}
+
+.metricLabel {
+  text-align: center;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  padding: 0 8px;
+}
+
+.metricValueGood {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-good-table);
+}
+
+/* Execution History */
+.historySection {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  padding: 20px;
+}
+
+.historySectionTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 16px;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.executionId {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tableBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.tableBadgeBad {
+  color: var(--color-bad-table);
+}
+
+.tableBadgeGood {
+  color: var(--color-good-table);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .comparisonHeader {
+    grid-template-columns: 1fr;
+  }
+
+  .metricsGrid {
+    grid-template-columns: 1fr auto 1fr;
+    gap: 8px 12px;
+  }
+
+  .indicatorStats {
+    grid-template-columns: 1fr;
+  }
+}

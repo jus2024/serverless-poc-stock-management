@@ -1,0 +1,112 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+}
+
+/* Header Bar */
+.header {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.headerBrand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-brand);
+  white-space: nowrap;
+}
+
+.headerTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+/* Tab Navigation */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  padding: 0 24px;
+}
+
+.tab {
+  padding: 12px 24px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  font-family: var(--font-sans);
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tab:hover {
+  color: var(--color-brand);
+}
+
+.tabActive {
+  color: var(--color-brand);
+  border-bottom: 2px solid var(--color-brand);
+}
+
+/* Content Area */
+.content {
+  max-width: 1600px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+  flex: 1;
+}
+
+/* Responsive: 768px 以下で single column */
+@media (max-width: 768px) {
+  .header {
+    padding: 0 16px;
+  }
+
+  .headerTitle {
+    font-size: 0.875rem;
+  }
+
+  .tabs {
+    padding: 0 16px;
+    overflow-x: auto;
+  }
+
+  .tab {
+    padding: 12px 16px;
+    font-size: 0.8125rem;
+  }
+
+  .content {
+    padding: 16px;
+  }
+}
+
+/* Load Test Sections (負荷テスト + オンライン影響テスト) */
+.loadTestSections {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.sectionDivider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 0;
+}

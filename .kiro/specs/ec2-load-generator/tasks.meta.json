@@ -1,0 +1,590 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "`load-generator/` ディレクトリを作成": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821557291
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821568660
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821599033
+      }
+    ],
+    "`load-generator/cdk/` と `load-generator/scripts/` を作成": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821557340
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821608608
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821652869
+      }
+    ],
+    "`load-generator/README.md` の雛形を作成": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821557390
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821663843
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821705698
+      }
+    ],
+    "コマンドライン引数のパース（argparse）": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821557451
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821716352
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821817309
+      }
+    ],
+    "DynamoDB テーブルから SKU リストを Scan で取得": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821557486
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821828402
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821944174
+      }
+    ],
+    "ThreadPoolExecutor による並列 UpdateItem 実行": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821557528
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821955463
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822073956
+      }
+    ],
+    "倉庫の重み付きランダム選択ロジック": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821557562
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822084228
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822193708
+      }
+    ],
+    "毎秒のリアルタイムレポート（成功/スロットル/レイテンシ）": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821557613
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822198901
+      }
+    ],
+    "完了時サマリー出力（p50/p95/p99 レイテンシ含む）": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821557645
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822339077
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822441268
+      }
+    ],
+    "`--no-retry` オプションで SDK リトライ無効化": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821557679
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822446764
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822558780
+      }
+    ],
+    "`requirements.txt` に boto3 を記載": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821557711
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822563970
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822610096
+      }
+    ],
+    "`cdk.json` 作成": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821557745
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822621360
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822673008
+      }
+    ],
+    "`app.py` エントリポイント作成": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821557802
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822678592
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822722646
+      }
+    ],
+    "`stack.py`: EC2 インスタンス定義（t3.xlarge, Amazon Linux 2023）": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821557844
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822729504
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822859861
+      }
+    ],
+    "`stack.py`: IAM ロール（DynamoDB 書き込み + SSM）": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821557878
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822865072
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822870234
+      }
+    ],
+    "`stack.py`: Security Group（アウトバウンドのみ）": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821557912
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822875210
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822879759
+      }
+    ],
+    "`stack.py`: User Data でスクリプト配置 + Python 依存インストール": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821557945
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822884342
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822889965
+      }
+    ],
+    "`stack.py`: テーブル名を CDK context から取得し環境変数に設定": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821557978
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822895267
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822900342
+      }
+    ],
+    "`requirements.txt` に aws-cdk-lib を記載": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821558012
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822905708
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822917825
+      }
+    ],
+    "前提条件（Amplify sandbox 稼働中、Python 3.12+、CDK CLI）": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821558064
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784822928621
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784823026112
+      }
+    ],
+    "デプロイ手順（`cdk deploy`）": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821558101
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784823031870
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784823038731
+      }
+    ],
+    "SSM 接続 → スクリプト実行手順": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821558136
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784823043775
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784823048764
+      }
+    ],
+    "実験シナリオ（3 ラウンド: Bad+noRetry, Bad+retry, Good+retry）": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821558169
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784823053747
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784823058366
+      }
+    ],
+    "片付け（`cdk destroy`）": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821558203
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784823063034
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784823068517
+      }
+    ],
+    "コスト見積もり": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821558238
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784823073968
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784823079334
+      }
+    ],
+    "GSI の WCU を 100 に下げる（コスト削減、GSI はテスト対象外）": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821558296
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784823090021
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784823171095
+      }
+    ],
+    "必要に応じて Amplify テーブルの WCU を確認": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821558337
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784823176400
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784823182419
+      }
+    ],
+    "CDK synth が通ることを確認": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821558387
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784823193611
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784839591865
+      }
+    ],
+    "load_test.py が単体でインポートエラーなく動作することを確認（ローカル dry-run）": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821558431
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784839597492
+      }
+    ],
+    "`cdk deploy` が正常に完了し、EC2 インスタンスが起動することを確認": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821558462
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784839699931
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784839782945
+      }
+    ],
+    "SSM Session Manager で EC2 に接続できることを確認": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821558494
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784839787788
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784839793173
+      }
+    ],
+    "load_test.py を低 RPS (--rps 10 --duration 5) で実行し、基本動作を確認": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821558552
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784839798588
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784839804046
+      }
+    ],
+    "引数パースのテスト（必須引数欠落時のエラー、デフォルト値）": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821558585
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784839822332
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784839938850
+      }
+    ],
+    "レポートフォーマットのテスト（毎秒出力、サマリー出力）": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821558619
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784839944114
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784839949297
+      }
+    ],
+    "倉庫選択の重み付きロジックのテスト（tokyo-ratio が反映されること）": [
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784821558651
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784839954205
+      },
+      {
+        "executionId": "bb785ab6-3b68-4fa0-a9d6-e2dcc469c189",
+        "chatSessionId": "sess_2e2c37e5-d989-462b-8234-790af58af37c",
+        "timestamp": 1784839959706
+      }
+    ]
+  }
+}
