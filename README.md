@@ -1,70 +1,76 @@
-# Kiro Roasters 在庫管理システム
+# Kiro Roasters 在庫管理 — DynamoDB vs OpenSearch 検索比較 PoC
 
-DynamoDB のパーティションキー設計がオンラインリクエストのレスポンスに与える影響を実測検証するアプリケーションです。
+架空のコーヒーロースター「Kiro Roasters」の在庫管理を題材に、DynamoDB GSI と OpenSearch Serverless NextGen の検索パフォーマンスを同一データ・同一条件で比較検証するサーバーレスアプリケーションです。
 
-架空のコーヒーロースター「Kiro Roasters」の在庫管理を題材に、同一データを「悪い設計」と「良い設計」の 2 テーブルに保持し、朝の出荷ラッシュ（書き込み集中）の状況下でレスポンスタイムとエラー率を比較します。
+## 何ができるか
 
-## 検証テーマ
+- **検索比較タブ**: 同一検索条件で DynamoDB (GSI) と OpenSearch Serverless (NextGen) に並列クエリを発行し、レイテンシ・結果件数を左右比較で可視化
+- **在庫管理タブ**: 倉庫別の在庫一覧・個別照会・出庫処理
+- **（オプション）負荷テスト**: DynamoDB のホットパーティション vs 分散設計の比較検証
 
-| テーブル | PK | パーティション数 | 特徴 |
-|---------|-----|----------------|------|
-| Bad Table | `warehouseId` | 3（倉庫数） | ホットスポット発生 |
-| Good Table | `itemId` | 5,000（SKU 数） | 均等分散 |
+## アーキテクチャ
 
-- **データ量**: 5,000 SKU × 3 倉庫 = 15,000 レコード/テーブル
-- **負荷パターン**: 朝の出荷ラッシュ（東京倉庫 70% 集中）
-- **比較項目**: レスポンスタイム（p50/p95/p99）、スロットリング率、エラー率
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Next.js (Amplify Hosting / localhost)                       │
+│  ├── 検索比較タブ → GET /search (OpenSearch Lambda)         │
+│  │                → GET /inventory?mode=comparison (DynamoDB)│
+│  └── 在庫管理タブ → GET /inventory/{warehouseId}            │
+└──────────────────────────┬──────────────────────────────────┘
+                           │ API Gateway
+┌──────────────────────────┴──────────────────────────────────┐
+│  Lambda Functions                                            │
+│  ├── opensearch-search   → OpenSearch Serverless (SigV4)    │
+│  ├── inventory-query     → DynamoDB Good Table (GSI)        │
+│  ├── inventory-ship      → DynamoDB Good Table              │
+│  └── seed                → DynamoDB Good Table              │
+└─────────────────────────────────────────────────────────────┘
+                           │
+┌──────────────────────────┴──────────────────────────────────┐
+│  DynamoDB Good Table                                         │
+│  PK=itemId, SK=warehouseId                                   │
+│  GSI: byWarehouse, byLocation, byUnitPrice                   │
+│  DynamoDB Streams → OSIS Pipeline → OpenSearch Collection   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## 検索パターン比較
+
+| 検索パターン | DynamoDB GSI | OpenSearch NextGen |
+|---|---|---|
+| 倉庫指定（完全一致） | ✅ GSI PK | ✅ term |
+| 商品 ID 前方一致 | ✅ begins_with | ✅ prefix |
+| 商品名部分一致 | ⚠️ FilterExpression | ✅ match (全文検索) |
+| 単価範囲 | ✅ GSI SK BETWEEN | ✅ range |
+| 複合条件 AND | ⚠️ 1 GSI + Filter | ✅ bool.must |
+| 総件数取得 | ❌ 不可 | ✅ total |
 
 ## 技術スタック
 
 | レイヤー | 技術 |
 |---------|------|
-| フロントエンド | Next.js + TypeScript |
+| フロントエンド | Next.js 15 + TypeScript |
 | バックエンド | AWS Amplify Gen 2 + CDK |
-| コンピュート | AWS Lambda (Node.js 20.x) |
+| コンピュート | AWS Lambda (Node.js 20) |
 | API | Amazon API Gateway REST API |
-| データベース | Amazon DynamoDB (プロビジョンドキャパシティ) |
-| 可観測性 | X-Ray, CloudWatch Metrics/Logs, Contributor Insights |
-| ホスティング | Amplify Hosting |
+| データベース | Amazon DynamoDB (オンデマンド) |
+| 全文検索 | Amazon OpenSearch Serverless NextGen (scale-to-zero) |
+| データ同期 | DynamoDB Streams → OSIS Ingestion Pipeline |
 | IDE 支援 | Kiro + Agent Toolkit for AWS |
 
-## ディレクトリ構成
+## コスト
 
-```
-src/
-  app/page.tsx                  # メインページ（タブ UI）
-  components/inventory/         # 在庫管理 UI コンポーネント
-    InventoryDashboard.tsx       #   タブコンテナ（ヘッダーに Good/Bad トグル）
-    InventoryListView.tsx        #   倉庫別在庫一覧（ページネーション付き）
-    InventoryTable.tsx           #   在庫テーブル表示
-    TableToggle.tsx              #   Good/Bad テーブル切替トグル
-    InventoryQueryPanel.tsx      #   在庫照会パネル（個別照会・出庫）
-    LoadTestPanel.tsx            #   負荷テスト制御パネル
-    ResultsDashboard.tsx         #   結果ダッシュボード
-  lib/inventory/                # API クライアント
-    api.ts                      #   REST API 呼び出し
-    types.ts                    #   型定義
-amplify/
-  custom/                       # CDK Construct
-    dynamodb-tables.ts          #   DynamoDB テーブル定義
-    lambda-functions.ts         #   Lambda 関数定義
-    api-gateway.ts              #   API Gateway 定義
-  functions/                    # Lambda ハンドラー
-    inventory-query/            #   在庫照会
-    inventory-ship/             #   出庫処理
-    load-test-start/            #   負荷生成開始
-    load-test-status/           #   負荷テストステータス
-    seed/                       #   初期データ投入
-    shared/                     #   共有ユーティリティ
-docs/
-  observability.md              # 可観測性ドキュメント
-.kiro/                          # Kiro ワークスペース設定
-.github/                        # CI/CD
-```
+OpenSearch Serverless NextGen は **scale-to-zero** 対応のため、アイドル時はストレージ料金のみ。15,000 件程度のデータでは月額数セントレベル。Ingestion Pipeline は稼働中 $0.24/OCU/時 ですが、データ投入後に停止可能。
 
 ---
 
 ## クイックスタート
+
+### 前提条件
+
+- Node.js 20+
+- AWS CLI 設定済み（`aws configure`）
+- CDK Bootstrap 済み（`npx cdk bootstrap aws://ACCOUNT/REGION`）
 
 ### 1. セットアップ
 
@@ -76,111 +82,151 @@ npm ci
 
 ### 2. Amplify sandbox デプロイ
 
-ターミナルを 2 つ開いて:
+```bash
+npx ampx sandbox
+```
+
+初回デプロイは 10〜15 分かかります（OpenSearch Collection + Pipeline 作成のため）。
+`✔ Deployment completed` が表示されたら次へ。
+
+### 3. 環境変数設定
+
+`.env.local` を作成して API URL を設定:
 
 ```bash
-# ターミナル 1: Amplify sandbox 起動（初回は数分）
-npx ampx sandbox
+# sandbox の出力から API URL をコピー
+# (CloudFormation Output の ApiInventoryApiUrl)
+NEXT_PUBLIC_INVENTORY_API_URL=https://xxxxxxxx.execute-api.us-west-2.amazonaws.com/api/
+```
 
-# ターミナル 2: 開発サーバー起動
+### 4. 初期データ投入
+
+```bash
+# API Gateway 経由で seed Lambda を呼び出す
+curl -X POST ${NEXT_PUBLIC_INVENTORY_API_URL}seed
+```
+
+5,000 SKU × 3 倉庫 = 15,000 レコードが投入されます。
+DynamoDB Streams 経由で OpenSearch にも自動同期されます（2〜5 分）。
+
+### 5. 開発サーバー起動
+
+```bash
 npm run dev
 ```
 
-sandbox デプロイが完了すると `amplify_outputs.json` が生成され、API Gateway URL が自動設定されます。
-
-### 3. 初期データ投入（Seed）
-
-API を直接呼び出してデータを投入します:
-
-```bash
-curl -X POST ${API_URL}/seed
-```
-
-5,000 SKU × 3 倉庫 = 15,000 レコードが Bad Table / Good Table の両方に投入されます。
-
-> **注意**: Seed 実行時に `ProvisionedThroughputExceededException` が発生する場合があります。その場合はしばらく待ってリトライするか、DynamoDB コンソールで一時的に WCU を引き上げてください。
-
-### 4. 在庫照会・負荷テスト
-
-Web UI (`http://localhost:3000`) の 3 つのタブで操作します:
-
-1. **在庫管理** — 倉庫別在庫一覧表示（ページネーション付き）、個別照会、出庫処理。ヘッダーの Good/Bad トグルでテーブルを切替
-2. **負荷テスト** — 朝の出荷ラッシュをシミュレート（東京 70% 集中）
-3. **結果ダッシュボード** — レスポンスタイム・エラー率の比較表示
+http://localhost:3000 にアクセスし、「検索比較」タブで DynamoDB vs OpenSearch の比較を確認できます。
 
 ---
 
-## アーキテクチャ
+## ディレクトリ構成
 
-### API エンドポイント
+```
+src/
+  app/page.tsx                    # メインページ
+  components/inventory/           # UI コンポーネント
+    InventoryDashboard.tsx        #   タブコンテナ
+    SearchComparisonView.tsx      #   検索比較ビュー（メイン機能）
+    SearchForm.tsx                #   検索フォーム
+    ComparisonPanel.tsx           #   DynamoDB/OpenSearch 左右比較パネル
+    LatencyBar.tsx                #   レイテンシ比較バー
+    InventoryListView.tsx         #   在庫一覧
+  lib/inventory/
+    api.ts                        #   API クライアント
+    types.ts                      #   型定義
+
+amplify/
+  backend.ts                      # CDK エントリポイント
+  custom/
+    dynamodb-tables.ts            #   DynamoDB テーブル (Good Table + GSI)
+    opensearch-infra.ts           #   OpenSearch Serverless + Pipeline
+    lambda-functions.ts           #   Lambda 関数定義
+    api-gateway.ts                #   API Gateway 定義
+  functions/
+    opensearch-search/            #   OpenSearch 検索 Lambda
+    inventory-query/              #   DynamoDB 検索 Lambda (GSI + FilterExpression)
+    inventory-ship/               #   出庫処理
+    seed/                         #   データ投入
+    shared/                       #   共有型定義
+
+docs/
+  opensearch-comparison.md        # 検索比較の詳細知見
+  dynamodb-vs-rds-search.md       # DynamoDB vs RDS 比較考察
+  observability.md                # 可観測性設定
+```
+
+---
+
+## API エンドポイント
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/inventory/{warehouseId}?table=bad\|good&nextToken=...` | 倉庫別在庫一覧 |
-| GET | `/inventory/{warehouseId}/{itemId}?table=bad\|good` | 在庫照会 |
+| GET | `/search?warehouseId=...&itemPrefix=...&itemName=...` | OpenSearch 検索 |
+| GET | `/inventory/{warehouseId}?mode=comparison&...` | DynamoDB GSI 検索（比較用） |
+| GET | `/inventory/{warehouseId}` | 在庫一覧 |
 | POST | `/inventory/ship` | 出庫処理 |
-| POST | `/load-test/start` | 負荷生成開始 |
-| GET | `/load-test/status/{executionId}` | 負荷テストステータス |
 | POST | `/seed` | 初期データ投入 |
-
-### DynamoDB テーブル設計
-
-**Bad Table** (`kiro-roasters-inventory-bad`):
-- PK: `warehouseId` / SK: `itemId`
-- 3 パーティションに全リクエストが集中 → ホットスポット
-
-**Good Table** (`kiro-roasters-inventory-good`):
-- PK: `itemId` / SK: `warehouseId`
-- GSI: `byWarehouse`（warehouseId → itemId）
-- 5,000 パーティションに均等分散
-
-### 可観測性
-
-- **X-Ray**: Lambda → DynamoDB のトレース
-- **CloudWatch Metrics**: カスタムメトリクス（レイテンシ、エラー率）
-- **Contributor Insights**: パーティションキーレベルのアクセスパターン可視化
-
-詳細は [docs/observability.md](docs/observability.md) を参照してください。
+| POST | `/load-test/start` | 負荷テスト開始（オプション） |
 
 ---
 
-## 環境変数
+## オプション: ホットパーティション検証
 
-| 変数名 | 説明 |
-|--------|------|
-| `NEXT_PUBLIC_INVENTORY_API_URL` | API Gateway URL。sandbox デプロイ後、`amplify_outputs.json` または CDK 出力から URL を手動で `.env.local` にコピーしてください（ステージ名: `api`） |
+DynamoDB のパーティションキー設計がオンラインリクエストに与える影響を実測したい場合、追加テーブル（Bad Table 等）を有効化して負荷テストを実施できます。
 
----
+### 検証テーマ
 
-## ブランチ戦略
+| テーブル | PK | パーティション数 | 特徴 |
+|---------|-----|----------------|------|
+| Bad Table | `warehouseId` | 3（倉庫数） | ホットスポット発生 |
+| Good Table | `itemId` | 5,000（SKU 数） | 均等分散 |
 
-| ブランチ | 用途 |
-|---------|------|
-| `main` | 本番向け |
-| `develop` | 統合ブランチ |
-| `feature/*` | 実装作業用 |
+### 有効化手順
 
-## CI/CD
+#### 1. テーブル定義のコメント解除
 
-| 対象 | 担当 | 方法 |
-|------|------|------|
-| Web アプリ（品質ゲート） | GitHub Actions | lint、型チェック |
-| Web アプリ（デプロイ） | Amplify Hosting | Git push で自動 |
+`amplify/custom/dynamodb-tables.ts`:
+- `badTable`, `goodGsiTable`, `badOnDemandTable` のブロックコメントを解除
+- `InventoryTables` インターフェースのオプショナルプロパティを有効化
 
-## Kiro + Agent Toolkit for AWS
+#### 2. Lambda 環境変数の追加
 
-[Agent Toolkit for AWS](https://github.com/aws/agent-toolkit-for-aws) の MCP サーバーを設定済みです。Kiro から AWS ドキュメント検索、スキル検索、CLI 実行が利用できます。
+`amplify/custom/lambda-functions.ts`:
+- `commonEnv` 内の `BAD_TABLE_NAME`, `GOOD_GSI_TABLE_NAME`, `BAD_ONDEMAND_TABLE_NAME` のコメントを解除
+- 権限付与のコメントアウトされたブロックを有効化
 
----
+#### 3. フロントエンド切替 UI の有効化
 
-## お片付け（リソース削除）
+`src/components/inventory/InventoryDashboard.tsx`:
+- テーブル切替トグル（Good/Bad）を表示に戻す
+
+#### 4. 再デプロイ & データ投入
 
 ```bash
-# sandbox の停止・削除
-npx ampx sandbox delete
+# テーブル作成を含む再デプロイ
+npx ampx sandbox
+
+# Bad Table はプロビジョンドキャパシティのため、コスト発生に注意
+# Seed で全テーブルにデータ投入
+curl -X POST ${NEXT_PUBLIC_INVENTORY_API_URL}seed
 ```
 
-Amplify Hosting を使用している場合は、AWS コンソール → Amplify → アプリを削除してください。
+#### 5. 負荷テスト実行
+
+Web UI の「負荷テスト」タブから:
+- 東京倉庫 70% 集中の朝の出荷ラッシュをシミュレート
+- Bad Table vs Good Table のレスポンスタイム・スロットリング率を比較
+
+> ⚠️ プロビジョンドキャパシティのテーブルはアイドル時もコストが発生します。テスト後は `npx ampx sandbox delete` で削除してください。
+
+---
+
+## お片付け
+
+```bash
+# sandbox 全リソース削除（DynamoDB, OpenSearch, Lambda, API Gateway 全て）
+npx ampx sandbox delete --yes
+```
 
 ---
 
@@ -188,4 +234,12 @@ Amplify Hosting を使用している場合は、AWS コンソール → Amplify
 
 | ドキュメント | 内容 |
 |-------------|------|
-| [docs/observability.md](docs/observability.md) | 可観測性の設定と確認方法 |
+| [docs/opensearch-comparison.md](docs/opensearch-comparison.md) | OpenSearch vs DynamoDB 検索比較の詳細知見・デプロイ Tips |
+| [docs/dynamodb-vs-rds-search.md](docs/dynamodb-vs-rds-search.md) | DynamoDB vs RDS の検索パターン比較考察 |
+| [docs/observability.md](docs/observability.md) | X-Ray / CloudWatch の設定と確認方法 |
+
+---
+
+## ライセンス
+
+MIT

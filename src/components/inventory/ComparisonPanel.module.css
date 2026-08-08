@@ -1,0 +1,186 @@
+/* ComparisonPanel — 左右比較レイアウト */
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  padding: 16px;
+  min-width: 0;
+}
+
+/* パネルヘッダー */
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.panelLabel {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-text);
+}
+
+.panelMeta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.metaItem {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-secondary);
+  background: var(--color-bg);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* DynamoDB 制約メッセージ */
+.limitation {
+  font-size: 0.8125rem;
+  color: var(--color-warning, #b45309);
+  background: var(--color-warning-bg, #fef3c7);
+  border: 1px solid var(--color-warning-border, #fcd34d);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+/* OpenSearch コールドスタートローディング */
+.coldStart {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8125rem;
+  color: var(--color-info, #1d4ed8);
+  background: var(--color-info-bg, #eff6ff);
+  border: 1px solid var(--color-info-border, #93c5fd);
+  border-radius: 6px;
+  padding: 12px;
+}
+
+/* 通常ローディング */
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  padding: 12px 0;
+}
+
+/* スピナー */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-brand);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* エラー表示 */
+.error {
+  font-size: 0.8125rem;
+  color: var(--color-danger, #dc2626);
+  background: var(--color-danger-bg, #fef2f2);
+  border: 1px solid var(--color-danger-border, #fca5a5);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+/* テーブル */
+.tableWrapper {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.th {
+  text-align: left;
+  padding: 8px 10px;
+  font-weight: 600;
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary);
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.tr {
+  transition: background 0.1s;
+}
+
+.tr:hover {
+  background: var(--color-bg);
+}
+
+.tr:not(:last-child) .td {
+  border-bottom: 1px solid var(--color-border-subtle, var(--color-border));
+}
+
+.td {
+  padding: 6px 10px;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.number {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.empty {
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  padding: 24px 0;
+}
+
+/* レスポンシブ: 768px 以下で縦並び */
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+
+  .panelHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .th,
+  .td {
+    padding: 6px 8px;
+    font-size: 0.75rem;
+  }
+}

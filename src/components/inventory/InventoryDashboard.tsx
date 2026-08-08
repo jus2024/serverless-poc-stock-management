@@ -3,14 +3,14 @@
 import { useCallback, useEffect, useState } from "react";
 import type { Table, OnlineImpactTestResponse } from "@/src/lib/inventory/types";
 import BrandIcon from "@/src/components/common/BrandIcon";
-import TableToggle from "./TableToggle";
 import InventoryListView from "./InventoryListView";
 import LoadTestPanel from "./LoadTestPanel";
 import OnlineImpactPanel from "./OnlineImpactPanel";
 import OnlineImpactComparison from "./OnlineImpactComparison";
+import SearchComparisonView from "./SearchComparisonView";
 import styles from "./InventoryDashboard.module.css";
 
-type Tab = "inventory" | "loadtest" | "results";
+type Tab = "inventory" | "loadtest" | "results" | "search";
 
 /** オンライン影響テスト結果の localStorage キー */
 const IMPACT_RESULTS_STORAGE_KEY = "kiro-online-impact-results";
@@ -19,11 +19,12 @@ const tabs: { key: Tab; label: string }[] = [
   { key: "inventory", label: "在庫管理" },
   { key: "loadtest", label: "負荷テスト" },
   { key: "results", label: "結果ダッシュボード" },
+  { key: "search", label: "検索比較" },
 ];
 
 export default function InventoryDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>("inventory");
-  const [table, setTable] = useState<Table>("good");
+  const table: Table = "good";
   const [impactResults, setImpactResults] = useState<OnlineImpactTestResponse[]>([]);
   const [restored, setRestored] = useState(false);
 
@@ -87,7 +88,6 @@ export default function InventoryDashboard() {
           <span>Kiro Roasters</span>
         </div>
         <h1 className={styles.headerTitle}>在庫管理システム</h1>
-        <TableToggle value={table} onChange={setTable} />
       </header>
 
       {/* Tab Navigation */}
@@ -142,6 +142,14 @@ export default function InventoryDashboard() {
               onClear={handleClearImpactResults}
             />
           )}
+        </div>
+        <div
+          id="panel-search"
+          role="tabpanel"
+          aria-labelledby="tab-search"
+          hidden={activeTab !== "search"}
+        >
+          {activeTab === "search" && <SearchComparisonView />}
         </div>
       </main>
     </div>

@@ -19,12 +19,12 @@ const WAREHOUSES: Warehouse[] = ["WH-TOKYO", "WH-OSAKA", "WH-FUKUOKA"];
 
 /** 拡張検索（GSI 前提）に対応しているテーブルか */
 function supportsIndexSearch(table: Table): boolean {
-  return table === "goodGsi";
+  return table === "good" || table === "goodGsi";
 }
 
 /** 一覧取得が Scan になるテーブルか（GSI なしで PK=itemId） */
 function usesScanForList(table: Table): boolean {
-  return table === "good";
+  return false;
 }
 
 export default function InventoryListView({ table }: InventoryListViewProps) {

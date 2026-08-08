@@ -10,10 +10,10 @@ import type { Warehouse } from '../shared/types';
 
 const client = new DynamoDBClient({});
 
-const BAD_TABLE_NAME = process.env.BAD_TABLE_NAME!;
-const GOOD_TABLE_NAME = process.env.GOOD_TABLE_NAME!;
-const GOOD_GSI_TABLE_NAME = process.env.GOOD_GSI_TABLE_NAME!;
-const BAD_ONDEMAND_TABLE_NAME = process.env.BAD_ONDEMAND_TABLE_NAME!;
+const BAD_TABLE_NAME = process.env.BAD_TABLE_NAME;
+const GOOD_TABLE_NAME = process.env.GOOD_TABLE_NAME;
+const GOOD_GSI_TABLE_NAME = process.env.GOOD_GSI_TABLE_NAME;
+const BAD_ONDEMAND_TABLE_NAME = process.env.BAD_ONDEMAND_TABLE_NAME;
 
 const WAREHOUSES: Warehouse[] = ['WH-TOKYO', 'WH-OSAKA', 'WH-FUKUOKA'];
 const BATCH_SIZE = 25;
@@ -213,19 +213,31 @@ export const handler = async (
       return written;
     }
 
-    // Bad / Good / Good_GSI / Bad_OnDemand を並列で書き込み
-    const [badWritten, goodWritten, goodGsiWritten, badOnDemandWritten] = await Promise.all([
-      writeBatches(BAD_TABLE_NAME, badRequests, 'Bad_Table'),
-      writeBatches(GOOD_TABLE_NAME, goodRequests, 'Good_Table'),
-      writeBatches(GOOD_GSI_TABLE_NAME, goodGsiRequests, 'Good_GSI_Table'),
-      writeBatches(BAD_ONDEMAND_TABLE_NAME, badOnDemandRequests, 'Bad_OnDemand_Table'),
-    ]);
+    // 環境変数が設定されているテーブルのみ並列で書き込み
+    const writePromises: Promise<number>[] = [];
+    const writeLabels: string[] = [];
 
-    totalWritten = badWritten + goodWritten + goodGsiWritten + badOnDemandWritten;
-    console.log(
-      `Seed: Bad_Table - ${badWritten}, Good_Table - ${goodWritten}, Good_GSI_Table - ${goodGsiWritten}, Bad_OnDemand_Table - ${badOnDemandWritten}`
-    );
-    console.log(`Seed: Total records written across all four tables: ${totalWritten}`);
+    if (BAD_TABLE_NAME) {
+      writePromises.push(writeBatches(BAD_TABLE_NAME, badRequests, 'Bad_Table'));
+      writeLabels.push('Bad_Table');
+    }
+    if (GOOD_TABLE_NAME) {
+      writePromises.push(writeBatches(GOOD_TABLE_NAME, goodRequests, 'Good_Table'));
+      writeLabels.push('Good_Table');
+    }
+    if (GOOD_GSI_TABLE_NAME) {
+      writePromises.push(writeBatches(GOOD_GSI_TABLE_NAME, goodGsiRequests, 'Good_GSI_Table'));
+      writeLabels.push('Good_GSI_Table');
+    }
+    if (BAD_ONDEMAND_TABLE_NAME) {
+      writePromises.push(writeBatches(BAD_ONDEMAND_TABLE_NAME, badOnDemandRequests, 'Bad_OnDemand_Table'));
+      writeLabels.push('Bad_OnDemand_Table');
+    }
+
+    const results = await Promise.all(writePromises);
+    totalWritten = results.reduce((sum, n) => sum + n, 0);
+    console.log(`Seed: Written to ${writeLabels.join(', ')}: ${results.join(', ')}`);
+    console.log(`Seed: Total records written: ${totalWritten}`);
 
     return {
       statusCode: 200,

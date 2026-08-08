@@ -13,6 +13,8 @@ import type {
 } from '@aws-sdk/client-dynamodb';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 import type { Table } from '../shared/types';
+import { selectGsi } from './gsi-selector';
+import { buildFilterExpression } from './filter-builder';
 
 const client = new DynamoDBClient({});
 
@@ -245,10 +247,175 @@ async function handleListInventory(
 }
 
 /**
+ * 検索比較モード用ハンドラー
+ *
+ * mode=comparison のとき、gsi-selector と filter-builder を使って
+ * 最適な GSI を選択し DynamoDB Query を実行する。
+ * レスポンスに latencyMs, usedIndex, filterApplied, limitation を含める。
+ */
+async function handleComparisonSearch(
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> {
+  const qs = event.queryStringParameters ?? {};
+
+  const warehouseId = qs.warehouseId ?? event.pathParameters?.warehouseId;
+
+  // 倉庫未指定の場合は制約メッセージを返却
+  if (!warehouseId) {
+    return {
+      statusCode: 200,
+      headers: corsHeaders,
+      body: JSON.stringify({
+        items: [],
+        nextToken: null,
+        latencyMs: 0,
+        usedIndex: 'none',
+        filterApplied: [],
+        limitation: 'DynamoDB: 倉庫指定が必須です（GSI の PK が warehouseId のため）',
+      }),
+    };
+  }
+
+  // クエリパラメータから検索条件を取得
+  const itemPrefix = qs.itemPrefix || undefined;
+  const locationPrefix = qs.locationPrefix || undefined;
+  const itemName = qs.itemName || undefined;
+  const minPrice = qs.minPrice ? Number(qs.minPrice) : undefined;
+  const maxPrice = qs.maxPrice ? Number(qs.maxPrice) : undefined;
+  const minQuantity = qs.minQuantity ? Number(qs.minQuantity) : undefined;
+  const maxQuantity = qs.maxQuantity ? Number(qs.maxQuantity) : undefined;
+  const nextToken = qs.nextToken || undefined;
+
+  // GSI 選択
+  const gsiSelection = selectGsi({
+    warehouseId,
+    itemPrefix,
+    locationPrefix,
+    itemName,
+    minPrice,
+    maxPrice,
+    minQuantity,
+    maxQuantity,
+  });
+
+  // FilterExpression ビルド
+  const filterResult = buildFilterExpression(gsiSelection.remainingConditions);
+
+  // 制約メッセージの決定
+  const limitations: string[] = [];
+  if (itemName && gsiSelection.remainingConditions.some((c) => c.field === 'itemName')) {
+    limitations.push('DynamoDB: 商品名部分一致は FilterExpression で実行（全件スキャン後フィルタ）');
+  }
+  if (
+    (minQuantity !== undefined || maxQuantity !== undefined) &&
+    gsiSelection.remainingConditions.some((c) => c.field === 'quantity')
+  ) {
+    limitations.push('DynamoDB: 数量範囲は FilterExpression で実行');
+  }
+
+  // ExclusiveStartKey のデコード
+  let exclusiveStartKey: Record<string, AttributeValue> | undefined;
+  if (nextToken) {
+    try {
+      const decoded = Buffer.from(nextToken, 'base64url').toString('utf-8');
+      exclusiveStartKey = JSON.parse(decoded);
+    } catch {
+      return errorResponse(400, 'INVALID_TOKEN', 'nextToken が不正です');
+    }
+  }
+
+  // DynamoDB Query の構築
+  const queryInput: QueryCommandInput = {
+    TableName: GOOD_TABLE_NAME,
+    IndexName: gsiSelection.indexName,
+    KeyConditionExpression: gsiSelection.keyConditionExpression,
+    ExpressionAttributeNames: {
+      ...gsiSelection.expressionAttributeNames,
+      ...filterResult.expressionAttributeNames,
+    },
+    ExpressionAttributeValues: {
+      ...gsiSelection.expressionAttributeValues,
+      ...filterResult.expressionAttributeValues,
+    } as Record<string, AttributeValue>,
+    Limit: 20,
+    ExclusiveStartKey: exclusiveStartKey,
+  };
+
+  if (filterResult.filterExpression) {
+    queryInput.FilterExpression = filterResult.filterExpression;
+  }
+
+  // filterApplied の収集（適用されたフィルタ条件の説明）
+  const filterApplied: string[] = gsiSelection.remainingConditions.map((c) => {
+    switch (c.type) {
+      case 'prefix':
+        return `begins_with(${c.field}, "${c.value}")`;
+      case 'contains':
+        return `contains(${c.field}, "${c.value}")`;
+      case 'range': {
+        const rv = c.value as { min?: number; max?: number };
+        if (rv.min !== undefined && rv.max !== undefined) {
+          return `${c.field} BETWEEN ${rv.min} AND ${rv.max}`;
+        } else if (rv.min !== undefined) {
+          return `${c.field} >= ${rv.min}`;
+        } else if (rv.max !== undefined) {
+          return `${c.field} <= ${rv.max}`;
+        }
+        return c.field;
+      }
+    }
+  });
+
+  // 実行とレイテンシ計測
+  const startTime = Date.now();
+
+  try {
+    const result = await client.send(new QueryCommand(queryInput));
+    const latencyMs = Date.now() - startTime;
+
+    const items = (result.Items ?? []).map((item) => unmarshall(item));
+    const responseNextToken = result.LastEvaluatedKey
+      ? Buffer.from(JSON.stringify(result.LastEvaluatedKey)).toString('base64url')
+      : null;
+
+    return {
+      statusCode: 200,
+      headers: corsHeaders,
+      body: JSON.stringify({
+        items,
+        nextToken: responseNextToken,
+        latencyMs,
+        usedIndex: gsiSelection.indexName,
+        filterApplied,
+        limitation: limitations.length > 0 ? limitations.join('; ') : undefined,
+      }),
+    };
+  } catch (error: unknown) {
+    const latencyMs = Date.now() - startTime;
+
+    if (error instanceof ProvisionedThroughputExceededException) {
+      return {
+        statusCode: 429,
+        headers: corsHeaders,
+        body: JSON.stringify({
+          error: 'THROTTLED',
+          message: 'DynamoDB のスロットリングが発生しました',
+          latencyMs,
+          usedIndex: gsiSelection.indexName,
+          filterApplied,
+        }),
+      };
+    }
+    throw error;
+  }
+}
+
+/**
  * 在庫照会 Lambda ハンドラー
  *
  * GET /inventory/{warehouseId}/{itemId}?table=bad|good|goodGsi|badOnDemand  → 個別取得
  * GET /inventory/{warehouseId}?table=bad|good|goodGsi|badOnDemand&nextToken=... → 一覧取得
+ * GET /inventory/{warehouseId}?mode=comparison&... → 検索比較モード
  *
  * 個別取得のキー構造:
  * - bad / badOnDemand: GetItem(PK=warehouseId, SK=itemId)
@@ -267,6 +434,13 @@ export const handler = async (
     // パスパラメータのバリデーション
     const warehouseId = event.pathParameters?.warehouseId;
     const itemId = event.pathParameters?.itemId || event.queryStringParameters?.itemId;
+
+    // 検索比較モードの判定（mode=comparison）
+    // warehouseId が pathParameters にあっても、なくても comparison モードを処理する
+    const mode = event.queryStringParameters?.mode;
+    if (mode === 'comparison') {
+      return handleComparisonSearch(event);
+    }
 
     if (!warehouseId) {
       return errorResponse(400, 'INVALID_PARAMETERS', 'warehouseId パスパラメータが必要です');

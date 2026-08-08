@@ -1,0 +1,10 @@
+{
+  "name": "opensearch-search",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@opensearch-project/opensearch": "^2.12.0",
+    "@aws-sdk/credential-provider-node": "^3.972.0"
+  }
+}

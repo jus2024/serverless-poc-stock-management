@@ -25,7 +25,7 @@ const POLL_INTERVAL_MS = 3000;
 
 export default function LoadTestPanel() {
   // Form state
-  const [table, setTable] = useState<Table>("bad");
+  const table: Table = "good";
   const [durationSeconds, setDurationSeconds] = useState(120);
   // 初期値 4,000（上限値）: クローズドループ構造のため実効 RPS は宣言値の 50〜60% に留まる。
   // 実効 2,400 RPS × 東京集中率 0.8 = 1,920 WCU/秒 が WH-TOKYO に集中し、
@@ -139,57 +139,6 @@ export default function LoadTestPanel() {
     <div className={styles.panel}>
       {/* 設定フォーム */}
       <div className={`card ${styles.form}`}>
-        {/* テーブル選択 */}
-        <div className={styles.fieldGroup}>
-          <span className={styles.fieldLabel}>テーブル選択</span>
-          <div className={styles.radioGroup}>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="table"
-                value="bad"
-                checked={table === "bad"}
-                onChange={() => setTable("bad")}
-                disabled={running}
-              />
-              Bad Table（PK=warehouseId / GSI なし）
-            </label>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="table"
-                value="good"
-                checked={table === "good"}
-                onChange={() => setTable("good")}
-                disabled={running}
-              />
-              Good Table（PK=itemId / GSI なし）
-            </label>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="table"
-                value="goodGsi"
-                checked={table === "goodGsi"}
-                onChange={() => setTable("goodGsi")}
-                disabled={running}
-              />
-              Good + GSI Table（PK=itemId / GSI 3本）
-            </label>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="table"
-                value="badOnDemand"
-                checked={table === "badOnDemand"}
-                onChange={() => setTable("badOnDemand")}
-                disabled={running}
-              />
-              Bad + OnDemand Table（PK=warehouseId / オンデマンド）
-            </label>
-          </div>
-        </div>
-
         {/* 継続秒数 */}
         <div className={styles.fieldGroup}>
           <label className={styles.fieldLabel} htmlFor="duration">

@@ -1,0 +1,89 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface, #ffffff);
+}
+
+.title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.barRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-secondary, #4b5563);
+  min-width: 90px;
+  flex-shrink: 0;
+}
+
+.barTrack {
+  flex: 1;
+  height: 24px;
+  background: var(--color-bg-subtle, #f3f4f6);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.barFillDynamoDB {
+  background: #3b82f6;
+}
+
+.barFillOpenSearch {
+  background: #f97316;
+}
+
+.value {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+  min-width: 70px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.skeleton {
+  flex: 1;
+  height: 24px;
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.valuePlaceholder {
+  min-width: 70px;
+  height: 16px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  flex-shrink: 0;
+}

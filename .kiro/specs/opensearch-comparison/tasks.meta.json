@@ -1,0 +1,438 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Good Table に DynamoDB Streams と PITR を有効化する": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535456
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106545729
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106633194
+      }
+    ],
+    "1.2 OpenSearch インフラ Construct を作成する (`amplify/custom/opensearch-infra.ts`)": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535495
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106639089
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106874824
+      }
+    ],
+    "1.3 Ingestion Pipeline 用の S3 バケットと IAM ロールを作成する": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535518
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106881043
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107077980
+      }
+    ],
+    "1.4 OpenSearch Ingestion Pipeline を作成する": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535544
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107089362
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107197856
+      }
+    ],
+    "1.5 OpenSearch インフラを backend.ts に統合する": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535569
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107232852
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107414658
+      }
+    ],
+    "2. Checkpoint - CDK 定義の確認": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535596
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107422314
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107645659
+      }
+    ],
+    "3.1 opensearch-search Lambda プロジェクトを作成する": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535622
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106640052
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106875897
+      }
+    ],
+    "3.2 Query DSL ビルダー関数を実装する (`amplify/functions/opensearch-search/query-builder.ts`)": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535661
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106882049
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107075779
+      }
+    ],
+    "3.6 OpenSearch 検索 Lambda を CDK に登録する": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535680
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107233668
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107415537
+      }
+    ],
+    "4.1 GSI 選択ロジックを実装する (`amplify/functions/inventory-query/gsi-selector.ts`)": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535704
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106883063
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107076519
+      }
+    ],
+    "4.2 FilterExpression ビルダーを実装する (`amplify/functions/inventory-query/filter-builder.ts`)": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535728
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106884149
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107078760
+      }
+    ],
+    "4.5 inventory-query Lambda に検索比較用パスを追加する": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535753
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107234558
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107416462
+      }
+    ],
+    "5. Checkpoint - バックエンド実装の確認": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535777
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107423131
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107646617
+      }
+    ],
+    "6.1 API Gateway に /search エンドポイントを追加する": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535802
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107652209
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107746650
+      }
+    ],
+    "7.1 検索フォームコンポーネントを作成する (`src/components/inventory/SearchForm.tsx`)": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535827
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107752713
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107882239
+      }
+    ],
+    "7.2 比較パネルコンポーネントを作成する (`src/components/inventory/ComparisonPanel.tsx`)": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535846
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107753888
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107883154
+      }
+    ],
+    "7.3 レイテンシバーコンポーネントを作成する (`src/components/inventory/LatencyBar.tsx`)": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535869
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107755065
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107884344
+      }
+    ],
+    "7.4 検索比較ビューコンポーネントを作成する (`src/components/inventory/SearchComparisonView.tsx`)": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535890
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107891037
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786108419606
+      }
+    ],
+    "7.5 API クライアント関数を追加する (`src/lib/inventory/api.ts`)": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535938
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107756384
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107885461
+      }
+    ],
+    "7.6 InventoryDashboard に「検索比較」タブを追加する": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106535976
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107892307
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786108420620
+      }
+    ],
+    "8. Checkpoint - フロントエンド実装の確認": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106536003
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786108426237
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786108480702
+      }
+    ],
+    "9.1 共通型定義を追加する (`src/lib/inventory/types.ts`)": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106536029
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106546510
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106633735
+      }
+    ],
+    "10. Final checkpoint - 全体統合の確認": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106536053
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786108427068
+      },
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786108481278
+      }
+    ],
+    "9. 型定義とインターフェース整備": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786106633762
+      }
+    ],
+    "1. OpenSearch インフラ CDK Construct の作成": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107414694
+      }
+    ],
+    "3. OpenSearch 検索 Lambda の実装": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107415565
+      }
+    ],
+    "4. DynamoDB 検索拡張の実装": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107416489
+      }
+    ],
+    "6. API Gateway エンドポイント追加": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786107746689
+      }
+    ],
+    "7. フロントエンドコンポーネントの実装": [
+      {
+        "executionId": "aba50346-735d-449a-b123-d70e696a9f32",
+        "chatSessionId": "sess_4f1d9779-e998-4961-b223-45003e0696ed",
+        "timestamp": 1786108420651
+      }
+    ]
+  }
+}

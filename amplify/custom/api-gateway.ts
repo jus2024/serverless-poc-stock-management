@@ -19,6 +19,8 @@ export interface InventoryApiProps {
   seedFunction: lambda.Function;
   /** オンライン影響テスト Lambda 関数 */
   onlineImpactTestFunction: lambda.Function;
+  /** OpenSearch 検索 Lambda 関数（検索比較用） */
+  opensearchSearchFunction?: lambda.Function;
 }
 
 /**
@@ -109,6 +111,13 @@ export class InventoryApiConstruct extends Construct {
     // ─── /seed リソース ──────────────────────────────────────────────
     const seed = this.restApi.root.addResource('seed');
     seed.addMethod('POST', seedIntegration);
+
+    // ─── /search リソース（OpenSearch 検索比較用）─────────────────────
+    if (props.opensearchSearchFunction) {
+      const opensearchSearchIntegration = new apigateway.LambdaIntegration(props.opensearchSearchFunction);
+      const search = this.restApi.root.addResource('search');
+      search.addMethod('GET', opensearchSearchIntegration);
+    }
 
     // ─── API URL を出力 ──────────────────────────────────────────────
     this.apiUrl = this.restApi.url;

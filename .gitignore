@@ -1,5 +1,8 @@
 # 依存関係
 /node_modules
+# Lambda 関数の依存関係（CDK bundling が npm install を実行するため不要）
+amplify/functions/**/node_modules/
+amplify/functions/**/package-lock.json
 /.pnp
 .pnp.js
 .yarn/install-state.gz

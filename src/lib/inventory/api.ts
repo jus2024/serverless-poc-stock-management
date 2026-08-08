@@ -15,6 +15,9 @@ import type {
   Table,
   OnlineImpactTestParams,
   OnlineImpactTestResponse,
+  ComparisonSearchParams,
+  OpenSearchSearchResponse,
+  DynamoDBComparisonResponse,
 } from "./types";
 
 /** API ベース URL（末尾スラッシュを正規化） */
@@ -231,5 +234,89 @@ export async function runOnlineImpactTest(
     await handleErrorResponse(response);
   }
 
+  return response.json();
+}
+
+
+/**
+ * 検索比較パラメータからクエリ文字列を構築する
+ *
+ * 値が空文字列・undefined・null のフィールドは除外し、
+ * 値があるフィールドのみをクエリパラメータに含める。
+ */
+function buildComparisonSearchParams(
+  params: ComparisonSearchParams
+): URLSearchParams {
+  const searchParams = new URLSearchParams();
+
+  if (params.warehouseId) searchParams.set("warehouseId", params.warehouseId);
+  if (params.itemPrefix) searchParams.set("itemPrefix", params.itemPrefix);
+  if (params.locationPrefix) searchParams.set("locationPrefix", params.locationPrefix);
+  if (params.itemName) searchParams.set("itemName", params.itemName);
+  if (params.minPrice !== undefined) searchParams.set("minPrice", String(params.minPrice));
+  if (params.maxPrice !== undefined) searchParams.set("maxPrice", String(params.maxPrice));
+  if (params.minQuantity !== undefined) searchParams.set("minQuantity", String(params.minQuantity));
+  if (params.maxQuantity !== undefined) searchParams.set("maxQuantity", String(params.maxQuantity));
+  if (params.from !== undefined) searchParams.set("from", String(params.from));
+  if (params.size !== undefined) searchParams.set("size", String(params.size));
+
+  return searchParams;
+}
+
+/**
+ * OpenSearch 検索
+ *
+ * GET /search エンドポイントに検索パラメータをクエリ文字列として送信し、
+ * OpenSearch NextGen Collection の検索結果を取得する。
+ */
+export async function searchOpenSearch(
+  params: ComparisonSearchParams
+): Promise<OpenSearchSearchResponse> {
+  const baseUrl = getBaseUrl();
+  const searchParams = buildComparisonSearchParams(params);
+  const url = `${baseUrl}/search?${searchParams.toString()}`;
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    await handleErrorResponse(response);
+  }
+  return response.json();
+}
+
+/**
+ * DynamoDB 検索比較
+ *
+ * GET /inventory/{warehouseId} エンドポイントに mode=comparison と
+ * 検索パラメータをクエリ文字列として送信し、GSI 検索の結果を取得する。
+ * レスポンスには使用した GSI 名、FilterExpression の適用状況、
+ * DynamoDB の制約メッセージが含まれる。
+ */
+export async function searchDynamoDBComparison(
+  params: ComparisonSearchParams,
+  nextToken?: string
+): Promise<DynamoDBComparisonResponse> {
+  const baseUrl = getBaseUrl();
+  const searchParams = buildComparisonSearchParams(params);
+  searchParams.set("mode", "comparison");
+  if (nextToken) searchParams.set("nextToken", nextToken);
+
+  const warehouseId = params.warehouseId;
+  if (!warehouseId) {
+    // 倉庫未指定時は DynamoDB の構造的制約を返す
+    return {
+      items: [],
+      nextToken: null,
+      latencyMs: 0,
+      usedIndex: 'none',
+      filterApplied: [],
+      limitation: 'DynamoDB: 倉庫横断検索はできません（全 GSI の PK が warehouseId のため、倉庫指定が必須です）',
+    };
+  }
+  const url = `${baseUrl}/inventory/${encodeURIComponent(warehouseId)}?${searchParams.toString()}`;
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    await handleErrorResponse(response);
+  }
   return response.json();
 }

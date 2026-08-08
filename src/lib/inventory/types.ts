@@ -136,3 +136,37 @@ export interface ErrorResponse {
   message: string;
   details?: unknown;
 }
+
+/** 検索比較共通パラメータ */
+export interface ComparisonSearchParams {
+  warehouseId?: string;
+  itemPrefix?: string;
+  locationPrefix?: string;
+  itemName?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minQuantity?: number;
+  maxQuantity?: number;
+  from?: number;
+  size?: number;
+}
+
+/** OpenSearch 検索レスポンス */
+export interface OpenSearchSearchResponse {
+  items: InventoryRecord[];
+  total: number;
+  took: number;         // OpenSearch took (ms)
+  latencyMs: number;    // サーバー側トータルレイテンシ (ms)
+  from: number;
+  size: number;
+}
+
+/** DynamoDB 検索比較レスポンス */
+export interface DynamoDBComparisonResponse {
+  items: InventoryRecord[];
+  nextToken: string | null;
+  latencyMs: number;           // サーバー側レイテンシ
+  usedIndex: string;           // 使用した GSI 名
+  filterApplied: string[];     // FilterExpression で適用した条件
+  limitation?: string;         // DynamoDB の制約メッセージ
+}
