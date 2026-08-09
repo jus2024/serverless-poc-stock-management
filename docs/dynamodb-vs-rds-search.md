@@ -112,6 +112,8 @@ FilterExpression: "unitPrice BETWEEN :min AND :max"
 
 これは RDS の `WHERE a = 1 AND b > 2 AND c LIKE 'prefix%'` が 1 クエリで完結するのとの大きな違いであり、DynamoDB で複合条件検索が難しい根本原因の一つ。
 
+> **補足（GSI のマルチ属性キー対応）**: GSI に限り、PK・SK をそれぞれ最大 4 属性で構成できるようになった（合計 8 属性）。これにより 1 回の Query で複数属性を KeyCondition に含められる。ただし SK 属性は定義順に左から指定する必要があり、途中を飛ばせない。詳細は後述の「GSI のマルチ属性キースキーマ」を参照。
+
 ### FilterExpression — 読み取り後のフィルタリング
 
 ```
@@ -166,7 +168,9 @@ Good Table（PK=itemId）の場合、検索の起点が `warehouseId`（テー�
 
 **設計上の教訓:** 検索要件はテーブル作成前に洗い出し、LSI で対応可能なものは LSI で定義しておくべき。後から「LSI があれば…」と思っても追加できない。
 
-### 複合ソートキー（Composite Sort Key）
+### 複合ソートキー（Composite Sort Key）— 従来のテクニック
+
+> ⚠️ **GSI についてはこのテクニックは不要になった。** DynamoDB の GSI がマルチ属性キースキーマに対応したため、文字列連結による複合キーを自前で組む必要はなくなっている（後述）。以下はベーステーブル・LSI や、既存設計を理解するための参考として残す。
 
 SK に複数の属性を区切り文字で結合して格納するテクニック。GSI を追加せずに疑似的な複合条件検索を実現する。
 
@@ -208,7 +212,68 @@ SK BETWEEN "2024-12-01" AND "2024-12-02" → 12/1 のデータ
 
 今回の在庫管理のように「商品 ID」「ロケーション」「単価」が独立した検索軸で、どれか 1 つだけで検索したいケースでは、複合キーだと 1 つの軸しかカバーできない。GSI を分けた設計が適切。
 
-**結論:** 複合ソートキーは「固定された検索階層」に強い。独立した複数の検索軸がある場合は GSI を分ける方が柔軟。
+**結論:** 複合ソートキーは「固定された検索階層」に強い。独立した複数の検索軸がある場合は GSI を分ける方が柔軟。ただし GSI であればマルチ属性キースキーマを使う方が、型を保てて実装も単純になる。
+
+### GSI のマルチ属性キースキーマ（Multi-attribute Key Schema）
+
+GSI の PK・SK をそれぞれ**最大 4 属性**で構成できる（合計最大 8 属性）。従来は文字列連結で自前の複合キー属性を作る必要があったが、その手間がなくなった。
+
+```typescript
+// 従来: 連結した合成属性をアイテムに持たせる必要があった
+{
+  itemId: 'ITEM#ETH-YIRG-G1',
+  warehouseId: 'WH-TOKYO',
+  location: 'A-03-02',
+  unitPrice: 1640,
+  // GSI 用の合成属性（アプリ側で生成・維持が必要）
+  gsiPk: 'WH-TOKYO',
+  gsiSk: 'A-03-02#001640',  // ゼロパディングも必要
+}
+
+// マルチ属性キー: 元の属性をそのまま使える
+{
+  itemId: 'ITEM#ETH-YIRG-G1',
+  warehouseId: 'WH-TOKYO',
+  location: 'A-03-02',
+  unitPrice: 1640,
+}
+// GSI 定義側で warehouseId を PK、location + unitPrice を SK として指定する
+```
+
+**従来の複合ソートキーと比べたメリット:**
+
+| 観点 | 複合ソートキー（連結） | マルチ属性キー |
+|---|---|---|
+| 合成属性の管理 | アプリ側で生成・更新が必要 | 不要（元の属性をそのまま使う） |
+| 数値の扱い | ゼロパディング必須（`"001640"`） | ネイティブな数値型のまま |
+| 区切り文字 | データに出現しない文字を選ぶ必要あり | 不要 |
+| 既存テーブルへの追加 | 全アイテムのバックフィルが必要 | 不要（自動でインデックスされる） |
+| 型の保持 | すべて文字列に潰れる | 属性ごとの型を維持 |
+
+**クエリ時の制約（従来の複合キーと同じ考え方）:**
+
+1. **PK 属性はすべて等値条件が必須** — 4 属性で PK を構成したら、4 つすべてを `=` で指定する
+2. **SK 属性は定義順に左から** — 1 番目だけ、1〜2 番目、…と絞れるが、**途中を飛ばせない**
+3. **不等号は最後の条件のみ** — `>`, `<`, `BETWEEN`, `begins_with()` はクエリ内の最後の条件でなければならない
+
+```
+// GSI: PK = [warehouseId], SK = [location, unitPrice] と定義した場合
+
+✅ warehouseId = :wh
+✅ warehouseId = :wh AND location = :loc
+✅ warehouseId = :wh AND begins_with(location, :locPrefix)      // 不等号が最後
+✅ warehouseId = :wh AND location = :loc AND unitPrice BETWEEN :min AND :max
+
+❌ warehouseId = :wh AND unitPrice BETWEEN :min AND :max        // location を飛ばせない
+❌ warehouseId = :wh AND begins_with(location, :p) AND unitPrice > :min  // 不等号が2つ
+```
+
+**適用範囲の注意:**
+
+- **GSI のみ** — ベーステーブルのキースキーマと LSI は対象外（従来どおり PK 1 属性 + SK 1 属性）
+- ホットパーティション対策として、PK を複数属性で構成してカーディナリティを上げる使い方もできる
+
+**設計上の意味:** 「検索軸ごとに GSI を分ける」ケースの一部は、1 本のマルチ属性 GSI に統合できる。GSI の本数（上限 20）と書き込みコストを節約できる可能性がある。ただし「独立した軸をどれか 1 つだけで検索したい」要件は、左から順に指定する制約があるため依然として複数 GSI が必要。
 
 ### Limit の挙動 — 結果件数が不安定
 
@@ -495,6 +560,8 @@ Kiro Roasters 在庫管理 PoC は DynamoDB のパーティション設計を学
 
 - [DynamoDB Best Practices](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/best-practices.html)
 - [DynamoDB パーティションキーの設計](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-design.html)
+- [GSI のマルチ属性キースキーマ](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html)
+- [Multi-key support for Global Secondary Index in Amazon DynamoDB (AWS Database Blog)](https://aws.amazon.com/blogs/database/multi-key-support-for-global-secondary-index-in-amazon-dynamodb)
 - [Single Table Design](https://www.alexdebrie.com/posts/dynamodb-single-table/)
 - [DynamoDB + OpenSearch 統合](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/OpenSearch.html)
 - [Aurora Serverless v2](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless-v2.html)

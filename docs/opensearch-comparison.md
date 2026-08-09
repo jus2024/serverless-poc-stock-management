@@ -108,6 +108,8 @@ sequenceDiagram
 - ロケーション条件は FilterExpression に回る
 - FilterExpression は Query 結果（最大 1MB）に対して適用されるため、大量データでは非効率
 
+> **補足**: GSI のマルチ属性キースキーマ（PK・SK 各最大 4 属性）を使えば、本検証の 3 本の GSI を 1 本に統合し、複数属性を KeyCondition に含めることも可能。ただし SK 属性は定義順に左から指定する制約があるため、「独立した軸を単独で検索したい」本検証の要件では引き続き複数 GSI が必要になる。詳細は [dynamodb-vs-rds-search.md](dynamodb-vs-rds-search.md) の「GSI のマルチ属性キースキーマ」を参照。
+
 ---
 
 ## 5. OpenSearch Serverless NextGen の特性
@@ -380,3 +382,4 @@ OpenSearch NextGen の scale-to-zero からのウォームアップ:
 2. **OpenSearch が必要なケース**: 部分一致検索、複合条件 AND、件数取得、倉庫横断、結果の完全性が必要な場合
 3. **NextGen の適用判断**: コールドスタート 14 秒を許容できる管理画面・分析用途なら NextGen（$0 アイドル）。リアルタイム検索が必要なら Classic（常時 OCU 稼働）
 4. **DynamoDB の FilterExpression は「検索」ではない**: 読み取った N 件に対する後付けフィルタであり、条件に一致する全件を返す保証がない。業務システムの検索要件には根本的に不適合
+5. **GSI 設計の前提が変わった点に注意**: DynamoDB の GSI はマルチ属性キースキーマ（PK・SK 各最大 4 属性）に対応済み。本検証の「GSI 1 本で 1 軸」という制約の一部は緩和できる。ただし部分一致検索・倉庫横断・総件数取得といった本質的な制約は解消されないため、上記の結論は変わらない。
