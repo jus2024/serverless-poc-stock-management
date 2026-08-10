@@ -62,6 +62,7 @@ export async function listInventory(
     prefix?: string;
     minPrice?: number;
     maxPrice?: number;
+    sortOrder?: 'asc' | 'desc';
   }
 ): Promise<ListInventoryResponse> {
   const baseUrl = getBaseUrl();
@@ -78,6 +79,9 @@ export async function listInventory(
     if (searchOptions.maxPrice !== undefined) {
       params.set("maxPrice", String(searchOptions.maxPrice));
     }
+  }
+  if (searchOptions?.sortOrder) {
+    params.set("sortOrder", searchOptions.sortOrder);
   }
   const url = `${baseUrl}/inventory/${encodeURIComponent(warehouseId)}?${params.toString()}`;
 

@@ -17,6 +17,34 @@ interface InventoryListViewProps {
 
 const WAREHOUSES: Warehouse[] = ["WH-TOKYO", "WH-OSAKA", "WH-FUKUOKA"];
 
+/** 商品IDプレフィックスの選択肢（sku-generator.ts の産地・カテゴリ定義に対応） */
+const ITEM_PREFIX_GROUPS: {
+  group: string;
+  options: { value: string; label: string }[];
+}[] = [
+  {
+    group: '産地（生豆・焙煎豆）',
+    options: [
+      { value: 'ITEM#ETH-', label: 'エチオピア' },
+      { value: 'ITEM#BRA-', label: 'ブラジル' },
+      { value: 'ITEM#COL-', label: 'コロンビア' },
+      { value: 'ITEM#GTM-', label: 'グアテマラ' },
+      { value: 'ITEM#KEN-', label: 'ケニア' },
+      { value: 'ITEM#IDN-', label: 'インドネシア' },
+      { value: 'ITEM#CRI-', label: 'コスタリカ' },
+      { value: 'ITEM#TZA-', label: 'タンザニア' },
+    ],
+  },
+  {
+    group: 'カテゴリ',
+    options: [
+      { value: 'ITEM#BLEND-', label: 'ブレンド' },
+      { value: 'ITEM#DRIP-', label: 'ドリップバッグ' },
+      { value: 'ITEM#MAT-', label: '資材' },
+    ],
+  },
+];
+
 /** 拡張検索（GSI 前提）に対応しているテーブルか */
 function supportsIndexSearch(table: Table): boolean {
   return table === "good" || table === "goodGsi";
@@ -42,6 +70,7 @@ export default function InventoryListView({ table }: InventoryListViewProps) {
   const [searchPrefix, setSearchPrefix] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   // 個別照会セクション state
   const [queryItemId, setQueryItemId] = useState("");
@@ -61,21 +90,29 @@ export default function InventoryListView({ table }: InventoryListViewProps) {
 
   // 検索オプションの構築（通常関数 — useCallback 不要）
   const getSearchOptions = () => {
-    if (!searchBy) return undefined;
+    const base: {
+      searchBy?: 'itemPrefix' | 'location' | 'unitPrice';
+      prefix?: string;
+      minPrice?: number;
+      maxPrice?: number;
+      sortOrder?: 'asc' | 'desc';
+    } = { sortOrder };
+
     if (searchBy === 'itemPrefix' && searchPrefix) {
-      return { searchBy: 'itemPrefix' as const, prefix: searchPrefix };
+      return { ...base, searchBy: 'itemPrefix' as const, prefix: searchPrefix };
     }
     if (searchBy === 'location' && searchPrefix) {
-      return { searchBy: 'location' as const, prefix: searchPrefix };
+      return { ...base, searchBy: 'location' as const, prefix: searchPrefix };
     }
     if (searchBy === 'unitPrice' && minPrice && maxPrice) {
       return {
+        ...base,
         searchBy: 'unitPrice' as const,
         minPrice: Number(minPrice),
         maxPrice: Number(maxPrice),
       };
     }
-    return undefined;
+    return base;
   };
 
   // 一覧取得
@@ -85,6 +122,7 @@ export default function InventoryListView({ table }: InventoryListViewProps) {
       prefix?: string;
       minPrice?: number;
       maxPrice?: number;
+      sortOrder?: 'asc' | 'desc';
     }) => {
       setLoading(true);
       setError(null);
@@ -116,6 +154,7 @@ export default function InventoryListView({ table }: InventoryListViewProps) {
     setSearchPrefix('');
     setMinPrice('');
     setMaxPrice('');
+    setSortOrder('asc');
     fetchList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [table, warehouseId]);
@@ -400,16 +439,25 @@ export default function InventoryListView({ table }: InventoryListViewProps) {
           {searchBy === 'itemPrefix' && (
             <div className={styles.fieldGroup}>
               <label className={styles.label} htmlFor="search-prefix">
-                商品IDプレフィックス
+                産地 / カテゴリ
               </label>
-              <input
+              <select
                 id="search-prefix"
-                className={styles.input}
-                type="text"
+                className={styles.select}
                 value={searchPrefix}
                 onChange={(e) => setSearchPrefix(e.target.value)}
-                placeholder="例: ITEM#ETH-"
-              />
+              >
+                <option value="">選択してください</option>
+                {ITEM_PREFIX_GROUPS.map((g) => (
+                  <optgroup key={g.group} label={g.group}>
+                    {g.options.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
             </div>
           )}
           {searchBy === 'location' && (
@@ -459,6 +507,26 @@ export default function InventoryListView({ table }: InventoryListViewProps) {
               </div>
             </>
           )}
+          <div className={styles.fieldGroup}>
+            <label className={styles.label} htmlFor="sort-order">
+              並び順
+            </label>
+            <select
+              id="sort-order"
+              className={styles.select}
+              value={sortOrder}
+              onChange={(e) => {
+                setSortOrder(e.target.value as 'asc' | 'desc');
+                // 並び順が変わると既存のカーソルは意味を失うためページングをリセット
+                setNextToken(null);
+                setCurrentToken(undefined);
+                setTokenHistory([]);
+              }}
+            >
+              <option value="asc">昇順</option>
+              <option value="desc">降順</option>
+            </select>
+          </div>
           <button
             className={styles.submitBtn}
             onClick={handleSearch}
@@ -472,6 +540,10 @@ export default function InventoryListView({ table }: InventoryListViewProps) {
             ※ このテーブルには GSI がないため、拡張検索（商品ID前方一致・ロケーション・単価範囲）はサポートされていません
           </p>
         )}
+        <p className={styles.noteText}>
+          ※ 並び順は使用中の GSI のソートキー方向（ScanIndexForward）です。
+          全件表示・商品ID前方一致は商品ID順、ロケーション前方一致は棚番号順、単価範囲は単価順に並びます
+        </p>
         {usesScanForList(table) && (
           <p className={styles.noteText}>
             ※ PK=itemId で GSI がないため、倉庫別の一覧取得は Scan + フィルタになります。

@@ -3,13 +3,11 @@ import {
   DynamoDBClient,
   GetItemCommand,
   QueryCommand,
-  ScanCommand,
   ProvisionedThroughputExceededException,
 } from '@aws-sdk/client-dynamodb';
 import type {
   AttributeValue,
   QueryCommandInput,
-  ScanCommandInput,
 } from '@aws-sdk/client-dynamodb';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 import type { Table } from '../shared/types';
@@ -65,7 +63,8 @@ function isWarehousePartitioned(table: Table): boolean {
 
 /** GSI による拡張検索に対応しているテーブルか */
 function supportsIndexSearch(table: Table): boolean {
-  return table === 'goodGsi';
+  // Good Table には GSI 3 本（byWarehouse / byLocation / byUnitPrice）を定義済み
+  return table === 'good' || table === 'goodGsi';
 }
 
 /** エラーメッセージ表示用のテーブル表示名 */
@@ -87,32 +86,39 @@ function tableDisplayName(table: string | undefined): string {
 /**
  * 在庫一覧取得ハンドラー
  *
- * GET /inventory/{warehouseId}?table=bad|good|goodGsi|badOnDemand&nextToken=...&searchBy=...&prefix=...&minPrice=...&maxPrice=...
+ * GET /inventory/{warehouseId}?table=bad|good|goodGsi|badOnDemand&nextToken=...&searchBy=...&prefix=...&minPrice=...&maxPrice=...&sortOrder=asc|desc
  *
  * テーブルごとの一覧取得手段:
  * - bad / badOnDemand: PK=warehouseId なのでテーブル直接 Query
- * - goodGsi:           PK=itemId だが GSI byWarehouse / byLocation / byUnitPrice で Query
- * - good:              PK=itemId かつ GSI なし → Scan + FilterExpression（非効率、設計上のトレードオフ）
+ * - good / goodGsi:    PK=itemId だが GSI byWarehouse / byLocation / byUnitPrice で Query
  *
- * searchBy パラメータによる検索モード（GSI を持つ goodGsi のみ対応）:
+ * searchBy パラメータによる検索モード（GSI を持つ good / goodGsi が対応）:
  * - searchBy=itemPrefix + prefix → GSI byWarehouse, begins_with(itemId, :prefix)
  * - searchBy=location + prefix  → GSI byLocation, begins_with(location, :prefix)
  * - searchBy=unitPrice + minPrice + maxPrice → GSI byUnitPrice, unitPrice BETWEEN
- * - searchBy なし → 既存動作（全件取得）
+ * - searchBy なし → GSI byWarehouse で倉庫別全件
+ *
+ * すべて KeyConditionExpression のみで完結するため、Limit: 20 は
+ * 「1 ページ 20 件」として安定して機能する（FilterExpression 不使用）。
+ *
+ * sortOrder パラメータ:
+ * - asc（既定） / desc → ScanIndexForward で使用中 GSI の SK 方向を切り替える
+ *   例: searchBy=unitPrice + sortOrder=desc → 単価の高い順
  */
 async function handleListInventory(
   warehouseId: string,
   table: Table,
   nextToken?: string,
   searchBy?: string,
-  searchParams?: Record<string, string>
+  searchParams?: Record<string, string>,
+  sortOrder?: string
 ): Promise<APIGatewayProxyResult> {
-  // 拡張検索は GSI を持つ goodGsi のみ対応
+  // 拡張検索は GSI を持つテーブルのみ対応
   if (searchBy && !supportsIndexSearch(table)) {
     return errorResponse(
       400,
       'UNSUPPORTED_SEARCH',
-      '拡張検索は Good + GSI Table でのみサポートされています'
+      '拡張検索は GSI を持つテーブル（Good Table / Good + GSI Table）でのみサポートされています'
     );
   }
 
@@ -127,10 +133,8 @@ async function handleListInventory(
     }
   }
 
-  // テーブル/インデックス選択
-  // good のみ Scan、それ以外は Query を使う
-  let queryParams: QueryCommandInput | undefined;
-  let scanParams: ScanCommandInput | undefined;
+  // テーブル/インデックス選択（すべて Query で完結）
+  let queryParams: QueryCommandInput;
 
   if (isWarehousePartitioned(table)) {
     // bad / badOnDemand: PK=warehouseId なのでテーブル直接 Query
@@ -141,11 +145,15 @@ async function handleListInventory(
       Limit: 20,
       ExclusiveStartKey: exclusiveStartKey,
     };
-  } else if (table === 'goodGsi') {
+  } else {
+    // good / goodGsi: PK=itemId だが GSI で倉庫別に引ける
+    // KeyConditionExpression のみで完結するため Limit: 20 は「返却件数 20 件」として安定する
+    const tableName = resolveTableName(table);
+
     if (searchBy === 'itemPrefix' && searchParams?.prefix) {
-      // Good + GSI Table: GSI byWarehouse + itemId 前方一致
+      // GSI byWarehouse + itemId 前方一致
       queryParams = {
-        TableName: GOOD_GSI_TABLE_NAME,
+        TableName: tableName,
         IndexName: 'byWarehouse',
         KeyConditionExpression: 'warehouseId = :wh AND begins_with(itemId, :prefix)',
         ExpressionAttributeValues: {
@@ -156,9 +164,9 @@ async function handleListInventory(
         ExclusiveStartKey: exclusiveStartKey,
       };
     } else if (searchBy === 'location' && searchParams?.prefix) {
-      // Good + GSI Table: GSI byLocation + location 前方一致
+      // GSI byLocation + location 前方一致
       queryParams = {
-        TableName: GOOD_GSI_TABLE_NAME,
+        TableName: tableName,
         IndexName: 'byLocation',
         KeyConditionExpression: 'warehouseId = :wh AND begins_with(#loc, :prefix)',
         ExpressionAttributeNames: { '#loc': 'location' },
@@ -174,9 +182,9 @@ async function handleListInventory(
       searchParams?.minPrice &&
       searchParams?.maxPrice
     ) {
-      // Good + GSI Table: GSI byUnitPrice + unitPrice 範囲検索
+      // GSI byUnitPrice + unitPrice 範囲検索
       queryParams = {
-        TableName: GOOD_GSI_TABLE_NAME,
+        TableName: tableName,
         IndexName: 'byUnitPrice',
         KeyConditionExpression:
           'warehouseId = :wh AND unitPrice BETWEEN :minPrice AND :maxPrice',
@@ -189,9 +197,9 @@ async function handleListInventory(
         ExclusiveStartKey: exclusiveStartKey,
       };
     } else {
-      // Good + GSI Table: デフォルト（GSI byWarehouse で全件取得）
+      // デフォルト: GSI byWarehouse で倉庫別全件
       queryParams = {
-        TableName: GOOD_GSI_TABLE_NAME,
+        TableName: tableName,
         IndexName: 'byWarehouse',
         KeyConditionExpression: 'warehouseId = :wh',
         ExpressionAttributeValues: { ':wh': { S: warehouseId } },
@@ -199,30 +207,17 @@ async function handleListInventory(
         ExclusiveStartKey: exclusiveStartKey,
       };
     }
-  } else {
-    // Good Table: PK=itemId かつ GSI がないため、倉庫別に引く手段が存在しない。
-    // そのため Scan + FilterExpression で倉庫を絞り込む。
-    // - Limit は「フィルタ適用前の読み取り件数」なので、20 件返すために 100 件読む必要がある
-    // - テーブル全体が 15,000 件あるため、ページングを繰り返すと実質全件走査になり RCU を大量に消費する
-    // - これは PK=itemId に GSI を付けなかった場合のトレードオフそのもの
-    scanParams = {
-      TableName: GOOD_TABLE_NAME,
-      FilterExpression: 'warehouseId = :wh',
-      ExpressionAttributeValues: { ':wh': { S: warehouseId } },
-      Limit: 100,
-      ExclusiveStartKey: exclusiveStartKey,
-    };
   }
 
+  // DynamoDB のソートは SK の昇順/降順のみ。任意属性でのソートはできない。
+  // 使用中の GSI の SK に対して方向を指定する。
+  queryParams.ScanIndexForward = sortOrder !== 'desc';
+
   try {
-    // Query か Scan かでコマンドを切り替える（レスポンスの扱いは共通）
-    const result = scanParams
-      ? await client.send(new ScanCommand(scanParams))
-      : await client.send(new QueryCommand(queryParams!));
+    const result = await client.send(new QueryCommand(queryParams));
 
     // レスポンス構築
-    // 注意: good の Scan では LastEvaluatedKey が返っても、FilterExpression で
-    // 除外された結果 Items が空になることがある。その場合も nextToken を返し、
+    // LastEvaluatedKey が返る場合は nextToken として base64url で返し、
     // クライアント側で「次へ」を押せば次ページを取得できるようにする。
     const items = (result.Items ?? []).map((item) => unmarshall(item));
     const responseNextToken = result.LastEvaluatedKey
@@ -414,7 +409,7 @@ async function handleComparisonSearch(
  * 在庫照会 Lambda ハンドラー
  *
  * GET /inventory/{warehouseId}/{itemId}?table=bad|good|goodGsi|badOnDemand  → 個別取得
- * GET /inventory/{warehouseId}?table=bad|good|goodGsi|badOnDemand&nextToken=... → 一覧取得
+ * GET /inventory/{warehouseId}?table=bad|good|goodGsi|badOnDemand&nextToken=...&sortOrder=asc|desc → 一覧取得
  * GET /inventory/{warehouseId}?mode=comparison&... → 検索比較モード
  *
  * 個別取得のキー構造:
@@ -424,8 +419,7 @@ async function handleComparisonSearch(
  *
  * 一覧取得の手段:
  * - bad / badOnDemand: テーブル直接 Query（PK=warehouseId）
- * - goodGsi:           GSI Query（byWarehouse / byLocation / byUnitPrice）
- * - good:              Scan + FilterExpression（GSI なしのため）
+ * - good / goodGsi:    GSI Query（byWarehouse / byLocation / byUnitPrice）
  */
 export const handler = async (
   event: APIGatewayProxyEvent
@@ -472,12 +466,14 @@ export const handler = async (
       if (event.queryStringParameters?.maxPrice) {
         searchParams.maxPrice = event.queryStringParameters.maxPrice;
       }
+      const sortOrder = event.queryStringParameters?.sortOrder;
       return handleListInventory(
         warehouseId,
         table as Table,
         nextToken ?? undefined,
         searchBy ?? undefined,
-        Object.keys(searchParams).length > 0 ? searchParams : undefined
+        Object.keys(searchParams).length > 0 ? searchParams : undefined,
+        sortOrder ?? undefined
       );
     }
 
