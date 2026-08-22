@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 1,
+  "mode": "search-score-mapping",
+  "generatedAt": "2026-08-21T13:16:15.654Z",
+  "region": "us-west-2",
+  "readOnly": true,
+  "task": "13.13",
+  "openQuestion": "Q5",
+  "requirements": ["8.9", "8.11", "14.7"],
+  "provenance": {
+    "rawResponseReport": "measure-search-response-shape-2026-08-21T13-09-22-492Z.json",
+    "note": "本ファイルは上記の生レスポンス記録に対する判定と、格納ベクトルからのローカル算出結果をまとめた結論レポートである。生レスポンスそのものは上記ファイルを参照すること。実行に使ったスクリプトは Q5 専用の使い捨てであり、記録の完了後に削除した（コードの要点は本ファイルの reproduction に転記してある）。"
+  },
+  "warnings": [],
+  "notes": [
+    "SearchVectors の呼び出し回数は 2 回のみ（TopK 1 × 2 種類の送信形）。要件 8.9 が求めるのは TopK 1 の 1 回であり、2 回目は送信形の食い違いを確定するために追加した。",
+    "格納ベクトルの読み出しは GetItem 1 回（読み取り専用）。SearchVectors を追加で呼んでいない。",
+    "クエリベクトルは決定論的生成（buildDeterministicQueryVector、シード 20260101）であり Bedrock を呼んでいない。埋め込み生成の課金は発生していない。",
+    "リソースの作成・変更・削除は行っていない。OSIS への操作も行っていない（要件 6.10）。",
+    "レポートにベクトル本体を貼らない方針（Property 22 の趣旨）に従い、次元数・ノルム・先頭 5 要素のみを載せている。"
+  ],
+  "target": {
+    "tableName": "kiro-roasters-inventory-vector",
+    "indexName": "byEmbeddingJa",
+    "language": "ja",
+    "topK": 1,
+    "dimensions": 1024,
+    "distanceFunction": "COSINE",
+    "indexStatus": "ACTIVE",
+    "backfilling": false,
+    "endpoint": "https://search-dynamodb.us-west-2.api.aws",
+    "callStyle": "署名付き HTTP（AWS JSON 1.0 / x-amz-target: DynamoDB_20120810.SearchVectors）。SearchVectorsCommand は使用していない"
+  },
+  "rawResponseShape": {
+    "httpStatus": 200,
+    "responseBodyBytes": 1125,
+    "topLevelKeys": ["ConsumedCapacity", "SearchResults"],
+    "searchResultItemKeys": ["Item", "Score"],
+    "scoreFieldName": "Score",
+    "scoreFieldPath": "SearchResults[].Score",
+    "scoreObservedValue": 0.9396041035652161,
+    "itemAttributeKeys": [
+      "itemId",
+      "itemName",
+      "location",
+      "metaEn",
+      "metaJa",
+      "quantity",
+      "unitPrice",
+      "warehouseId"
+    ],
+    "vectorBodyPresent": false,
+    "vectorBodyFields": [],
+    "vectorBodyNote": "生レスポンスにベクトル本体（1,024 要素の数値配列）は現れなかった。ProjectionExpression に embeddingJa / embeddingEn を含めていないため（要件 8.8）。長い数値配列を機械的に走査する検出器を通しても該当は 0 件だった。",
+    "responseHeaders": {
+      "content-type": "application/x-amz-json-1.0",
+      "x-amz-crc32": "463440596",
+      "x-amzn-requestid": "5113SE3KSAKVNPFLD2DONJSKUVVV4KQNSO5AEMVJF66Q9ASUAAJG"
+    },
+    "sdkModelComparison": {
+      "SearchResults": "SDK の SearchVectorsOutput.SearchResults と一致",
+      "Score": "SDK の SearchResultItem.Score と一致（型は number）",
+      "ConsumedCapacity": "キー名は一致するが、内容に SDK の VectorCapacity に無い項目が含まれる（下記 consumedCapacity 参照）"
+    }
+  },
+  "consumedCapacity": {
+    "observed": {
+      "VectorSearchRequestBytes": 61318,
+      "VectorSearchUnits": 61318
+    },
+    "sdkModelFields": ["VectorSearchRequestBytes", "VectorWriteRequestBytes"],
+    "fieldsNotInSdkModel": ["VectorSearchUnits"],
+    "absentFields": ["VectorWriteRequestBytes", "CapacityUnits", "ReadCapacityUnits", "Table", "Indexes"],
+    "returnConsumedCapacitySent": "INDEXES",
+    "findings": [
+      "実 API は VectorSearchRequestBytes と VectorSearchUnits の 2 項目を返した。VectorSearchUnits は SDK の VectorCapacity モデルに存在しない。",
+      "この 1 回の観測では両者が同値（61318）だった。常に一致するとは仮定していない。13.18 の 100 回測定で一致するかを確認できる。",
+      "通常の読み取り API の CapacityUnits / ReadCapacityUnits / Table / Indexes は返らなかった。ReturnConsumedCapacity に INDEXES を指定しても内訳（Indexes）は返らない。",
+      "要件 14.7 が測定対象とする値は VectorSearchRequestBytes であり、実 API が返す名前と一致している。測定の前提は成立する。",
+      "単位はバイトである。61,318 バイトという値は 1,024 次元 f32 のクエリベクトル（4 KiB）より一桁大きく、リクエストサイズではなくインデックス走査量に応じた課金単位であることを示唆する。13.18 で TopK を変えた場合の変化を見れば確認できる（本タスクの範囲外）。"
+    ]
+  },
+  "scoreSemantics": {
+    "question": "Score はコサイン距離か、それとも類似度か",
+    "method": "返却行の格納ベクトル（embeddingJa）を GetItem で読み、SearchVectors へ送ったクエリベクトルとの厳密なコサイン距離をローカルで算出して Score と突き合わせた。SearchVectors の追加呼び出しは行っていない。",
+    "hit": {
+      "itemId": "ITEM#MAT-TAG-M-KRAFT-V693",
+      "warehouseId": "WH-FUKUOKA",
+      "productNameJa": "資材 タグ M クラフト V693"
+    },
+    "storedVector": {
+      "attributeName": "embeddingJa",
+      "dimensions": 1024,
+      "norm": 1.0000000196219725,
+      "first5": [
+        0.00391659140586853,
+        0.044265784323215485,
+        0.02780170924961567,
+        0.015876928344368935,
+        -0.01974198967218399
+      ]
+    },
+    "queryVector": {
+      "generator": "buildDeterministicQueryVector (mulberry32 → 正規化 → float32 丸め)",
+      "seed": 20260101,
+      "dimensions": 1024,
+      "norm": 0.9999999999683366,
+      "first5": [
+        -0.026626011356711388,
+        0.010134484618902206,
+        0.03330769017338753,
+        0.05100538581609726,
+        0.02501242235302925
+      ]
+    },
+    "cosineSimilarityLocal": 0.06039586280811087,
+    "cosineDistanceLocal": 0.9396041371918892,
+    "observedScore": 0.9396041035652161,
+    "candidates": [
+      {
+        "hypothesis": "d = Score（Score がコサイン距離そのもの）",
+        "dCalc": 0.9396041035652161,
+        "absResidual": 3.3626673112685523e-8,
+        "verdict": "採用"
+      },
+      {
+        "hypothesis": "d = 1 - Score（Score がコサイン類似度）",
+        "dCalc": 0.060395896434783936,
+        "absResidual": 0.8792082407571052,
+        "verdict": "棄却"
+      },
+      {
+        "hypothesis": "d = 2 - 2 * Score（式 A）",
+        "dCalc": 0.12079179286956787,
+        "absResidual": 0.8188123443223213,
+        "verdict": "棄却"
+      },
+      {
+        "hypothesis": "d = 1 / Score - 1（式 B）",
+        "dCalc": 0.06427802539986671,
+        "absResidual": 0.8753261117920225,
+        "verdict": "棄却"
+      }
+    ],
+    "conclusion": "Score はコサイン距離（1 − cos）そのものである。残差 3.36e-8 は f32 精度（格納側の丸めとインデックス内の f32 保持）の範囲内であり、変換式は不要。範囲は 0（同一）〜2（正反対）で、値が小さいほど類似（要件 8.9 のとおり）。"
+  },
+  "rawScoreMapping": {
+    "decided": true,
+    "mapping": "VectorSearchHit.distance = VectorSearchHit.rawScore = SearchResults[].Score（変換なし）",
+    "distanceFunction": "COSINE",
+    "distanceSemantics": "lower_is_closer",
+    "range": "0 〜 2",
+    "existingImplementationMatched": true,
+    "note": "amplify/functions/vector-search-ddb/handler.ts の toHits() は既に result.Score を distance と rawScore の両方へそのまま入れていた。実レスポンスのキー名・意味の両方と一致しており、マッピングの修正は不要。実測で確定した内容をコメントとして固定し、単体テストで実レスポンスの形を固定した。"
+  },
+  "wireFormatFinding": {
+    "question": "SearchVector の送信形（AttributeValue[] か素の数値配列か）",
+    "reason": "handler.ts / probe-range-filter.ts は AttributeValue[]、measure.ts の createSearchVectorsProbe は素の数値配列を送っており、実装間で食い違っていた。SDK モデルは SearchVectorsInput.SearchVector: AttributeValue[] である。",
+    "attempts": [
+      {
+        "wireForm": "AttributeValue[]（[{\"N\":\"...\"}]）",
+        "httpStatus": 200,
+        "latencyMs": 617,
+        "verdict": "受理"
+      },
+      {
+        "wireForm": "number[]（素の数値配列）",
+        "httpStatus": 400,
+        "latencyMs": 550,
+        "errorType": "SerializationException",
+        "rawErrorBody": "{\"__type\":\"com.amazon.coral.service#SerializationException\"}",
+        "verdict": "拒否"
+      }
+    ],
+    "conclusion": "AttributeValue[] のみが受理される。measure.ts の createSearchVectorsProbe は素の数値配列を送っていたため、--capacity（task 13.18 の 100 回測定）は全件 SerializationException で失敗する状態だった。本タスクで修正済み（デプロイ不要のローカルスクリプト）。"
+  },
+  "latency": {
+    "note": "参考値。1 回の観測であり要件 8.11 / 8.12 / 14.7 の測定値ではない（13.18 が担当）。ローカル端末から署名付き HTTP を送った往復時間であり、Lambda 内の searchLatencyMs とは測定点が異なる。",
+    "acceptedCallHttpRoundTripMs": 617,
+    "rejectedCallHttpRoundTripMs": 550
+  },
+  "reproduction": {
+    "note": "使い捨てスクリプトは削除済み。再実行が必要な場合は下記の手順で同一の観測が得られる。",
+    "steps": [
+      "1. scripts/vector-search/measure.ts の buildDeterministicQueryVector(1024, 20260101) でクエリベクトルを生成する（Bedrock を呼ばない）",
+      "2. scripts/vector-search/measure.ts の buildSearchVectorsRequestBody({ tableName: 'kiro-roasters-inventory-vector', indexName: 'byEmbeddingJa', searchVector, topK: 1 }) で要求本文を組み立てる",
+      "3. SignatureV4（service: 'dynamodb'）で署名し https://search-dynamodb.us-west-2.api.aws へ POST する（x-amz-target: DynamoDB_20120810.SearchVectors、content-type: application/x-amz-json-1.0）",
+      "4. 応答本文を JSON.parse してそのまま記録する。長い数値配列は次元数と先頭数要素へ要約する",
+      "5. スコア意味の検証は、返却行のキーで GetItem し ProjectionExpression に embeddingJa のみを指定して格納ベクトルを読み、1 − cos をローカル算出して Score と比較する"
+    ]
+  },
+  "spendUsd": {
+    "before": 1.32,
+    "beforeOcuHours": 5.4944,
+    "beforeWindow": "2026-08-19T13:05:00.000Z 〜 2026-08-21T13:10:00.000Z",
+    "after": 1.31,
+    "afterOcuHours": 5.45,
+    "afterWindow": "2026-08-19T13:15:00.000Z 〜 2026-08-21T13:20:00.000Z",
+    "thresholdUsd": 20,
+    "windowHours": 48,
+    "increase": 0,
+    "note": "--hours 48 で取得（既定 24 時間はローリングウィンドウのため通算にならない。13.12 で判明）。実行前後で増加はない。本タスクが触ったのは DynamoDB のみであり AOSS の SearchOCU / IndexingOCU を消費していないため。実行後の値が 0.01 USD 下がっているのは 48 時間ウィンドウ自体が 10 分先へ滑り、最古のサンプルが 2 件分抜けたことによる（サンプル件数 484 → 486、区間開始 13:05 → 13:15）。上限 20 USD に対して残り 18.69 USD。"
+  }
+}

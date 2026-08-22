@@ -1,0 +1,559 @@
+{
+  "schemaVersion": 1,
+  "mode": "ocu",
+  "generatedAt": "2026-08-22T04:24:12.566Z",
+  "region": "us-west-2",
+  "readOnly": true,
+  "warnings": [
+    "CollectionGroupName=kiro-inventory-vector-group で OCUUtilization のデータ点が 1 件も返りませんでした（2026-08-17T04:20:00.000Z 〜 2026-08-22T04:25:00.000Z / 式 SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"OCUUtilization\" \"kiro-inventory-vector-group\"', 'Average', 300) / 該当系列 0 本）。これは「使用率 0 を測定した」ことではなく「測定値が存在しない」ことを意味します。OCUUtilization は AWS/AOSS の ListMetrics に現れていない。ListMetrics は直近約 14 日にデータのあるメトリクスのみを列挙するため、これは「最近この AWS アカウントで公開されていない」ことを意味するに留まり、「NextGen の Collection Group では公開されない」ことの証明ではない。本スクリプトは OCU 系メトリクスとして他の 2 つと同じ SEARCH() 式（次元キー集合 ClientId / CollectionGroupId / CollectionGroupName）で照会するため、次元不足による空振りとは区別できる。SEARCH() が系列を 1 本も返さない場合は当該メトリクスがそもそも公開されていないことを示し、要件 7.8 の右サイジング指標が得られない。Verification_Report にはその旨を測定不能として記載する必要がある。"
+  ],
+  "notes": [
+    "照会した次元キー集合: ClientId / CollectionGroupId / CollectionGroupName（AWS/AOSS / SearchOCU / IndexingOCU / OCUUtilization）。絞り込みは CollectionGroupName=kiro-inventory-vector-group を検索語とする SEARCH() 式で行いました。OCU は Collection ではなく Collection Group で公開されるため、本モードは Collection 名を参照しません。検索語の値は --collection-group で指定します。GetMetricStatistics へ CollectionGroupName の 1 次元だけを渡すと、次元集合の完全一致要求により常にデータ点 0 件が返ります（本スクリプトはこの経路を使いません）。",
+    "SearchOCU（Average）: 式 SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"SearchOCU\" \"kiro-inventory-vector-group\"', 'Average', 300) / 該当系列 1 本（データを持つ系列 1 本）/ データ点 667 件 / 系列: kiro-inventory-vector-group / u4g3b8nxs0q0e6vgto7c / SearchOCU（667 点 / Complete）",
+    "IndexingOCU（Average）: 式 SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"IndexingOCU\" \"kiro-inventory-vector-group\"', 'Average', 300) / 該当系列 1 本（データを持つ系列 1 本）/ データ点 667 件 / 系列: kiro-inventory-vector-group / u4g3b8nxs0q0e6vgto7c / IndexingOCU（667 点 / Complete）",
+    "OCUUtilization（Minimum）: 式 SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"OCUUtilization\" \"kiro-inventory-vector-group\"', 'Minimum', 300) / 該当系列 0 本（データを持つ系列 0 本）/ データ点 0 件",
+    "OCUUtilization（Average）: 式 SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"OCUUtilization\" \"kiro-inventory-vector-group\"', 'Average', 300) / 該当系列 0 本（データを持つ系列 0 本）/ データ点 0 件",
+    "OCUUtilization（Maximum）: 式 SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"OCUUtilization\" \"kiro-inventory-vector-group\"', 'Maximum', 300) / 該当系列 0 本（データを持つ系列 0 本）/ データ点 0 件",
+    "データ点が 667 件で、120 時間分の期待件数 1440 件に満たしません。欠測は区間の連続性を切る扱いにしています（欠測を 0 とみなして 0 OCU 区間を伸ばしません）。",
+    "scale-to-zero 適用可（0 OCU 区間の最大長 1555.0 分、60 分以上）。0 OCU 区間の合計は 3135.0 分、アイドル時月額見積は 0 USD です（要件 7.6）。",
+    "検索継続区間は連続 30 分以上、アイドル区間は連続 6 時間以上のものを出力しています（要件 14.9）。アイドル区間は「検索を一切実行しない区間」であり、IndexingOCU は問いません。したがってアイドル区間の消費 OCU-hour は 0 とは限らず、その値自体が測定対象です。",
+    "ベクトルコレクションの OCU 使用量は主にインメモリベクトルに起因するため、SEARCH タイプコレクションと同等のアイドルコストになるとは限りません（要件 7.9 のリスク）。",
+    "Vector_Collection には vectorOptions.ServerlessVectorAcceleration: ENABLED が付いている。本モードが積算するのは SearchOCU / IndexingOCU から導く OCU-hour のみであり、OCU-hour に還元されない課金要素が存在しうる（単価は未調査。本スクリプトは金額を推測しない）。したがって 20 USD 閾値ガードの累積額は OCU 分の下限見積である。実費の確定には請求データ（Cost Explorer / Billing の AOSS 利用種別）を用いること。"
+  ],
+  "collectionGroupName": "kiro-inventory-vector-group",
+  "ocuDimension": {
+    "name": "CollectionGroupName",
+    "value": "kiro-inventory-vector-group"
+  },
+  "ocuQuery": {
+    "dimensionKeys": [
+      "ClientId",
+      "CollectionGroupId",
+      "CollectionGroupName"
+    ],
+    "filterDimension": {
+      "name": "CollectionGroupName",
+      "value": "kiro-inventory-vector-group"
+    },
+    "resolutions": [
+      {
+        "metricName": "SearchOCU",
+        "statistic": "Average",
+        "expression": "SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"SearchOCU\" \"kiro-inventory-vector-group\"', 'Average', 300)",
+        "dimensionKeys": [
+          "ClientId",
+          "CollectionGroupId",
+          "CollectionGroupName"
+        ],
+        "seriesCount": 1,
+        "seriesWithDataCount": 1,
+        "series": [
+          {
+            "label": "kiro-inventory-vector-group / u4g3b8nxs0q0e6vgto7c / SearchOCU",
+            "statusCode": "Complete",
+            "dataPointCount": 667
+          }
+        ],
+        "dataPointCount": 667,
+        "messages": [],
+        "measured": true,
+        "anomaly": null
+      },
+      {
+        "metricName": "IndexingOCU",
+        "statistic": "Average",
+        "expression": "SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"IndexingOCU\" \"kiro-inventory-vector-group\"', 'Average', 300)",
+        "dimensionKeys": [
+          "ClientId",
+          "CollectionGroupId",
+          "CollectionGroupName"
+        ],
+        "seriesCount": 1,
+        "seriesWithDataCount": 1,
+        "series": [
+          {
+            "label": "kiro-inventory-vector-group / u4g3b8nxs0q0e6vgto7c / IndexingOCU",
+            "statusCode": "Complete",
+            "dataPointCount": 667
+          }
+        ],
+        "dataPointCount": 667,
+        "messages": [],
+        "measured": true,
+        "anomaly": null
+      },
+      {
+        "metricName": "OCUUtilization",
+        "statistic": "Minimum",
+        "expression": "SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"OCUUtilization\" \"kiro-inventory-vector-group\"', 'Minimum', 300)",
+        "dimensionKeys": [
+          "ClientId",
+          "CollectionGroupId",
+          "CollectionGroupName"
+        ],
+        "seriesCount": 0,
+        "seriesWithDataCount": 0,
+        "series": [],
+        "dataPointCount": 0,
+        "messages": [],
+        "measured": false,
+        "anomaly": "SEARCH() がデータ点を持つ系列を 1 本も返しませんでした（該当系列 0 本 / メトリクス OCUUtilization / 式 SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"OCUUtilization\" \"kiro-inventory-vector-group\"', 'Minimum', 300) / 区間 2026-08-17T04:20:00.000Z 〜 2026-08-22T04:25:00.000Z）。これは「0 OCU を測定した」ことではなく「測定できていない」ことを意味します。次元キー集合（ClientId / CollectionGroupId / CollectionGroupName）と CollectionGroupName=kiro-inventory-vector-group が実在の系列と一致しているかを ListMetrics で確認してください。"
+      },
+      {
+        "metricName": "OCUUtilization",
+        "statistic": "Average",
+        "expression": "SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"OCUUtilization\" \"kiro-inventory-vector-group\"', 'Average', 300)",
+        "dimensionKeys": [
+          "ClientId",
+          "CollectionGroupId",
+          "CollectionGroupName"
+        ],
+        "seriesCount": 0,
+        "seriesWithDataCount": 0,
+        "series": [],
+        "dataPointCount": 0,
+        "messages": [],
+        "measured": false,
+        "anomaly": "SEARCH() がデータ点を持つ系列を 1 本も返しませんでした（該当系列 0 本 / メトリクス OCUUtilization / 式 SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"OCUUtilization\" \"kiro-inventory-vector-group\"', 'Average', 300) / 区間 2026-08-17T04:20:00.000Z 〜 2026-08-22T04:25:00.000Z）。これは「0 OCU を測定した」ことではなく「測定できていない」ことを意味します。次元キー集合（ClientId / CollectionGroupId / CollectionGroupName）と CollectionGroupName=kiro-inventory-vector-group が実在の系列と一致しているかを ListMetrics で確認してください。"
+      },
+      {
+        "metricName": "OCUUtilization",
+        "statistic": "Maximum",
+        "expression": "SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"OCUUtilization\" \"kiro-inventory-vector-group\"', 'Maximum', 300)",
+        "dimensionKeys": [
+          "ClientId",
+          "CollectionGroupId",
+          "CollectionGroupName"
+        ],
+        "seriesCount": 0,
+        "seriesWithDataCount": 0,
+        "series": [],
+        "dataPointCount": 0,
+        "messages": [],
+        "measured": false,
+        "anomaly": "SEARCH() がデータ点を持つ系列を 1 本も返しませんでした（該当系列 0 本 / メトリクス OCUUtilization / 式 SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"OCUUtilization\" \"kiro-inventory-vector-group\"', 'Maximum', 300) / 区間 2026-08-17T04:20:00.000Z 〜 2026-08-22T04:25:00.000Z）。これは「0 OCU を測定した」ことではなく「測定できていない」ことを意味します。次元キー集合（ClientId / CollectionGroupId / CollectionGroupName）と CollectionGroupName=kiro-inventory-vector-group が実在の系列と一致しているかを ListMetrics で確認してください。"
+      }
+    ],
+    "allMeasured": false
+  },
+  "windowStart": "2026-08-17T04:20:00.000Z",
+  "windowEnd": "2026-08-22T04:25:00.000Z",
+  "windowHours": 120,
+  "periodSeconds": 300,
+  "alignment": {
+    "pairedCount": 667,
+    "searchOnlyCount": 0,
+    "indexingOnlyCount": 0
+  },
+  "analysis": {
+    "periodSeconds": 300,
+    "sampleCount": 667,
+    "startTime": "2026-08-19T20:50:00.000Z",
+    "endTime": "2026-08-22T04:25:00.000Z",
+    "searchOcu": {
+      "count": 667,
+      "minimum": 0,
+      "average": 0.10374812593703149,
+      "maximum": 2,
+      "startTime": "2026-08-19T20:50:00.000Z",
+      "endTime": "2026-08-22T04:25:00.000Z"
+    },
+    "indexingOcu": {
+      "count": 667,
+      "minimum": 0,
+      "average": 0.030884557721139433,
+      "maximum": 1,
+      "startTime": "2026-08-19T20:50:00.000Z",
+      "endTime": "2026-08-22T04:25:00.000Z"
+    },
+    "combinedOcu": {
+      "count": 667,
+      "minimum": 0,
+      "average": 0.13463268365817094,
+      "maximum": 3,
+      "startTime": "2026-08-19T20:50:00.000Z",
+      "endTime": "2026-08-22T04:25:00.000Z"
+    },
+    "totalOcuHours": 7.483333333333334,
+    "zeroOcuIntervals": [
+      {
+        "startTime": "2026-08-19T20:50:00.000Z",
+        "endTime": "2026-08-20T22:45:00.000Z",
+        "sampleCount": 311,
+        "lengthMinutes": 1555,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0
+      },
+      {
+        "startTime": "2026-08-21T00:20:00.000Z",
+        "endTime": "2026-08-21T12:45:00.000Z",
+        "sampleCount": 149,
+        "lengthMinutes": 745,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0
+      },
+      {
+        "startTime": "2026-08-21T13:10:00.000Z",
+        "endTime": "2026-08-21T13:35:00.000Z",
+        "sampleCount": 5,
+        "lengthMinutes": 25,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0
+      },
+      {
+        "startTime": "2026-08-21T13:50:00.000Z",
+        "endTime": "2026-08-22T00:45:00.000Z",
+        "sampleCount": 131,
+        "lengthMinutes": 655,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0
+      },
+      {
+        "startTime": "2026-08-22T01:00:00.000Z",
+        "endTime": "2026-08-22T03:15:00.000Z",
+        "sampleCount": 27,
+        "lengthMinutes": 135,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0
+      },
+      {
+        "startTime": "2026-08-22T03:50:00.000Z",
+        "endTime": "2026-08-22T03:55:00.000Z",
+        "sampleCount": 1,
+        "lengthMinutes": 5,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0
+      },
+      {
+        "startTime": "2026-08-22T04:10:00.000Z",
+        "endTime": "2026-08-22T04:25:00.000Z",
+        "sampleCount": 3,
+        "lengthMinutes": 15,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0
+      }
+    ],
+    "qualifyingZeroOcuIntervals": [
+      {
+        "startTime": "2026-08-19T20:50:00.000Z",
+        "endTime": "2026-08-20T22:45:00.000Z",
+        "sampleCount": 311,
+        "lengthMinutes": 1555,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0
+      },
+      {
+        "startTime": "2026-08-21T00:20:00.000Z",
+        "endTime": "2026-08-21T12:45:00.000Z",
+        "sampleCount": 149,
+        "lengthMinutes": 745,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0
+      },
+      {
+        "startTime": "2026-08-21T13:50:00.000Z",
+        "endTime": "2026-08-22T00:45:00.000Z",
+        "sampleCount": 131,
+        "lengthMinutes": 655,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0
+      },
+      {
+        "startTime": "2026-08-22T01:00:00.000Z",
+        "endTime": "2026-08-22T03:15:00.000Z",
+        "sampleCount": 27,
+        "lengthMinutes": 135,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0
+      }
+    ],
+    "longestZeroOcuMinutes": 1555,
+    "totalZeroOcuMinutes": 3135,
+    "qualifyingZeroOcuMinutes": 3090,
+    "scaleToZeroApplicable": true,
+    "activityPartition": [
+      {
+        "startTime": "2026-08-19T20:50:00.000Z",
+        "endTime": "2026-08-20T22:45:00.000Z",
+        "sampleCount": 311,
+        "lengthMinutes": 1555,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0,
+        "activity": "idle"
+      },
+      {
+        "startTime": "2026-08-20T22:45:00.000Z",
+        "endTime": "2026-08-21T00:20:00.000Z",
+        "sampleCount": 19,
+        "lengthMinutes": 95,
+        "searchOcuHours": 3.1333333333333333,
+        "indexingOcuHours": 1.55,
+        "ocuHours": 4.683333333333334,
+        "activity": "search-active"
+      },
+      {
+        "startTime": "2026-08-21T00:20:00.000Z",
+        "endTime": "2026-08-21T12:45:00.000Z",
+        "sampleCount": 149,
+        "lengthMinutes": 745,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0,
+        "activity": "idle"
+      },
+      {
+        "startTime": "2026-08-21T12:45:00.000Z",
+        "endTime": "2026-08-21T13:10:00.000Z",
+        "sampleCount": 5,
+        "lengthMinutes": 25,
+        "searchOcuHours": 0.6,
+        "indexingOcuHours": 0.16666666666666666,
+        "ocuHours": 0.7666666666666666,
+        "activity": "search-active"
+      },
+      {
+        "startTime": "2026-08-21T13:10:00.000Z",
+        "endTime": "2026-08-21T13:35:00.000Z",
+        "sampleCount": 5,
+        "lengthMinutes": 25,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0,
+        "activity": "idle"
+      },
+      {
+        "startTime": "2026-08-21T13:35:00.000Z",
+        "endTime": "2026-08-21T13:50:00.000Z",
+        "sampleCount": 3,
+        "lengthMinutes": 15,
+        "searchOcuHours": 0.3333333333333333,
+        "indexingOcuHours": 0,
+        "ocuHours": 0.3333333333333333,
+        "activity": "search-active"
+      },
+      {
+        "startTime": "2026-08-21T13:50:00.000Z",
+        "endTime": "2026-08-22T00:45:00.000Z",
+        "sampleCount": 131,
+        "lengthMinutes": 655,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0,
+        "activity": "idle"
+      },
+      {
+        "startTime": "2026-08-22T00:45:00.000Z",
+        "endTime": "2026-08-22T01:00:00.000Z",
+        "sampleCount": 3,
+        "lengthMinutes": 15,
+        "searchOcuHours": 0.3,
+        "indexingOcuHours": 0,
+        "ocuHours": 0.3,
+        "activity": "search-active"
+      },
+      {
+        "startTime": "2026-08-22T01:00:00.000Z",
+        "endTime": "2026-08-22T03:15:00.000Z",
+        "sampleCount": 27,
+        "lengthMinutes": 135,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0,
+        "activity": "idle"
+      },
+      {
+        "startTime": "2026-08-22T03:15:00.000Z",
+        "endTime": "2026-08-22T03:50:00.000Z",
+        "sampleCount": 7,
+        "lengthMinutes": 35,
+        "searchOcuHours": 0.9666666666666668,
+        "indexingOcuHours": 0,
+        "ocuHours": 0.9666666666666666,
+        "activity": "search-active"
+      },
+      {
+        "startTime": "2026-08-22T03:50:00.000Z",
+        "endTime": "2026-08-22T03:55:00.000Z",
+        "sampleCount": 1,
+        "lengthMinutes": 5,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0,
+        "activity": "idle"
+      },
+      {
+        "startTime": "2026-08-22T03:55:00.000Z",
+        "endTime": "2026-08-22T04:10:00.000Z",
+        "sampleCount": 3,
+        "lengthMinutes": 15,
+        "searchOcuHours": 0.43333333333333335,
+        "indexingOcuHours": 0,
+        "ocuHours": 0.43333333333333335,
+        "activity": "search-active"
+      },
+      {
+        "startTime": "2026-08-22T04:10:00.000Z",
+        "endTime": "2026-08-22T04:25:00.000Z",
+        "sampleCount": 3,
+        "lengthMinutes": 15,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0,
+        "activity": "idle"
+      }
+    ],
+    "searchActiveIntervals": [
+      {
+        "startTime": "2026-08-20T22:45:00.000Z",
+        "endTime": "2026-08-21T00:20:00.000Z",
+        "sampleCount": 19,
+        "lengthMinutes": 95,
+        "searchOcuHours": 3.1333333333333333,
+        "indexingOcuHours": 1.55,
+        "ocuHours": 4.683333333333334,
+        "activity": "search-active"
+      },
+      {
+        "startTime": "2026-08-22T03:15:00.000Z",
+        "endTime": "2026-08-22T03:50:00.000Z",
+        "sampleCount": 7,
+        "lengthMinutes": 35,
+        "searchOcuHours": 0.9666666666666668,
+        "indexingOcuHours": 0,
+        "ocuHours": 0.9666666666666666,
+        "activity": "search-active"
+      }
+    ],
+    "idleIntervals": [
+      {
+        "startTime": "2026-08-19T20:50:00.000Z",
+        "endTime": "2026-08-20T22:45:00.000Z",
+        "sampleCount": 311,
+        "lengthMinutes": 1555,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0,
+        "activity": "idle"
+      },
+      {
+        "startTime": "2026-08-21T00:20:00.000Z",
+        "endTime": "2026-08-21T12:45:00.000Z",
+        "sampleCount": 149,
+        "lengthMinutes": 745,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0,
+        "activity": "idle"
+      },
+      {
+        "startTime": "2026-08-21T13:50:00.000Z",
+        "endTime": "2026-08-22T00:45:00.000Z",
+        "sampleCount": 131,
+        "lengthMinutes": 655,
+        "searchOcuHours": 0,
+        "indexingOcuHours": 0,
+        "ocuHours": 0,
+        "activity": "idle"
+      }
+    ],
+    "alwaysOnMonthlyUsd": null
+  },
+  "utilization": {
+    "minimum": {
+      "count": 0,
+      "minimum": null,
+      "average": null,
+      "maximum": null,
+      "startTime": "2026-08-17T04:20:00.000Z",
+      "endTime": "2026-08-22T04:25:00.000Z"
+    },
+    "average": {
+      "count": 0,
+      "minimum": null,
+      "average": null,
+      "maximum": null,
+      "startTime": "2026-08-17T04:20:00.000Z",
+      "endTime": "2026-08-22T04:25:00.000Z"
+    },
+    "maximum": {
+      "count": 0,
+      "minimum": null,
+      "average": null,
+      "maximum": null,
+      "startTime": "2026-08-17T04:20:00.000Z",
+      "endTime": "2026-08-22T04:25:00.000Z"
+    },
+    "dimension": {
+      "name": "CollectionGroupName",
+      "value": "kiro-inventory-vector-group"
+    },
+    "resolutions": [
+      {
+        "metricName": "OCUUtilization",
+        "statistic": "Minimum",
+        "expression": "SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"OCUUtilization\" \"kiro-inventory-vector-group\"', 'Minimum', 300)",
+        "dimensionKeys": [
+          "ClientId",
+          "CollectionGroupId",
+          "CollectionGroupName"
+        ],
+        "seriesCount": 0,
+        "seriesWithDataCount": 0,
+        "series": [],
+        "dataPointCount": 0,
+        "messages": [],
+        "measured": false,
+        "anomaly": "SEARCH() がデータ点を持つ系列を 1 本も返しませんでした（該当系列 0 本 / メトリクス OCUUtilization / 式 SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"OCUUtilization\" \"kiro-inventory-vector-group\"', 'Minimum', 300) / 区間 2026-08-17T04:20:00.000Z 〜 2026-08-22T04:25:00.000Z）。これは「0 OCU を測定した」ことではなく「測定できていない」ことを意味します。次元キー集合（ClientId / CollectionGroupId / CollectionGroupName）と CollectionGroupName=kiro-inventory-vector-group が実在の系列と一致しているかを ListMetrics で確認してください。"
+      },
+      {
+        "metricName": "OCUUtilization",
+        "statistic": "Average",
+        "expression": "SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"OCUUtilization\" \"kiro-inventory-vector-group\"', 'Average', 300)",
+        "dimensionKeys": [
+          "ClientId",
+          "CollectionGroupId",
+          "CollectionGroupName"
+        ],
+        "seriesCount": 0,
+        "seriesWithDataCount": 0,
+        "series": [],
+        "dataPointCount": 0,
+        "messages": [],
+        "measured": false,
+        "anomaly": "SEARCH() がデータ点を持つ系列を 1 本も返しませんでした（該当系列 0 本 / メトリクス OCUUtilization / 式 SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"OCUUtilization\" \"kiro-inventory-vector-group\"', 'Average', 300) / 区間 2026-08-17T04:20:00.000Z 〜 2026-08-22T04:25:00.000Z）。これは「0 OCU を測定した」ことではなく「測定できていない」ことを意味します。次元キー集合（ClientId / CollectionGroupId / CollectionGroupName）と CollectionGroupName=kiro-inventory-vector-group が実在の系列と一致しているかを ListMetrics で確認してください。"
+      },
+      {
+        "metricName": "OCUUtilization",
+        "statistic": "Maximum",
+        "expression": "SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"OCUUtilization\" \"kiro-inventory-vector-group\"', 'Maximum', 300)",
+        "dimensionKeys": [
+          "ClientId",
+          "CollectionGroupId",
+          "CollectionGroupName"
+        ],
+        "seriesCount": 0,
+        "seriesWithDataCount": 0,
+        "series": [],
+        "dataPointCount": 0,
+        "messages": [],
+        "measured": false,
+        "anomaly": "SEARCH() がデータ点を持つ系列を 1 本も返しませんでした（該当系列 0 本 / メトリクス OCUUtilization / 式 SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"OCUUtilization\" \"kiro-inventory-vector-group\"', 'Maximum', 300) / 区間 2026-08-17T04:20:00.000Z 〜 2026-08-22T04:25:00.000Z）。これは「0 OCU を測定した」ことではなく「測定できていない」ことを意味します。次元キー集合（ClientId / CollectionGroupId / CollectionGroupName）と CollectionGroupName=kiro-inventory-vector-group が実在の系列と一致しているかを ListMetrics で確認してください。"
+      }
+    ],
+    "dataPointsPresent": false,
+    "unavailableReason": "CollectionGroupName=kiro-inventory-vector-group で OCUUtilization のデータ点が 1 件も返りませんでした（2026-08-17T04:20:00.000Z 〜 2026-08-22T04:25:00.000Z / 式 SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"OCUUtilization\" \"kiro-inventory-vector-group\"', 'Average', 300) / 該当系列 0 本）。これは「使用率 0 を測定した」ことではなく「測定値が存在しない」ことを意味します。OCUUtilization は AWS/AOSS の ListMetrics に現れていない。ListMetrics は直近約 14 日にデータのあるメトリクスのみを列挙するため、これは「最近この AWS アカウントで公開されていない」ことを意味するに留まり、「NextGen の Collection Group では公開されない」ことの証明ではない。本スクリプトは OCU 系メトリクスとして他の 2 つと同じ SEARCH() 式（次元キー集合 ClientId / CollectionGroupId / CollectionGroupName）で照会するため、次元不足による空振りとは区別できる。SEARCH() が系列を 1 本も返さない場合は当該メトリクスがそもそも公開されていないことを示し、要件 7.8 の右サイジング指標が得られない。Verification_Report にはその旨を測定不能として記載する必要がある。"
+  },
+  "partitionConserved": true
+}

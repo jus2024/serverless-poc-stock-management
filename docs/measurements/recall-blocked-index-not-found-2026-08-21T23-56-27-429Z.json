@@ -1,0 +1,185 @@
+{
+  "artifact": "task 13.17（言語別 recall の測定）のブロッカー記録",
+  "purpose": "recall 測定は実行できなかった。本ファイルは測定値ではなく、実行不能の原因と根拠、および再実行の前提条件を記録するものである。要件 13.3〜13.15 / 18.9 / 18.10 の測定値はすべて未実測である。",
+  "generatedAt": "2026-08-22T00:10:00Z",
+  "region": "us-west-2",
+  "accountId": "992382598974",
+  "verdict": {
+    "measured": false,
+    "blocked": true,
+    "blockedBackends": ["dynamodb"],
+    "blockingErrorCode": "INDEX_NOT_FOUND",
+    "classification": "実装欠陥（デプロイ構成の欠陥）。データ特性ではない。",
+    "requiresRedeploy": true
+  },
+  "searchActivityWindowUtc": {
+    "start": "2026-08-21T23:50:16Z",
+    "end": "2026-08-21T23:56:27.429Z",
+    "note": "start は CLI 起動時刻、end は kiro-vector-search-ddb の最終ログイベント時刻。task 13.19 のアイドル OCU 観測に必要な情報として記録する。",
+    "openSearchTouched": false,
+    "openSearchEvidence": "kiro-vector-search-aoss の最終ログイベントは 2026-08-21T13:36:07.251Z であり、本作業の区間には 1 件も呼び出しがない。DynamoDB 側で INDEX_NOT_FOUND（FATAL 扱い）となり測定が中断したため、OpenSearch へは 1 度も到達しなかった。",
+    "zeroOcuIntervalIntact": true,
+    "zeroOcuIntervalStart": "2026-08-21T13:50:00Z",
+    "zeroOcuIntervalNote": "2026-08-22T00:05:00Z 時点で 615.0 分の連続 0 OCU 区間として継続している（--watch-spend --hours 48 の区間分解より）。task 13.19 のアイドル窓はまだ壊れていない。"
+  },
+  "commandsRun": [
+    "npm run vector:recall -- --dry-run --base-url https://7x62kbhicg.execute-api.us-west-2.amazonaws.com/api/",
+    "NODE_OPTIONS=--max-old-space-size=6144 AWS_REGION=us-west-2 npm run vector:recall -- --base-url https://7x62kbhicg.execute-api.us-west-2.amazonaws.com/api/ --region us-west-2 --language ja --limit 1 --no-write --omit-observations",
+    "aws dynamodb describe-table --table-name kiro-roasters-inventory-vector（AWS CLI 2.35.9）",
+    "DescribeTable（@aws-sdk/client-dynamodb 3.1112.0 / 3.1104.0 / 3.1103.0 / 3.1102.0 / 3.1100.0 / 3.1096.0 / 3.1081.0 / 3.1050.0）",
+    "aws lambda get-function --function-name kiro-vector-search-ddb（デプロイ済みバンドルの取得と検査）",
+    "AWS_REGION=us-west-2 npm run vector:measure -- --watch-spend --no-write --hours 48"
+  ],
+  "plannedButNotExecuted": {
+    "note": "--dry-run で確認した実行計画。実際にはこの規模の測定に入れていない。",
+    "queryCount": 60,
+    "querySeed": 20260805,
+    "queryOrderDigest": "fnv1a32:b04e1ba3:60",
+    "intentCounts": { "flavor": 20, "body": 10, "origin": 12, "usage": 10, "material": 8 },
+    "languages": ["ja", "en"],
+    "backends": ["dynamodb", "opensearch"],
+    "distinctSkuKValues": [1, 10, 33],
+    "requestedTopKValues": [3, 30, 99],
+    "plannedEmbedCalls": 120,
+    "plannedSearchCalls": 720,
+    "plannedOutput": "docs/measurements/recall-<date>.json"
+  },
+  "observedFailure": {
+    "endpoint": "POST https://7x62kbhicg.execute-api.us-west-2.amazonaws.com/api/vector-search/dynamodb",
+    "httpStatus": 404,
+    "stage": "SEARCH_DYNAMODB",
+    "errorCode": "INDEX_NOT_FOUND",
+    "message": "指定された言語に対応するベクトルインデックスが存在しないため、検索を実行しませんでした。 対象インデックス名: byEmbeddingJa。",
+    "cliBehaviour": "INDEX_NOT_FOUND は recall-cli.ts の FATAL_ERROR_CODES に含まれるため、CLI は 1 件目（q01 / ja / dynamodb / k=1）で測定を中断した（終了コード 1）。これは意図どおりの動作である。",
+    "upstreamStepsThatSucceeded": [
+      "POST /vector-search/embed が HTTP 200 で queryId を発行した（Bedrock 呼び出し 1 回）",
+      "kiro-vector-query-cache から当該 queryId のクエリベクトル（1024 次元 / language=ja）を GetItem で解決した",
+      "Vector_Table を Scan して ja の一意ベクトル集合 5,000 件を構築した（走査 15,000 件）"
+    ]
+  },
+  "rootCause": {
+    "summary": "デプロイ済み kiro-vector-search-ddb は @aws-sdk/client-dynamodb を外部モジュール（Lambda ランタイム同梱 SDK）として解決している。ランタイム同梱 SDK のモデルには TableDescription.VectorIndexes が存在せず、DescribeTable の応答から当該フィールドが黙って落ちる。ハンドラの readVectorIndexDescriptions() が空配列を返し、インデックスが存在しないと判定される。",
+    "mechanism": "AWS SDK for JavaScript v3 はモデル駆動でレスポンスを逆直列化する。モデルに無いフィールドはエラーにならず単に無視される。したがって実サービスが VectorIndexes を返していても、モデルが古い SDK では観測できない。",
+    "codePaths": {
+      "handlerRead": "amplify/functions/vector-search-ddb/handler.ts: readVectorIndexDescriptions() は table?.VectorIndexes ?? [] を返す",
+      "handlerDecision": "同 handler.ts ステップ 5: lookup.index が undefined のとき INDEX_NOT_FOUND を返す（要件 16.2 どおりの実装であり、ハンドラのロジック自体に誤りはない）",
+      "bundlingDefect": "amplify/custom/lambda-functions.ts の commonProps.bundling は externalModules を指定していない。aws-cdk-lib 2.244.0 の NodejsFunction は Node 18 以上のランタイムに対し既定で ['@aws-sdk/*'] を external にする（node_modules/aws-cdk-lib/aws-lambda-nodejs/lib/bundling.js の sdkV3Externals / versionedExternals / defaultExternals）。",
+      "existingPrecedent": "amplify/custom/vector-index.ts は Index_Provisioner に対して externalModules: [] を明示し、コメントで『VectorIndexUpdates は比較的新しい API パラメータのため Lambda 同梱の SDK に依存させない』と述べている。同じ配慮が検索 Lambda に適用されていない。"
+    }
+  },
+  "evidence": {
+    "actualIndexState": {
+      "source": "DescribeTable（@aws-sdk/client-dynamodb 3.1112.0、リポジトリが依存している版）",
+      "tableName": "kiro-roasters-inventory-vector",
+      "tableStatus": "ACTIVE",
+      "tableItemCount": 15000,
+      "vectorIndexes": [
+        {
+          "indexName": "byEmbeddingJa",
+          "vectorAttribute": "embeddingJa",
+          "dimensions": 1024,
+          "distanceFunction": "COSINE",
+          "indexStatus": "ACTIVE",
+          "indexSizeBytes": 74602024,
+          "itemCount": 15000,
+          "searchSchema": [{ "attributeName": "warehouseId", "searchSchemaElementType": "INLINE_FILTER" }],
+          "projection": { "projectionType": "INCLUDE", "nonKeyAttributes": ["quantity", "unitPrice", "location", "metaEn", "metaJa", "itemName"] },
+          "backfillingKeyPresent": false
+        },
+        {
+          "indexName": "byEmbeddingEn",
+          "vectorAttribute": "embeddingEn",
+          "dimensions": 1024,
+          "distanceFunction": "COSINE",
+          "indexStatus": "ACTIVE",
+          "indexSizeBytes": 74602024,
+          "itemCount": 15000,
+          "searchSchema": [{ "attributeName": "warehouseId", "searchSchemaElementType": "INLINE_FILTER" }],
+          "projection": { "projectionType": "INCLUDE", "nonKeyAttributes": ["quantity", "unitPrice", "location", "metaEn", "metaJa", "itemName"] },
+          "backfillingKeyPresent": false
+        }
+      ],
+      "note": "2 本ともに ACTIVE であり、ハンドラが探している名前（byEmbeddingJa）と完全に一致する。すなわちインデックスは存在し、名前解決の誤りでもない。"
+    },
+    "sdkModelGating": {
+      "method": "同一の資格情報・同一のリージョン・同一のテーブルに対して DescribeTable を実行し、@aws-sdk/client-dynamodb の版だけを変えて TableDescription に VectorIndexes キーが現れるかを観測した。",
+      "results": [
+        { "sdkVersion": "3.1050.0", "hasVectorIndexes": false },
+        { "sdkVersion": "3.1081.0", "hasVectorIndexes": false },
+        { "sdkVersion": "3.1096.0", "hasVectorIndexes": false },
+        { "sdkVersion": "3.1100.0", "hasVectorIndexes": false },
+        { "sdkVersion": "3.1102.0", "hasVectorIndexes": false },
+        { "sdkVersion": "3.1103.0", "hasVectorIndexes": true },
+        { "sdkVersion": "3.1104.0", "hasVectorIndexes": true },
+        { "sdkVersion": "3.1112.0", "hasVectorIndexes": true }
+      ],
+      "boundary": "3.1103.0 が TableDescription.VectorIndexes を持つ最初の版であり、3.1102.0 以前は同一応答から当該フィールドを黙って落とす。",
+      "cliCorroboration": "AWS CLI 2.35.9（aws dynamodb describe-table）も VectorIndexes を返さない。返るトップレベルキーは AttributeDefinitions / TableName / KeySchema / TableStatus / CreationDateTime / ProvisionedThroughput / TableSizeBytes / ItemCount / TableArn / TableId / BillingModeSummary / DeletionProtectionEnabled / WarmThroughput のみ。",
+      "keysDroppedExample": "3.1050.0 の応答キー: AttributeDefinitions, TableName, KeySchema, TableStatus, CreationDateTime, ProvisionedThroughput, TableSizeBytes, ItemCount, TableArn, TableId, BillingModeSummary, DeletionProtectionEnabled, WarmThroughput（VectorIndexes なし）"
+    },
+    "deployedBundle": {
+      "functionName": "kiro-vector-search-ddb",
+      "runtime": "nodejs20.x",
+      "runtimeVersion": "nodejs:20.v101",
+      "codeSizeBytes": 261967,
+      "lastModified": "2026-08-21T23:27:22+00:00",
+      "bundleContents": ["index.js（161,128 B）", "index.js.map（721,999 B）"],
+      "externalRequires": ["require(\"@aws-sdk/client-dynamodb\")", "require(\"@aws-sdk/util-dynamodb\")"],
+      "interpretation": "SDK がバンドルされていれば index.js は数 MB 規模になり require(\"@aws-sdk/...\") は残らない。161 KB で require が残っていることは、実行時にランタイム同梱 SDK を解決していることを示す。"
+    },
+    "lambdaInvocations": {
+      "kiro-vector-query-embed": { "count": 1, "requestId": "1ac6312c-4f4c-46b6-8e3a-aefcd6e1f1d6", "durationMs": 713.33, "initDurationMs": 393.67 },
+      "kiro-vector-search-ddb": { "count": 1, "requestId": "24f612ff-13bd-436a-9c7b-0da8d9be02e4", "durationMs": 297.21, "initDurationMs": 413.42, "note": "ハンドラは例外を投げていない。INDEX_NOT_FOUND は正常な応答経路であり、ログにエラー行はない。" },
+      "kiro-vector-search-aoss": { "count": 0 }
+    }
+  },
+  "sideEffects": {
+    "bedrockCallsAdded": 1,
+    "bedrockCallsNote": "task 14.1 の呼び出し回数計上に加算する 1 件（q01 / ja / POST /vector-search/embed 経由）。累計は 10,008 → 10,009 回。",
+    "dynamodbReads": "Vector_Table の全件 Scan 1 回（15,000 レコード / ja のベクトル属性のみ射影）。設計の見積では約 28,500 RRU 相当。",
+    "queryCacheWrites": 1,
+    "aossSearchOcuConsumed": 0,
+    "groundTruthCacheCreated": {
+      "path": "docs/measurements/ground-truth/ground-truth-ja-d1024.json",
+      "sizeBytes": 108939023,
+      "language": "ja",
+      "dimensions": 1024,
+      "warehouseFilter": null,
+      "uniqueVectorCount": 5000,
+      "scannedRecordCount": 15000,
+      "value": "再実行時にこの Scan を省略できる。en 側（ground-truth-en-d1024.json）は未作成である。",
+      "caution": "1 ファイル約 104 MiB であり、2 言語で約 208 MiB になる。docs/measurements/ 配下はまだ Git 未追跡であり .gitignore の対象にもなっていない。コミット前に無視設定を入れるかどうかの判断が必要である。"
+    },
+    "cumulativeSpend": {
+      "asOf": "2026-08-22T00:10:00Z",
+      "ocuHour": 5.7833,
+      "usd": 1.39,
+      "capUsd": 20,
+      "changedByThisWork": false,
+      "note": "本作業の前後で変化なし。OpenSearch へ 1 件も検索を投げていないため。"
+    }
+  },
+  "notMeasured": [
+    { "item": "言語別・バックエンド別・Distinct_Sku_K 別の Recall_At_K（平均 / 最小 / 0.99 未満件数 / 合否）", "requirements": ["13.3", "13.4", "13.5", "13.6", "13.11"], "reason": "DynamoDB 側が INDEX_NOT_FOUND で成立しないため測定に入れなかった。片側だけ測ると要件 13.5（同一クエリベクトル・同一 TopK・同一 Ground_Truth での両バックエンド比較）が成立せず、AOSS の SearchOCU と Bedrock 呼び出しを捨てることになるため、意図的に実行しなかった。" },
+    { "item": "日本語平均と英語平均の差分（要件 13.8）", "requirements": ["13.8"], "reason": "同上" },
+    { "item": "同値件数・完全同値行件数（要件 13.12 / 13.13）", "requirements": ["13.12", "13.13"], "reason": "同上。ただし ja の Ground_Truth 自体は構築済みであり、再実行時はキャッシュから即座に復元できる。" },
+    { "item": "風味クエリ上位の Material_Sku 件数と 0 件判定（要件 13.15 / 18.10）", "requirements": ["13.15", "18.10"], "reason": "同上" },
+    { "item": "日本語クエリ 3 件以上と対応する英語クエリの上位結果の観察例（要件 18.9）", "requirements": ["18.9"], "reason": "同上" },
+    { "item": "倉庫フィルタ有効時の Recall_At_K（要件 13.14）", "requirements": ["13.14"], "reason": "フィルタ無効時の測定に到達していないため未着手。" }
+  ],
+  "prerequisiteForRerun": {
+    "requiredChange": "検索系 Lambda（少なくとも kiro-vector-search-ddb）のバンドルで @aws-sdk/client-dynamodb を同梱する。amplify/custom/lambda-functions.ts の bundling に externalModules: [] を加えるのが最小の変更であり、amplify/custom/vector-index.ts が Index_Provisioner に対して既に採っている方式と同一である。",
+    "alternative": "同梱を避けるなら DescribeTable を使わず、ベクトルインデックスの準備状態確認を SearchVectors の応答（および 3.1103.0 以降の SDK を持つ別経路）に委ねる設計変更が必要になる。ただし要件 5.15 / 16.2 / 16.3 は DescribeTable の VectorIndexes を前提としているため、要件の改訂を伴う。",
+    "deployment": "デプロイは利用者が手動で行う（npx ampx sandbox、コンテキスト vectorCollectionEnabled=true）。本タスクではデプロイを実行していない。",
+    "verificationAfterDeploy": [
+      "POST /vector-search/embed で queryId を 1 件発行する",
+      "同一 queryId で POST /vector-search/dynamodb を TopK 3 で 1 回呼び、HTTP 200 と indexReadiness（indexStatus=ACTIVE / backfillingPresent=false）が返ることを確認する",
+      "その後に npm run vector:recall を全量（60 クエリ × 2 言語 × 2 バックエンド × k 3 種）で実行する"
+    ],
+    "costImpactOfRerun": "全量実行は埋め込み 120 回（Bedrock 120 呼び出し）と検索 720 回（うち OpenSearch 360 回）を要する。OpenSearch 検索は SearchOCU を消費するため、実行時刻を記録し task 13.19 のアイドル窓は必ずその後に開始する。"
+  },
+  "reportingHooks": {
+    "requirement18_21": "本件は『リソーススキーマ / SDK モデルが実サービスの応答に追いつかないことによる失敗』の 4 件目の実例である。既存の 3 件（Method.Engine の faiss 拒否、Settings 省略時の index.knn=false、AttributeDefinitions 省略時の SearchSchema 拒否）と異なり、これは要求が拒否されるのではなく、実サービスが返した情報が SDK 側で黙って消える型の失敗であり、エラーも警告も出ない。Verification_Report に知見として追加する価値がある。",
+    "requirement18_23": "ローカルの合成テスト（handler.test.ts）はスタブが VectorIndexes を返すため本欠陥を検出できない。検出できるのはデプロイ後の実呼び出しのみである。"
+  }
+}

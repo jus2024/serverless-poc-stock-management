@@ -1,0 +1,1569 @@
+{
+  "schemaVersion": 1,
+  "mode": "score-calibration",
+  "generatedAt": "2026-08-21T13:36:09.269Z",
+  "region": "us-west-2",
+  "readOnly": false,
+  "task": "13.15",
+  "openQuestion": "Q2",
+  "requirements": [
+    "9.5",
+    "9.6",
+    "18.6"
+  ],
+  "design": "Open Questions Q2 / キャリブレーション手順",
+  "provenance": {
+    "note": "実行に使ったスクリプトは Q2 専用の使い捨てであり、記録の完了後に削除した。コードの要点は本ファイルの reproduction に転記してある（13.13 と同じ扱い）。",
+    "relatedReports": [
+      "measure-search-score-mapping-2026-08-21T13-16-15-654Z.json"
+    ],
+    "relatedNote": "13.13 で DynamoDB 側の SearchResults[].Score はコサイン距離そのものと確定した（残差 3.36e-8、変換不要）。本タスクのキャリブレーション対象は OpenSearch 側の k-NN スコアのみである。"
+  },
+  "writes": {
+    "performed": true,
+    "target": "kiro-vector-query-cache（Query_Vector_Cache）",
+    "operation": "PutItem 5 回（queryId / vector / language / dimensions / model / expiresAt）",
+    "ttlSeconds": 300,
+    "reason": "POST /vector-search/embed が全リクエストで HTTP 400 を返すため（下記 blocker 参照）、埋め込み Lambda が書くのと同一形のアイテムをスクリプトから保管して queryId を発行した。検索そのものは既存のデプロイ済み Lambda（POST /vector-search/opensearch）で実行しており、測定対象の挙動は本番経路と同一である。",
+    "approval": "利用者が本タスク実行中に明示的に承認した（制約「データを書き込まない」に対する承認済みの逸脱）。TTL 300 秒で自動失効するため恒久的な状態変更を残さない。",
+    "otherWrites": "なし。Vector_Table / Good_Table / Vector_Collection / OSIS には一切書き込んでいない。リソースの作成・変更・削除も行っていない。"
+  },
+  "blocker": {
+    "summary": "POST /vector-search/embed（Query_Embedding_Lambda）がデプロイ済み環境で全リクエストに HTTP 400 を返す。要件 10.1 が指定するレイテンシ最適化推論が us-west-2 の amazon.titan-embed-text-v2:0 で未対応であることが原因である。",
+    "observedResponse": {
+      "httpStatus": 400,
+      "stage": "EMBEDDING",
+      "errorCode": "INVALID_QUERY",
+      "message": "クエリ文字列が空、または空白文字のみです。 Latency performance configuration is not supported for amazon.titan-embed-text-v2:0 in us-west-2"
+    },
+    "rootCause": "amplify/functions/vector-query-embed/handler.ts の createEmbeddingGenerator({ latencyOptimized: true })。embedding-generator.ts の createBedrockEmbeddingTransport が performanceConfigLatency: optimized を付けて InvokeModel を呼ぶ。埋め込みバッチ側は latencyOptimized: false であるため 13.11 は完走した。",
+    "isolationProbe": {
+      "method": "Bedrock を直接呼ぶ A/B。同一モデル・同一リージョン・同一本文（inputText / dimensions 1024 / normalize true）・同一資格情報で performanceConfigLatency の有無だけを変えて 2 回呼んだ。",
+      "attempts": [
+        {
+          "performanceConfigLatency": "（指定なし）",
+          "verdict": "成功",
+          "dimensions": 1024,
+          "inputTextTokenCount": 29
+        },
+        {
+          "performanceConfigLatency": "optimized",
+          "verdict": "失敗",
+          "errorName": "ValidationException",
+          "httpStatus": 400,
+          "message": "Latency performance configuration is not supported for amazon.titan-embed-text-v2:0 in us-west-2"
+        }
+      ],
+      "conclusion": "モデル・リージョン・IAM・本文はいずれも問題なく、performanceConfigLatency: optimized の指定のみが 400 の原因である。実装ミスではなく要件 10.1（レイテンシ最適化された推論呼び出しを使用する）が us-west-2 の Titan Embed v2 では成立しないという前提の破綻である。"
+    },
+    "secondaryFinding": "Bedrock の ValidationException は errors.ts の classifyBadRequest の既定分岐により stage EMBEDDING で INVALID_QUERY に分類される。定型文が「クエリ文字列が空、または空白文字のみです。」となり実態と食い違うが、Bedrock の原文が detail に残るため切り分けは可能だった。",
+    "impact": "両検索エンドポイントは queryId しか受け付けず、queryId を発行できるのは POST /vector-search/embed のみである。開発者の IAM ユーザーは AOSS のデータアクセスポリシーの Principal に含まれないためエンドポイント直叩きは 403（要件 17.7 の設計どおり）。したがって本ブロッカーは 13.15 のみならず 13.17（recall）/ 13.18（レイテンシ・キャパシティ・UI 検証）も止める。",
+    "followUp": "要件 10.1 の改訂（レイテンシ最適化を要求しない）か、実装のフォールバック化（optimized を試して未対応なら標準で再試行）のいずれかを選び、利用者がデプロイする必要がある。本タスクでは選択も実装変更も行っていない。"
+  },
+  "target": {
+    "collectionName": "kiro-inventory-vector",
+    "indexName": "inventory-vector",
+    "endpointRoute": "POST /vector-search/opensearch",
+    "spaceType": "cosinesimil",
+    "dimensions": 1024,
+    "embeddingModel": "amazon.titan-embed-text-v2:0",
+    "normalize": true,
+    "topK": 10,
+    "warehouseFilter": "なし（全倉庫）",
+    "queryCount": 5,
+    "queryLanguages": {
+      "ja": 3,
+      "en": 2
+    },
+    "querySource": "scripts/vector-search/paired-queries.ts の Paired_Query_Set から意図の異なる 5 本（q01 flavor / q22 body / q31 origin / q44 usage / q53 material）",
+    "scoreNormalizationAppliedByHandler": "two_minus_d_over_two（デプロイ済みハンドラの既定値）"
+  },
+  "method": {
+    "steps": [
+      "1. embedding-generator.ts の createEmbeddingGenerator({ dimensions: 1024, latencyOptimized: false }) と embedding-text.ts の normalizeText() でクエリ 5 本を埋め込む（Bedrock 5 回）。前処理・次元数・normalize 指定・f32 丸めはデプロイ済みハンドラと同一のコードを通る",
+      "2. 埋め込み Lambda が書くのと同一形のアイテムを Query_Vector_Cache へ PutItem（TTL 300 秒）して queryId を発行する",
+      "3. POST /vector-search/opensearch に { queryId, topK: 10 } を投げ、返却行の rawScore / itemId / warehouseId / distance を取得する",
+      "4. 各返却行について Vector_Table を GetItem し、ProjectionExpression にクエリと同じ言語のベクトル属性のみを指定して格納ベクトルを読む（読み取り専用）",
+      "5. d_local = 1 − dot(q, v) / (|q| |v|) をローカル算出し、式 A / 式 B の |d_calc − d_local| を求める"
+    ],
+    "documentIdNote": "応答に _id は含まれない（handler.ts の VectorSearchHit が _id を載せない）。documentId は buildVectorDocumentId の規約 `${itemId}#${warehouseId}` で再構成した値である。この規約は amplify/custom/vector-collection.ts / vector-embed-batch/handler.ts / vector-search-aoss/verify.ts の 3 箇所で同一に定義されており、17.3 の Verification_Run が _mget でこの _id を用いて全件一致を得ている（verify-2026-08-21T12-52-43-942Z.json）。",
+    "vectorBodyNote": "レポートにベクトル本体を貼らない方針（Property 22 の趣旨）に従い、次元数・ノルム・先頭 5 要素のみを載せている。",
+    "localDistanceNote": "d_local はノルムで割る厳密なコサイン距離である。対照として 1 − 内積（ノルムで割らない値、各件の dLocalOneMinusDot）も算出したが、両者の差は最大 9.185e-8 であった（格納・クエリ双方のノルムが 1 ± 1e-7 のため）。faiss の取り込み時正規化や Titan の normalize 設定を疑う必要がないことの根拠でもある。"
+  },
+  "result": {
+    "totalHits": 50,
+    "residualThreshold": 0.001,
+    "candidates": [
+      {
+        "formula": "式 A",
+        "identifier": "two_minus_d_over_two",
+        "expression": "d = 2 − 2 × score",
+        "source": "現行の OpenSearch k-NN spaces ドキュメント（score = (2 − d) / 2）",
+        "maxAbsResidual": 1.2309161967483107e-7,
+        "verdict": "採用"
+      },
+      {
+        "formula": "式 B",
+        "identifier": "reciprocal_minus_one",
+        "expression": "d = 1 / score − 1",
+        "source": "旧版ドキュメントの nmslib / faiss 記述（score = 1 / (1 + d)）",
+        "maxAbsResidual": 0.17156329094706524,
+        "verdict": "棄却"
+      },
+      {
+        "formula": "参考",
+        "identifier": "(なし)",
+        "expression": "d = score",
+        "source": "13.13 で DynamoDB 側に当てはまった対応。OpenSearch でも成り立つかの確認",
+        "maxAbsResidual": 0.48136936723471857,
+        "verdict": "棄却"
+      },
+      {
+        "formula": "参考",
+        "identifier": "(なし)",
+        "expression": "d = 1 − score",
+        "source": "score をコサイン類似度と解釈した場合",
+        "maxAbsResidual": 0.2947338603103078,
+        "verdict": "棄却"
+      }
+    ],
+    "adoptedFormula": "two_minus_d_over_two",
+    "adoptedExpression": "d = 2 − 2 × score",
+    "maxAbsResidualAdopted": 1.2309161967483107e-7,
+    "conclusion": "式 A（d = 2 − 2 × score）を採用する。最大残差 1.23e-7 は閾値 1e-3 を 4 桁下回り、f32 精度（Bedrock 応答の f32 丸めとインデックス内の f32 保持）の範囲内である。式 B の最大残差 1.72e-1 は閾値を 2 桁超える。したがって現行の k-NN spaces ドキュメントの score = (2 − d) / 2 が AOSS の VECTORSEARCH コレクションにも当てはまり、旧版の nmslib / faiss 記述は当てはまらない。",
+    "renormalizationNotNeeded": "設計「キャリブレーション手順」の手順 5（faiss の取り込み時正規化と Titan の normalize 設定を含めた再検証）は不要だった。式 A が閾値を満たしたうえ、格納ベクトル 50 件のノルムとクエリベクトル 5 本のノルムがいずれも 1 ± 1e-7 であり、正規化状態の食い違いが存在しなかった。",
+    "distanceBasisMismatchCount": 0,
+    "distanceBasisMismatchNote": "50 件すべてで正規化距離が 0〜2 に収まり、要件 9.12 の範囲外フラグは 1 件も立たなかった。設計が想定した「式の選択を誤った場合の検出装置」は、式 A が正しいことと整合する。",
+    "codeChange": "amplify/functions/shared/vector/score-normalize.ts の DEFAULT_SCORE_NORMALIZATION_FORMULA は既に two_minus_d_over_two であり、値の変更は不要だった。実測条件と残差表をドックコメントとして固定し、閾値定数 SCORE_CALIBRATION_RESIDUAL_THRESHOLD を追加した。score-normalize.test.ts に実測値を固定する単体テスト 4 件を追加した。ハンドラの挙動は変わらないためデプロイは不要である。",
+    "maxAbsDifferenceCosineVsDot": 9.185275995360342e-8
+  },
+  "observations": {
+    "coldStart": "1 本目（q01）が coldStart: true で took 19,349 ms / searchLatencyMs 19,879 ms。要件 9.9 の打ち切り 30,000 ms 以内に収まった。2 本目以降は took 508〜885 ms。要件 18.3 の Cold_Start 所要時間として参照できる参考値だが、正式な測定は 13.18 が担当する。",
+    "distinctSkuDilution": "5 本すべてで returnedCount 10 / distinctSkuCount 4 だった。同一 SKU の 3 倉庫行が同一ベクトルを持つため（V12）、TopK 10 は一意 SKU 3〜4 件に希釈される。要件 18.13 の知見と整合する。",
+    "semanticSanity": "q31（エチオピア産のベリー系）は ETH-YIRG / ETH-SHB のシティロースト、q44（espresso extraction 向けダークロースト）は BLEND-ESPRESSO-DARK、q53（バルブ付の袋）は MAT-BAG-*-VALVE を上位に返した。意味検索として妥当な結果である。正式な recall 測定は 13.17 が担当する。",
+    "scoreRangeByLanguage": "生スコアの範囲は日本語 3 本が 0.705266〜0.732218、英語 2 本が 0.800578〜0.827123。英語側が一貫して高い（= 距離が小さい）が、本タスクは 5 本のみの観測であり言語間の埋め込み品質の比較材料にはしない（13.17 / 要件 18.8 が担当）。"
+  },
+  "bedrockCalls": {
+    "calibration": 5,
+    "isolationProbe": 2,
+    "viaEmbedEndpoint": 1,
+    "total": 8,
+    "note": "キャリブレーション本体は 5 本 × 1 回 = 5 回（要件どおり）。切り分けプローブが 2 回（成功 1 / ValidationException で拒否 1）、最初に POST /vector-search/embed を叩いた分が 1 回（ValidationException で拒否）。拒否された 3 回は推論に到達していないためトークン課金は発生しない。実質の課金対象は 6 回（うち成功 6 回：キャリブレーション 5 + プローブ 1）。"
+  },
+  "awsCalls": {
+    "searchOpensearch": 5,
+    "dynamodbGetItem": "Vector_Table 50 回（返却 50 行を (itemId, warehouseId, ベクトル属性) で重複排除した件数。3 倉庫行は別キーなので同一 SKU でも個別に読んだ）",
+    "dynamodbPutItem": "Query_Vector_Cache 5 回（上記 writes 参照）",
+    "note": "SearchVectors（DynamoDB ベクトル検索）は 1 度も呼んでいない。OSIS への操作も行っていない（要件 6.10）。Good_Table には触れていない。"
+  },
+  "reproduction": {
+    "note": "使い捨てスクリプトは削除済み。再実行が必要な場合は下記の手順で同一の観測が得られる。POST /vector-search/embed が修復済みであれば手順 2 と 3 は当該エンドポイントの呼び出し 1 回に置き換わる。",
+    "steps": [
+      "1. 対象クエリは scripts/vector-search/paired-queries.ts の q01 / q22 / q31（ja）と q44 / q53（en）",
+      "2. createEmbeddingGenerator({ dimensions: 1024, latencyOptimized: false }).generate({ text: normalizeText(クエリ文), maxRetries: 3 }) でクエリベクトルを得る",
+      "3. randomUUID() を queryId として { queryId, vector, language, dimensions, model, expiresAt: 現在 epoch 秒 + 300 } を kiro-vector-query-cache へ PutItem する（marshall を使う）",
+      "4. POST {NEXT_PUBLIC_INVENTORY_API_URL}/vector-search/opensearch に { queryId, topK: 10 } を投げる",
+      "5. 返却行ごとに kiro-roasters-inventory-vector を Key { itemId, warehouseId } で GetItem し、ProjectionExpression に embeddingJa（ja）または embeddingEn（en）のみを指定して格納ベクトルを読む",
+      "6. d_local = 1 − dot / (norm × norm) を算出し、2 − 2 × score と 1 / score − 1 の残差を比較する"
+    ]
+  },
+  "queries": [
+    {
+      "id": "q01",
+      "language": "ja",
+      "intent": "flavor",
+      "text": "花のような香りで酸味の強い浅煎りの豆",
+      "vectorField": "embeddingJa",
+      "requestedTopK": 10,
+      "appliedTopK": 10,
+      "returnedCount": 10,
+      "distinctSkuCount": 4,
+      "took": 19349,
+      "searchLatencyMs": 19879,
+      "handlerLatencyMs": 20109,
+      "coldStart": true,
+      "scoreNormalizationApplied": "two_minus_d_over_two",
+      "queryVector": {
+        "dimensions": 1024,
+        "norm": 1.0000000818995616,
+        "first5": [
+          0.0043687717989087105,
+          0.03803272917866707,
+          0.006300625391304493,
+          -0.015339686535298824,
+          0.02370961382985115
+        ]
+      },
+      "rawScoreRange": {
+        "min": 0.7052661,
+        "max": 0.71469384
+      },
+      "maxResidualFormulaA": 4.9835374937856614e-8,
+      "maxResidualFormulaB": 0.17156329094706524,
+      "maxResidualIdentity": 0.14408149708578266,
+      "maxResidualOneMinusScore": 0.2947338603103078,
+      "hits": [
+        {
+          "rank": 1,
+          "documentId": "ITEM#GTM-SANT-G2-LIGHT-1KG#WH-OSAKA",
+          "itemId": "ITEM#GTM-SANT-G2-LIGHT-1KG",
+          "warehouseId": "WH-OSAKA",
+          "productName": "グアテマラ サントス G2 ライト 1kg",
+          "rawScore": 0.71469384,
+          "handlerDistance": 0.57061232,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000301863736,
+          "cosineSimilarityLocal": 0.42938765708578264,
+          "dLocal": 0.5706123429142174,
+          "formulaA": {
+            "dCalc": 0.57061232,
+            "absResidual": 2.29142174124064e-8
+          },
+          "formulaB": {
+            "dCalc": 0.3992005303977435,
+            "absResidual": 0.17141181251647386
+          },
+          "identityResidual": 0.14408149708578266,
+          "oneMinusScoreResidual": 0.2853061829142174,
+          "dLocalOneMinusDot": 0.5706122947858991
+        },
+        {
+          "rank": 2,
+          "documentId": "ITEM#GTM-SANT-G2-LIGHT-1KG#WH-TOKYO",
+          "itemId": "ITEM#GTM-SANT-G2-LIGHT-1KG",
+          "warehouseId": "WH-TOKYO",
+          "productName": "グアテマラ サントス G2 ライト 1kg",
+          "rawScore": 0.71469384,
+          "handlerDistance": 0.57061232,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000301863736,
+          "cosineSimilarityLocal": 0.42938765708578264,
+          "dLocal": 0.5706123429142174,
+          "formulaA": {
+            "dCalc": 0.57061232,
+            "absResidual": 2.29142174124064e-8
+          },
+          "formulaB": {
+            "dCalc": 0.3992005303977435,
+            "absResidual": 0.17141181251647386
+          },
+          "identityResidual": 0.14408149708578266,
+          "oneMinusScoreResidual": 0.2853061829142174,
+          "dLocalOneMinusDot": 0.5706122947858991
+        },
+        {
+          "rank": 3,
+          "documentId": "ITEM#GTM-SANT-G2-LIGHT-1KG#WH-FUKUOKA",
+          "itemId": "ITEM#GTM-SANT-G2-LIGHT-1KG",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "グアテマラ サントス G2 ライト 1kg",
+          "rawScore": 0.71469384,
+          "handlerDistance": 0.57061232,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000301863736,
+          "cosineSimilarityLocal": 0.42938765708578264,
+          "dLocal": 0.5706123429142174,
+          "formulaA": {
+            "dCalc": 0.57061232,
+            "absResidual": 2.29142174124064e-8
+          },
+          "formulaB": {
+            "dCalc": 0.3992005303977435,
+            "absResidual": 0.17141181251647386
+          },
+          "identityResidual": 0.14408149708578266,
+          "oneMinusScoreResidual": 0.2853061829142174,
+          "dLocalOneMinusDot": 0.5706122947858991
+        },
+        {
+          "rank": 4,
+          "documentId": "ITEM#GTM-SANT-G1-LIGHT-500G#WH-OSAKA",
+          "itemId": "ITEM#GTM-SANT-G1-LIGHT-500G",
+          "warehouseId": "WH-OSAKA",
+          "productName": "グアテマラ サントス G1 ライト 500g",
+          "rawScore": 0.70965075,
+          "handlerDistance": 0.5806985,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.000000029341903,
+          "cosineSimilarityLocal": 0.41930151692688145,
+          "dLocal": 0.5806984830731186,
+          "formulaA": {
+            "dCalc": 0.5806985,
+            "absResidual": 1.692688145205068e-8
+          },
+          "formulaB": {
+            "dCalc": 0.40914386407680126,
+            "absResidual": 0.1715546189963173
+          },
+          "identityResidual": 0.12895226692688144,
+          "oneMinusScoreResidual": 0.29034923307311855,
+          "dLocalOneMinusDot": 0.5806984364294027
+        },
+        {
+          "rank": 5,
+          "documentId": "ITEM#GTM-SANT-G1-LIGHT-500G#WH-FUKUOKA",
+          "itemId": "ITEM#GTM-SANT-G1-LIGHT-500G",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "グアテマラ サントス G1 ライト 500g",
+          "rawScore": 0.70965075,
+          "handlerDistance": 0.5806985,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.000000029341903,
+          "cosineSimilarityLocal": 0.41930151692688145,
+          "dLocal": 0.5806984830731186,
+          "formulaA": {
+            "dCalc": 0.5806985,
+            "absResidual": 1.692688145205068e-8
+          },
+          "formulaB": {
+            "dCalc": 0.40914386407680126,
+            "absResidual": 0.1715546189963173
+          },
+          "identityResidual": 0.12895226692688144,
+          "oneMinusScoreResidual": 0.29034923307311855,
+          "dLocalOneMinusDot": 0.5806984364294027
+        },
+        {
+          "rank": 6,
+          "documentId": "ITEM#GTM-SANT-G1-LIGHT-500G#WH-TOKYO",
+          "itemId": "ITEM#GTM-SANT-G1-LIGHT-500G",
+          "warehouseId": "WH-TOKYO",
+          "productName": "グアテマラ サントス G1 ライト 500g",
+          "rawScore": 0.70965075,
+          "handlerDistance": 0.5806985,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.000000029341903,
+          "cosineSimilarityLocal": 0.41930151692688145,
+          "dLocal": 0.5806984830731186,
+          "formulaA": {
+            "dCalc": 0.5806985,
+            "absResidual": 1.692688145205068e-8
+          },
+          "formulaB": {
+            "dCalc": 0.40914386407680126,
+            "absResidual": 0.1715546189963173
+          },
+          "identityResidual": 0.12895226692688144,
+          "oneMinusScoreResidual": 0.29034923307311855,
+          "dLocalOneMinusDot": 0.5806984364294027
+        },
+        {
+          "rank": 7,
+          "documentId": "ITEM#GTM-SHB-SHB-LIGHT-200G-V315#WH-FUKUOKA",
+          "itemId": "ITEM#GTM-SHB-SHB-LIGHT-200G-V315",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "グアテマラ SHB SHB ライト 200g V315",
+          "rawScore": 0.70527315,
+          "handlerDistance": 0.5894537,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000294810503,
+          "cosineSimilarityLocal": 0.41054634983537497,
+          "dLocal": 0.589453650164625,
+          "formulaA": {
+            "dCalc": 0.5894537,
+            "absResidual": 4.9835374937856614e-8
+          },
+          "formulaB": {
+            "dCalc": 0.4178903592175598,
+            "absResidual": 0.17156329094706524
+          },
+          "identityResidual": 0.11581949983537498,
+          "oneMinusScoreResidual": 0.29472680016462505,
+          "dLocalOneMinusDot": 0.5894536044377203
+        },
+        {
+          "rank": 8,
+          "documentId": "ITEM#GTM-SHB-SHB-LIGHT-200G-V315#WH-OSAKA",
+          "itemId": "ITEM#GTM-SHB-SHB-LIGHT-200G-V315",
+          "warehouseId": "WH-OSAKA",
+          "productName": "グアテマラ SHB SHB ライト 200g V315",
+          "rawScore": 0.70527315,
+          "handlerDistance": 0.5894537,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000294810503,
+          "cosineSimilarityLocal": 0.41054634983537497,
+          "dLocal": 0.589453650164625,
+          "formulaA": {
+            "dCalc": 0.5894537,
+            "absResidual": 4.9835374937856614e-8
+          },
+          "formulaB": {
+            "dCalc": 0.4178903592175598,
+            "absResidual": 0.17156329094706524
+          },
+          "identityResidual": 0.11581949983537498,
+          "oneMinusScoreResidual": 0.29472680016462505,
+          "dLocalOneMinusDot": 0.5894536044377203
+        },
+        {
+          "rank": 9,
+          "documentId": "ITEM#GTM-SHB-SHB-LIGHT-200G-V315#WH-TOKYO",
+          "itemId": "ITEM#GTM-SHB-SHB-LIGHT-200G-V315",
+          "warehouseId": "WH-TOKYO",
+          "productName": "グアテマラ SHB SHB ライト 200g V315",
+          "rawScore": 0.70527315,
+          "handlerDistance": 0.5894537,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000294810503,
+          "cosineSimilarityLocal": 0.41054634983537497,
+          "dLocal": 0.589453650164625,
+          "formulaA": {
+            "dCalc": 0.5894537,
+            "absResidual": 4.9835374937856614e-8
+          },
+          "formulaB": {
+            "dCalc": 0.4178903592175598,
+            "absResidual": 0.17156329094706524
+          },
+          "identityResidual": 0.11581949983537498,
+          "oneMinusScoreResidual": 0.29472680016462505,
+          "dLocalOneMinusDot": 0.5894536044377203
+        },
+        {
+          "rank": 10,
+          "documentId": "ITEM#GTM-SHB-G2-LIGHT-200G#WH-FUKUOKA",
+          "itemId": "ITEM#GTM-SHB-G2-LIGHT-200G",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "グアテマラ SHB G2 ライト 200g",
+          "rawScore": 0.7052661,
+          "handlerDistance": 0.5894678,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000175521153,
+          "cosineSimilarityLocal": 0.4105322396896922,
+          "dLocal": 0.5894677603103078,
+          "formulaA": {
+            "dCalc": 0.5894678,
+            "absResidual": 3.9689692199473825e-8
+          },
+          "formulaB": {
+            "dCalc": 0.4179045327713895,
+            "absResidual": 0.17156322753891828
+          },
+          "identityResidual": 0.11579833968969222,
+          "oneMinusScoreResidual": 0.2947338603103078,
+          "dLocalOneMinusDot": 0.5894677194821876
+        }
+      ]
+    },
+    {
+      "id": "q22",
+      "language": "ja",
+      "intent": "body",
+      "text": "重いボディでコクのあるフレンチロースト",
+      "vectorField": "embeddingJa",
+      "requestedTopK": 10,
+      "appliedTopK": 10,
+      "returnedCount": 10,
+      "distinctSkuCount": 4,
+      "took": 810,
+      "searchLatencyMs": 885,
+      "handlerLatencyMs": 921,
+      "coldStart": false,
+      "scoreNormalizationApplied": "two_minus_d_over_two",
+      "queryVector": {
+        "dimensions": 1024,
+        "norm": 0.9999999713194871,
+        "first5": [
+          -0.08246386051177979,
+          0.009498322382569313,
+          -0.027360791340470314,
+          -0.02353677712380886,
+          0.027119537815451622
+        ]
+      },
+      "rawScoreRange": {
+        "min": 0.7285069,
+        "max": 0.7322182
+      },
+      "maxResidualFormulaA": 6.72699667081389e-8,
+      "maxResidualFormulaB": 0.17031559085545445,
+      "maxResidualIdentity": 0.19665456726996677,
+      "maxResidualOneMinusScore": 0.271493086013853,
+      "hits": [
+        {
+          "rank": 1,
+          "documentId": "ITEM#BLEND-RICH-FRENCH-200G#WH-OSAKA",
+          "itemId": "ITEM#BLEND-RICH-FRENCH-200G",
+          "warehouseId": "WH-OSAKA",
+          "productName": "ブレンド リッチ フレンチ 200g",
+          "rawScore": 0.7322182,
+          "handlerDistance": 0.5355635999999999,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000732561876,
+          "cosineSimilarityLocal": 0.46443636726996673,
+          "dLocal": 0.5355636327300333,
+          "formulaA": {
+            "dCalc": 0.5355635999999999,
+            "absResidual": 3.273003335024782e-8
+          },
+          "formulaB": {
+            "dCalc": 0.36571311666385786,
+            "absResidual": 0.1698505160661754
+          },
+          "identityResidual": 0.19665456726996677,
+          "oneMinusScoreResidual": 0.2677818327300333,
+          "dLocalOneMinusDot": 0.5355636120274698
+        },
+        {
+          "rank": 2,
+          "documentId": "ITEM#BLEND-RICH-FRENCH-200G#WH-FUKUOKA",
+          "itemId": "ITEM#BLEND-RICH-FRENCH-200G",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "ブレンド リッチ フレンチ 200g",
+          "rawScore": 0.73221815,
+          "handlerDistance": 0.5355637,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000732561876,
+          "cosineSimilarityLocal": 0.46443636726996673,
+          "dLocal": 0.5355636327300333,
+          "formulaA": {
+            "dCalc": 0.5355637,
+            "absResidual": 6.72699667081389e-8
+          },
+          "formulaB": {
+            "dCalc": 0.36571320992248,
+            "absResidual": 0.16985042280755325
+          },
+          "identityResidual": 0.19665451726996674,
+          "oneMinusScoreResidual": 0.2677817827300333,
+          "dLocalOneMinusDot": 0.5355636120274698
+        },
+        {
+          "rank": 3,
+          "documentId": "ITEM#BLEND-RICH-FRENCH-200G#WH-TOKYO",
+          "itemId": "ITEM#BLEND-RICH-FRENCH-200G",
+          "warehouseId": "WH-TOKYO",
+          "productName": "ブレンド リッチ フレンチ 200g",
+          "rawScore": 0.73221815,
+          "handlerDistance": 0.5355637,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000732561876,
+          "cosineSimilarityLocal": 0.46443636726996673,
+          "dLocal": 0.5355636327300333,
+          "formulaA": {
+            "dCalc": 0.5355637,
+            "absResidual": 6.72699667081389e-8
+          },
+          "formulaB": {
+            "dCalc": 0.36571320992248,
+            "absResidual": 0.16985042280755325
+          },
+          "identityResidual": 0.19665451726996674,
+          "oneMinusScoreResidual": 0.2677817827300333,
+          "dLocalOneMinusDot": 0.5355636120274698
+        },
+        {
+          "rank": 4,
+          "documentId": "ITEM#BLEND-ESPRESSO-FRENCH-200G#WH-OSAKA",
+          "itemId": "ITEM#BLEND-ESPRESSO-FRENCH-200G",
+          "warehouseId": "WH-OSAKA",
+          "productName": "ブレンド エスプレッソ フレンチ 200g",
+          "rawScore": 0.72908,
+          "handlerDistance": 0.5418400000000001,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000309069308,
+          "cosineSimilarityLocal": 0.4581599705118794,
+          "dLocal": 0.5418400294881206,
+          "formulaA": {
+            "dCalc": 0.5418400000000001,
+            "absResidual": 2.94881205009645e-8
+          },
+          "formulaB": {
+            "dCalc": 0.37159159488670657,
+            "absResidual": 0.17024843460141403
+          },
+          "identityResidual": 0.18723997051187935,
+          "oneMinusScoreResidual": 0.27092002948812055,
+          "dLocalOneMinusDot": 0.5418400284680654
+        },
+        {
+          "rank": 5,
+          "documentId": "ITEM#BLEND-ESPRESSO-FRENCH-200G#WH-FUKUOKA",
+          "itemId": "ITEM#BLEND-ESPRESSO-FRENCH-200G",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "ブレンド エスプレッソ フレンチ 200g",
+          "rawScore": 0.72907996,
+          "handlerDistance": 0.5418400800000001,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000309069308,
+          "cosineSimilarityLocal": 0.4581599705118794,
+          "dLocal": 0.5418400294881206,
+          "formulaA": {
+            "dCalc": 0.5418400800000001,
+            "absResidual": 5.0511879456927034e-8
+          },
+          "formulaB": {
+            "dCalc": 0.3715916701372508,
+            "absResidual": 0.1702483593508698
+          },
+          "identityResidual": 0.18723993051187937,
+          "oneMinusScoreResidual": 0.27091998948812057,
+          "dLocalOneMinusDot": 0.5418400284680654
+        },
+        {
+          "rank": 6,
+          "documentId": "ITEM#BLEND-ESPRESSO-FRENCH-200G#WH-TOKYO",
+          "itemId": "ITEM#BLEND-ESPRESSO-FRENCH-200G",
+          "warehouseId": "WH-TOKYO",
+          "productName": "ブレンド エスプレッソ フレンチ 200g",
+          "rawScore": 0.72907996,
+          "handlerDistance": 0.5418400800000001,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000309069308,
+          "cosineSimilarityLocal": 0.4581599705118794,
+          "dLocal": 0.5418400294881206,
+          "formulaA": {
+            "dCalc": 0.5418400800000001,
+            "absResidual": 5.0511879456927034e-8
+          },
+          "formulaB": {
+            "dCalc": 0.3715916701372508,
+            "absResidual": 0.1702483593508698
+          },
+          "identityResidual": 0.18723993051187937,
+          "oneMinusScoreResidual": 0.27091998948812057,
+          "dLocalOneMinusDot": 0.5418400284680654
+        },
+        {
+          "rank": 7,
+          "documentId": "ITEM#BLEND-ESPRESSO-FRENCH-200G-V523#WH-FUKUOKA",
+          "itemId": "ITEM#BLEND-ESPRESSO-FRENCH-200G-V523",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "ブレンド エスプレッソ フレンチ 200g V523",
+          "rawScore": 0.72863597,
+          "handlerDistance": 0.54272806,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 0.999999981295875,
+          "cosineSimilarityLocal": 0.45727196132482417,
+          "dLocal": 0.5427280386751758,
+          "formulaA": {
+            "dCalc": 0.54272806,
+            "absResidual": 2.132482412875447e-8
+          },
+          "formulaB": {
+            "dCalc": 0.3724274413737767,
+            "absResidual": 0.17030059730139913
+          },
+          "identityResidual": 0.1859079313248242,
+          "oneMinusScoreResidual": 0.27136400867517585,
+          "dLocalOneMinusDot": 0.5427280603428418
+        },
+        {
+          "rank": 8,
+          "documentId": "ITEM#BLEND-ESPRESSO-FRENCH-200G-V523#WH-TOKYO",
+          "itemId": "ITEM#BLEND-ESPRESSO-FRENCH-200G-V523",
+          "warehouseId": "WH-TOKYO",
+          "productName": "ブレンド エスプレッソ フレンチ 200g V523",
+          "rawScore": 0.72863597,
+          "handlerDistance": 0.54272806,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 0.999999981295875,
+          "cosineSimilarityLocal": 0.45727196132482417,
+          "dLocal": 0.5427280386751758,
+          "formulaA": {
+            "dCalc": 0.54272806,
+            "absResidual": 2.132482412875447e-8
+          },
+          "formulaB": {
+            "dCalc": 0.3724274413737767,
+            "absResidual": 0.17030059730139913
+          },
+          "identityResidual": 0.1859079313248242,
+          "oneMinusScoreResidual": 0.27136400867517585,
+          "dLocalOneMinusDot": 0.5427280603428418
+        },
+        {
+          "rank": 9,
+          "documentId": "ITEM#BLEND-ESPRESSO-FRENCH-200G-V523#WH-OSAKA",
+          "itemId": "ITEM#BLEND-ESPRESSO-FRENCH-200G-V523",
+          "warehouseId": "WH-OSAKA",
+          "productName": "ブレンド エスプレッソ フレンチ 200g V523",
+          "rawScore": 0.72863597,
+          "handlerDistance": 0.54272806,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 0.999999981295875,
+          "cosineSimilarityLocal": 0.45727196132482417,
+          "dLocal": 0.5427280386751758,
+          "formulaA": {
+            "dCalc": 0.54272806,
+            "absResidual": 2.132482412875447e-8
+          },
+          "formulaB": {
+            "dCalc": 0.3724274413737767,
+            "absResidual": 0.17030059730139913
+          },
+          "identityResidual": 0.1859079313248242,
+          "oneMinusScoreResidual": 0.27136400867517585,
+          "dLocalOneMinusDot": 0.5427280603428418
+        },
+        {
+          "rank": 10,
+          "documentId": "ITEM#BLEND-RICH-FRENCH-100G#WH-FUKUOKA",
+          "itemId": "ITEM#BLEND-RICH-FRENCH-100G",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "ブレンド リッチ フレンチ 100g",
+          "rawScore": 0.7285069,
+          "handlerDistance": 0.5429862000000001,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 0.9999999689270266,
+          "cosineSimilarityLocal": 0.45701381398614693,
+          "dLocal": 0.5429861860138531,
+          "formulaA": {
+            "dCalc": 0.5429862000000001,
+            "absResidual": 1.3986147018307804e-8
+          },
+          "formulaB": {
+            "dCalc": 0.3726705951583986,
+            "absResidual": 0.17031559085545445
+          },
+          "identityResidual": 0.1855207139861469,
+          "oneMinusScoreResidual": 0.271493086013853,
+          "dLocalOneMinusDot": 0.5429862133220213
+        }
+      ]
+    },
+    {
+      "id": "q31",
+      "language": "ja",
+      "intent": "origin",
+      "text": "エチオピア産のベリー系の風味の豆",
+      "vectorField": "embeddingJa",
+      "requestedTopK": 10,
+      "appliedTopK": 10,
+      "returnedCount": 10,
+      "distinctSkuCount": 4,
+      "took": 635,
+      "searchLatencyMs": 680,
+      "handlerLatencyMs": 705,
+      "coldStart": false,
+      "scoreNormalizationApplied": "two_minus_d_over_two",
+      "queryVector": {
+        "dimensions": 1024,
+        "norm": 1.0000000306068364,
+        "first5": [
+          -0.001350328209809959,
+          0.0003894471738021821,
+          0.042981889098882675,
+          -0.055107638239860535,
+          0.018270771950483322
+        ]
+      },
+      "rawScoreRange": {
+        "min": 0.7228248,
+        "max": 0.72453105
+      },
+      "maxResidualFormulaA": 6.832478105511797e-8,
+      "maxResidualFormulaB": 0.1708892218737844,
+      "maxResidualIdentity": 0.17359314673207138,
+      "maxResidualOneMinusScore": 0.2771751316752189,
+      "hits": [
+        {
+          "rank": 1,
+          "documentId": "ITEM#ETH-YIRG-G1-CITY-500G-V472#WH-TOKYO",
+          "itemId": "ITEM#ETH-YIRG-G1-CITY-500G-V472",
+          "warehouseId": "WH-TOKYO",
+          "productName": "エチオピア イルガチェフェ G1 シティ 500g V472",
+          "rawScore": 0.72453105,
+          "handlerDistance": 0.5509379000000001,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000659484412,
+          "cosineSimilarityLocal": 0.4490620967320714,
+          "dLocal": 0.5509379032679286,
+          "formulaA": {
+            "dCalc": 0.5509379000000001,
+            "absResidual": 3.26792848337476e-9
+          },
+          "formulaB": {
+            "dCalc": 0.3802030982661131,
+            "absResidual": 0.17073480500181548
+          },
+          "identityResidual": 0.17359314673207138,
+          "oneMinusScoreResidual": 0.27546895326792853,
+          "dLocalOneMinusDot": 0.5509378599086123
+        },
+        {
+          "rank": 2,
+          "documentId": "ITEM#ETH-YIRG-G1-CITY-500G-V472#WH-FUKUOKA",
+          "itemId": "ITEM#ETH-YIRG-G1-CITY-500G-V472",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "エチオピア イルガチェフェ G1 シティ 500g V472",
+          "rawScore": 0.72453105,
+          "handlerDistance": 0.5509379000000001,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000659484412,
+          "cosineSimilarityLocal": 0.4490620967320714,
+          "dLocal": 0.5509379032679286,
+          "formulaA": {
+            "dCalc": 0.5509379000000001,
+            "absResidual": 3.26792848337476e-9
+          },
+          "formulaB": {
+            "dCalc": 0.3802030982661131,
+            "absResidual": 0.17073480500181548
+          },
+          "identityResidual": 0.17359314673207138,
+          "oneMinusScoreResidual": 0.27546895326792853,
+          "dLocalOneMinusDot": 0.5509378599086123
+        },
+        {
+          "rank": 3,
+          "documentId": "ITEM#ETH-YIRG-G1-CITY-500G-V472#WH-OSAKA",
+          "itemId": "ITEM#ETH-YIRG-G1-CITY-500G-V472",
+          "warehouseId": "WH-OSAKA",
+          "productName": "エチオピア イルガチェフェ G1 シティ 500g V472",
+          "rawScore": 0.72453105,
+          "handlerDistance": 0.5509379000000001,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000659484412,
+          "cosineSimilarityLocal": 0.4490620967320714,
+          "dLocal": 0.5509379032679286,
+          "formulaA": {
+            "dCalc": 0.5509379000000001,
+            "absResidual": 3.26792848337476e-9
+          },
+          "formulaB": {
+            "dCalc": 0.3802030982661131,
+            "absResidual": 0.17073480500181548
+          },
+          "identityResidual": 0.17359314673207138,
+          "oneMinusScoreResidual": 0.27546895326792853,
+          "dLocalOneMinusDot": 0.5509378599086123
+        },
+        {
+          "rank": 4,
+          "documentId": "ITEM#ETH-SHB-G1-CITY-500G#WH-TOKYO",
+          "itemId": "ITEM#ETH-SHB-G1-CITY-500G",
+          "warehouseId": "WH-TOKYO",
+          "productName": "エチオピア SHB G1 シティ 500g",
+          "rawScore": 0.7234312,
+          "handlerDistance": 0.5531375999999999,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000171151215,
+          "cosineSimilarityLocal": 0.4468624212351464,
+          "dLocal": 0.5531375787648536,
+          "formulaA": {
+            "dCalc": 0.5531375999999999,
+            "absResidual": 2.1235146308029584e-8
+          },
+          "formulaB": {
+            "dCalc": 0.38230145451288244,
+            "absResidual": 0.17083612425197114
+          },
+          "identityResidual": 0.17029362123514646,
+          "oneMinusScoreResidual": 0.27656877876485364,
+          "dLocalOneMinusDot": 0.5531375574397037
+        },
+        {
+          "rank": 5,
+          "documentId": "ITEM#ETH-SHB-G1-CITY-500G#WH-FUKUOKA",
+          "itemId": "ITEM#ETH-SHB-G1-CITY-500G",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "エチオピア SHB G1 シティ 500g",
+          "rawScore": 0.7234312,
+          "handlerDistance": 0.5531375999999999,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000171151215,
+          "cosineSimilarityLocal": 0.4468624212351464,
+          "dLocal": 0.5531375787648536,
+          "formulaA": {
+            "dCalc": 0.5531375999999999,
+            "absResidual": 2.1235146308029584e-8
+          },
+          "formulaB": {
+            "dCalc": 0.38230145451288244,
+            "absResidual": 0.17083612425197114
+          },
+          "identityResidual": 0.17029362123514646,
+          "oneMinusScoreResidual": 0.27656877876485364,
+          "dLocalOneMinusDot": 0.5531375574397037
+        },
+        {
+          "rank": 6,
+          "documentId": "ITEM#ETH-SHB-G1-CITY-500G#WH-OSAKA",
+          "itemId": "ITEM#ETH-SHB-G1-CITY-500G",
+          "warehouseId": "WH-OSAKA",
+          "productName": "エチオピア SHB G1 シティ 500g",
+          "rawScore": 0.7234312,
+          "handlerDistance": 0.5531375999999999,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000171151215,
+          "cosineSimilarityLocal": 0.4468624212351464,
+          "dLocal": 0.5531375787648536,
+          "formulaA": {
+            "dCalc": 0.5531375999999999,
+            "absResidual": 2.1235146308029584e-8
+          },
+          "formulaB": {
+            "dCalc": 0.38230145451288244,
+            "absResidual": 0.17083612425197114
+          },
+          "identityResidual": 0.17029362123514646,
+          "oneMinusScoreResidual": 0.27656877876485364,
+          "dLocalOneMinusDot": 0.5531375574397037
+        },
+        {
+          "rank": 7,
+          "documentId": "ITEM#ETH-YIRG-SHB-CITY-500G#WH-FUKUOKA",
+          "itemId": "ITEM#ETH-YIRG-SHB-CITY-500G",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "エチオピア イルガチェフェ SHB シティ 500g",
+          "rawScore": 0.7229401,
+          "handlerDistance": 0.5541198,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000300146488,
+          "cosineSimilarityLocal": 0.4458802204339134,
+          "dLocal": 0.5541197795660866,
+          "formulaA": {
+            "dCalc": 0.5541198,
+            "absResidual": 2.0433913450190744e-8
+          },
+          "formulaB": {
+            "dCalc": 0.3832404648739225,
+            "absResidual": 0.1708793146921641
+          },
+          "identityResidual": 0.16882032043391337,
+          "oneMinusScoreResidual": 0.2770598795660866,
+          "dLocalOneMinusDot": 0.554119752536165
+        },
+        {
+          "rank": 8,
+          "documentId": "ITEM#ETH-YIRG-SHB-CITY-500G#WH-TOKYO",
+          "itemId": "ITEM#ETH-YIRG-SHB-CITY-500G",
+          "warehouseId": "WH-TOKYO",
+          "productName": "エチオピア イルガチェフェ SHB シティ 500g",
+          "rawScore": 0.7229401,
+          "handlerDistance": 0.5541198,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000300146488,
+          "cosineSimilarityLocal": 0.4458802204339134,
+          "dLocal": 0.5541197795660866,
+          "formulaA": {
+            "dCalc": 0.5541198,
+            "absResidual": 2.0433913450190744e-8
+          },
+          "formulaB": {
+            "dCalc": 0.3832404648739225,
+            "absResidual": 0.1708793146921641
+          },
+          "identityResidual": 0.16882032043391337,
+          "oneMinusScoreResidual": 0.2770598795660866,
+          "dLocalOneMinusDot": 0.554119752536165
+        },
+        {
+          "rank": 9,
+          "documentId": "ITEM#ETH-YIRG-SHB-CITY-500G#WH-OSAKA",
+          "itemId": "ITEM#ETH-YIRG-SHB-CITY-500G",
+          "warehouseId": "WH-OSAKA",
+          "productName": "エチオピア イルガチェフェ SHB シティ 500g",
+          "rawScore": 0.7229401,
+          "handlerDistance": 0.5541198,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000300146488,
+          "cosineSimilarityLocal": 0.4458802204339134,
+          "dLocal": 0.5541197795660866,
+          "formulaA": {
+            "dCalc": 0.5541198,
+            "absResidual": 2.0433913450190744e-8
+          },
+          "formulaB": {
+            "dCalc": 0.3832404648739225,
+            "absResidual": 0.1708793146921641
+          },
+          "identityResidual": 0.16882032043391337,
+          "oneMinusScoreResidual": 0.2770598795660866,
+          "dLocalOneMinusDot": 0.554119752536165
+        },
+        {
+          "rank": 10,
+          "documentId": "ITEM#ETH-YIRG-G1-CITY-200G-V72#WH-OSAKA",
+          "itemId": "ITEM#ETH-YIRG-G1-CITY-200G-V72",
+          "warehouseId": "WH-OSAKA",
+          "productName": "エチオピア イルガチェフェ G1 シティ 200g V72",
+          "rawScore": 0.7228248,
+          "handlerDistance": 0.5543503999999999,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 0.9999999979305586,
+          "cosineSimilarityLocal": 0.44564966832478115,
+          "dLocal": 0.5543503316752189,
+          "formulaA": {
+            "dCalc": 0.5543503999999999,
+            "absResidual": 6.832478105511797e-8
+          },
+          "formulaB": {
+            "dCalc": 0.38346110980143444,
+            "absResidual": 0.1708892218737844
+          },
+          "identityResidual": 0.1684744683247812,
+          "oneMinusScoreResidual": 0.2771751316752189,
+          "dLocalOneMinusDot": 0.5543503189575383
+        }
+      ]
+    },
+    {
+      "id": "q44",
+      "language": "en",
+      "intent": "usage",
+      "text": "dark roast beans suited for espresso extraction",
+      "vectorField": "embeddingEn",
+      "requestedTopK": 10,
+      "appliedTopK": 10,
+      "returnedCount": 10,
+      "distinctSkuCount": 4,
+      "took": 599,
+      "searchLatencyMs": 630,
+      "handlerLatencyMs": 641,
+      "coldStart": false,
+      "scoreNormalizationApplied": "two_minus_d_over_two",
+      "queryVector": {
+        "dimensions": 1024,
+        "norm": 1.0000000749808797,
+        "first5": [
+          -0.00029327828087843955,
+          0.018769273534417152,
+          -0.01943236216902733,
+          -0.028826897963881493,
+          0.011598406359553337
+        ]
+      },
+      "rawScoreRange": {
+        "min": 0.8005776,
+        "max": 0.8091618
+      },
+      "maxResidualFormulaA": 1.2309161967483107e-7,
+      "maxResidualFormulaB": 0.14974666611169873,
+      "maxResidualIdentity": 0.42748527690838045,
+      "maxResidualOneMinusScore": 0.1994224172465794,
+      "hits": [
+        {
+          "rank": 1,
+          "documentId": "ITEM#BLEND-ESPRESSO-DARK-100G#WH-TOKYO",
+          "itemId": "ITEM#BLEND-ESPRESSO-DARK-100G",
+          "warehouseId": "WH-TOKYO",
+          "productName": "Blend Espresso dark roast 100g",
+          "rawScore": 0.8091618,
+          "handlerDistance": 0.3816763999999999,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000128596291,
+          "cosineSimilarityLocal": 0.6183234769083804,
+          "dLocal": 0.3816765230916196,
+          "formulaA": {
+            "dCalc": 0.3816763999999999,
+            "absResidual": 1.2309161967483107e-7
+          },
+          "formulaB": {
+            "dCalc": 0.23584677378492147,
+            "absResidual": 0.14582974930669812
+          },
+          "identityResidual": 0.42748527690838045,
+          "oneMinusScoreResidual": 0.19083832309161963,
+          "dLocalOneMinusDot": 0.3816764687777702
+        },
+        {
+          "rank": 2,
+          "documentId": "ITEM#BLEND-ESPRESSO-DARK-100G#WH-OSAKA",
+          "itemId": "ITEM#BLEND-ESPRESSO-DARK-100G",
+          "warehouseId": "WH-OSAKA",
+          "productName": "Blend Espresso dark roast 100g",
+          "rawScore": 0.8091618,
+          "handlerDistance": 0.3816763999999999,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000128596291,
+          "cosineSimilarityLocal": 0.6183234769083804,
+          "dLocal": 0.3816765230916196,
+          "formulaA": {
+            "dCalc": 0.3816763999999999,
+            "absResidual": 1.2309161967483107e-7
+          },
+          "formulaB": {
+            "dCalc": 0.23584677378492147,
+            "absResidual": 0.14582974930669812
+          },
+          "identityResidual": 0.42748527690838045,
+          "oneMinusScoreResidual": 0.19083832309161963,
+          "dLocalOneMinusDot": 0.3816764687777702
+        },
+        {
+          "rank": 3,
+          "documentId": "ITEM#BLEND-ESPRESSO-DARK-100G#WH-FUKUOKA",
+          "itemId": "ITEM#BLEND-ESPRESSO-DARK-100G",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "Blend Espresso dark roast 100g",
+          "rawScore": 0.8091617,
+          "handlerDistance": 0.38167660000000003,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000128596291,
+          "cosineSimilarityLocal": 0.6183234769083804,
+          "dLocal": 0.3816765230916196,
+          "formulaA": {
+            "dCalc": 0.38167660000000003,
+            "absResidual": 7.690838044194237e-8
+          },
+          "formulaB": {
+            "dCalc": 0.2358469265166654,
+            "absResidual": 0.1458295965749542
+          },
+          "identityResidual": 0.4274851769083804,
+          "oneMinusScoreResidual": 0.19083822309161957,
+          "dLocalOneMinusDot": 0.3816764687777702
+        },
+        {
+          "rank": 4,
+          "documentId": "ITEM#BLEND-ESPRESSO-DARK-500G#WH-FUKUOKA",
+          "itemId": "ITEM#BLEND-ESPRESSO-DARK-500G",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "Blend Espresso dark roast 500g",
+          "rawScore": 0.80831033,
+          "handlerDistance": 0.38337934000000007,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000143181078,
+          "cosineSimilarityLocal": 0.6166206351696717,
+          "dLocal": 0.3833793648303283,
+          "formulaA": {
+            "dCalc": 0.38337934000000007,
+            "absResidual": 2.4830328237968047e-8
+          },
+          "formulaB": {
+            "dCalc": 0.2371486085053498,
+            "absResidual": 0.1462307563249785
+          },
+          "identityResidual": 0.42493096516967166,
+          "oneMinusScoreResidual": 0.19168969483032827,
+          "dLocalOneMinusDot": 0.3833793097667292
+        },
+        {
+          "rank": 5,
+          "documentId": "ITEM#BLEND-ESPRESSO-DARK-500G#WH-OSAKA",
+          "itemId": "ITEM#BLEND-ESPRESSO-DARK-500G",
+          "warehouseId": "WH-OSAKA",
+          "productName": "Blend Espresso dark roast 500g",
+          "rawScore": 0.80831033,
+          "handlerDistance": 0.38337934000000007,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000143181078,
+          "cosineSimilarityLocal": 0.6166206351696717,
+          "dLocal": 0.3833793648303283,
+          "formulaA": {
+            "dCalc": 0.38337934000000007,
+            "absResidual": 2.4830328237968047e-8
+          },
+          "formulaB": {
+            "dCalc": 0.2371486085053498,
+            "absResidual": 0.1462307563249785
+          },
+          "identityResidual": 0.42493096516967166,
+          "oneMinusScoreResidual": 0.19168969483032827,
+          "dLocalOneMinusDot": 0.3833793097667292
+        },
+        {
+          "rank": 6,
+          "documentId": "ITEM#BLEND-ESPRESSO-DARK-500G#WH-TOKYO",
+          "itemId": "ITEM#BLEND-ESPRESSO-DARK-500G",
+          "warehouseId": "WH-TOKYO",
+          "productName": "Blend Espresso dark roast 500g",
+          "rawScore": 0.8083103,
+          "handlerDistance": 0.3833793999999999,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000143181078,
+          "cosineSimilarityLocal": 0.6166206351696717,
+          "dLocal": 0.3833793648303283,
+          "formulaA": {
+            "dCalc": 0.3833793999999999,
+            "absResidual": 3.51696716194283e-8
+          },
+          "formulaB": {
+            "dCalc": 0.2371486544214516,
+            "absResidual": 0.1462307104088767
+          },
+          "identityResidual": 0.42493093516967173,
+          "oneMinusScoreResidual": 0.19168966483032834,
+          "dLocalOneMinusDot": 0.3833793097667292
+        },
+        {
+          "rank": 7,
+          "documentId": "ITEM#BLEND-ESPRESSO-DARK-200G#WH-FUKUOKA",
+          "itemId": "ITEM#BLEND-ESPRESSO-DARK-200G",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "Blend Espresso dark roast 200g",
+          "rawScore": 0.80773246,
+          "handlerDistance": 0.38453508000000003,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000742603998,
+          "cosineSimilarityLocal": 0.6154648154395072,
+          "dLocal": 0.38453518456049285,
+          "formulaA": {
+            "dCalc": 0.38453508000000003,
+            "absResidual": 1.0456049281959423e-7
+          },
+          "formulaB": {
+            "dCalc": 0.23803369249268513,
+            "absResidual": 0.14650149206780771
+          },
+          "identityResidual": 0.42319727543950714,
+          "oneMinusScoreResidual": 0.19226764456049283,
+          "dLocalOneMinusDot": 0.3845350927077329
+        },
+        {
+          "rank": 8,
+          "documentId": "ITEM#BLEND-ESPRESSO-DARK-200G#WH-OSAKA",
+          "itemId": "ITEM#BLEND-ESPRESSO-DARK-200G",
+          "warehouseId": "WH-OSAKA",
+          "productName": "Blend Espresso dark roast 200g",
+          "rawScore": 0.80773246,
+          "handlerDistance": 0.38453508000000003,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000742603998,
+          "cosineSimilarityLocal": 0.6154648154395072,
+          "dLocal": 0.38453518456049285,
+          "formulaA": {
+            "dCalc": 0.38453508000000003,
+            "absResidual": 1.0456049281959423e-7
+          },
+          "formulaB": {
+            "dCalc": 0.23803369249268513,
+            "absResidual": 0.14650149206780771
+          },
+          "identityResidual": 0.42319727543950714,
+          "oneMinusScoreResidual": 0.19226764456049283,
+          "dLocalOneMinusDot": 0.3845350927077329
+        },
+        {
+          "rank": 9,
+          "documentId": "ITEM#BLEND-ESPRESSO-DARK-200G#WH-TOKYO",
+          "itemId": "ITEM#BLEND-ESPRESSO-DARK-200G",
+          "warehouseId": "WH-TOKYO",
+          "productName": "Blend Espresso dark roast 200g",
+          "rawScore": 0.80773246,
+          "handlerDistance": 0.38453508000000003,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000742603998,
+          "cosineSimilarityLocal": 0.6154648154395072,
+          "dLocal": 0.38453518456049285,
+          "formulaA": {
+            "dCalc": 0.38453508000000003,
+            "absResidual": 1.0456049281959423e-7
+          },
+          "formulaB": {
+            "dCalc": 0.23803369249268513,
+            "absResidual": 0.14650149206780771
+          },
+          "identityResidual": 0.42319727543950714,
+          "oneMinusScoreResidual": 0.19226764456049283,
+          "dLocalOneMinusDot": 0.3845350927077329
+        },
+        {
+          "rank": 10,
+          "documentId": "ITEM#ETH-SANT-G1-DARK-500G#WH-FUKUOKA",
+          "itemId": "ITEM#ETH-SANT-G1-DARK-500G",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "Ethiopia Santos G1 dark roast 500g",
+          "rawScore": 0.8005776,
+          "handlerDistance": 0.3988448,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000063236971,
+          "cosineSimilarityLocal": 0.6011551827534206,
+          "dLocal": 0.3988448172465794,
+          "formulaA": {
+            "dCalc": 0.3988448,
+            "absResidual": 1.7246579386842598e-8
+          },
+          "formulaB": {
+            "dCalc": 0.24909815113488065,
+            "absResidual": 0.14974666611169873
+          },
+          "identityResidual": 0.4017327827534206,
+          "oneMinusScoreResidual": 0.1994224172465794,
+          "dLocalOneMinusDot": 0.39884476836991134
+        }
+      ]
+    },
+    {
+      "id": "q53",
+      "language": "en",
+      "intent": "material",
+      "text": "bag with valve for storing coffee beans",
+      "vectorField": "embeddingEn",
+      "requestedTopK": 10,
+      "appliedTopK": 10,
+      "returnedCount": 10,
+      "distinctSkuCount": 4,
+      "took": 508,
+      "searchLatencyMs": 550,
+      "handlerLatencyMs": 560,
+      "coldStart": false,
+      "scoreNormalizationApplied": "two_minus_d_over_two",
+      "queryVector": {
+        "dimensions": 1024,
+        "norm": 0.9999999678099529,
+        "first5": [
+          -0.035055775195360184,
+          0.02208024449646473,
+          -0.013589894399046898,
+          0.044314563274383545,
+          0.01795019954442978
+        ]
+      },
+      "rawScoreRange": {
+        "min": 0.8230182,
+        "max": 0.8271231
+      },
+      "maxResidualFormulaA": 9.946121415360665e-8,
+      "maxResidualFormulaB": 0.13892366061642025,
+      "maxResidualIdentity": 0.48136936723471857,
+      "maxResidualOneMinusScore": 0.1769818196355526,
+      "hits": [
+        {
+          "rank": 1,
+          "documentId": "ITEM#MAT-BAG-L-VALVE#WH-OSAKA",
+          "itemId": "ITEM#MAT-BAG-L-VALVE",
+          "warehouseId": "WH-OSAKA",
+          "productName": "Packaging material bag L with valve",
+          "rawScore": 0.8271231,
+          "handlerDistance": 0.3457538,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.000000003023999,
+          "cosineSimilarityLocal": 0.6542462672347186,
+          "dLocal": 0.34575373276528143,
+          "formulaA": {
+            "dCalc": 0.3457538,
+            "absResidual": 6.723471857039698e-8
+          },
+          "formulaB": {
+            "dCalc": 0.2090098801496416,
+            "absResidual": 0.13674385261563982
+          },
+          "identityResidual": 0.48136936723471857,
+          "oneMinusScoreResidual": 0.17287683276528143,
+          "dLocalOneMinusDot": 0.3457537518470596
+        },
+        {
+          "rank": 2,
+          "documentId": "ITEM#MAT-BAG-L-VALVE#WH-FUKUOKA",
+          "itemId": "ITEM#MAT-BAG-L-VALVE",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "Packaging material bag L with valve",
+          "rawScore": 0.8271231,
+          "handlerDistance": 0.3457538,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.000000003023999,
+          "cosineSimilarityLocal": 0.6542462672347186,
+          "dLocal": 0.34575373276528143,
+          "formulaA": {
+            "dCalc": 0.3457538,
+            "absResidual": 6.723471857039698e-8
+          },
+          "formulaB": {
+            "dCalc": 0.2090098801496416,
+            "absResidual": 0.13674385261563982
+          },
+          "identityResidual": 0.48136936723471857,
+          "oneMinusScoreResidual": 0.17287683276528143,
+          "dLocalOneMinusDot": 0.3457537518470596
+        },
+        {
+          "rank": 3,
+          "documentId": "ITEM#MAT-BAG-L-VALVE#WH-TOKYO",
+          "itemId": "ITEM#MAT-BAG-L-VALVE",
+          "warehouseId": "WH-TOKYO",
+          "productName": "Packaging material bag L with valve",
+          "rawScore": 0.8271231,
+          "handlerDistance": 0.3457538,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.000000003023999,
+          "cosineSimilarityLocal": 0.6542462672347186,
+          "dLocal": 0.34575373276528143,
+          "formulaA": {
+            "dCalc": 0.3457538,
+            "absResidual": 6.723471857039698e-8
+          },
+          "formulaB": {
+            "dCalc": 0.2090098801496416,
+            "absResidual": 0.13674385261563982
+          },
+          "identityResidual": 0.48136936723471857,
+          "oneMinusScoreResidual": 0.17287683276528143,
+          "dLocalOneMinusDot": 0.3457537518470596
+        },
+        {
+          "rank": 4,
+          "documentId": "ITEM#MAT-BAG-M-VALVE#WH-FUKUOKA",
+          "itemId": "ITEM#MAT-BAG-M-VALVE",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "Packaging material bag M with valve",
+          "rawScore": 0.82588065,
+          "handlerDistance": 0.3482387,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 0.999999991123989,
+          "cosineSimilarityLocal": 0.6517613166041256,
+          "dLocal": 0.3482386833958744,
+          "formulaA": {
+            "dCalc": 0.3482387,
+            "absResidual": 1.6604125629982036e-8
+          },
+          "formulaB": {
+            "dCalc": 0.21082870751360994,
+            "absResidual": 0.13740997588226445
+          },
+          "identityResidual": 0.4776419666041256,
+          "oneMinusScoreResidual": 0.17411933339587438,
+          "dLocalOneMinusDot": 0.3482387101611423
+        },
+        {
+          "rank": 5,
+          "documentId": "ITEM#MAT-BAG-M-VALVE#WH-OSAKA",
+          "itemId": "ITEM#MAT-BAG-M-VALVE",
+          "warehouseId": "WH-OSAKA",
+          "productName": "Packaging material bag M with valve",
+          "rawScore": 0.82588065,
+          "handlerDistance": 0.3482387,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 0.999999991123989,
+          "cosineSimilarityLocal": 0.6517613166041256,
+          "dLocal": 0.3482386833958744,
+          "formulaA": {
+            "dCalc": 0.3482387,
+            "absResidual": 1.6604125629982036e-8
+          },
+          "formulaB": {
+            "dCalc": 0.21082870751360994,
+            "absResidual": 0.13740997588226445
+          },
+          "identityResidual": 0.4776419666041256,
+          "oneMinusScoreResidual": 0.17411933339587438,
+          "dLocalOneMinusDot": 0.3482387101611423
+        },
+        {
+          "rank": 6,
+          "documentId": "ITEM#MAT-BAG-M-VALVE#WH-TOKYO",
+          "itemId": "ITEM#MAT-BAG-M-VALVE",
+          "warehouseId": "WH-TOKYO",
+          "productName": "Packaging material bag M with valve",
+          "rawScore": 0.82588065,
+          "handlerDistance": 0.3482387,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 0.999999991123989,
+          "cosineSimilarityLocal": 0.6517613166041256,
+          "dLocal": 0.3482386833958744,
+          "formulaA": {
+            "dCalc": 0.3482387,
+            "absResidual": 1.6604125629982036e-8
+          },
+          "formulaB": {
+            "dCalc": 0.21082870751360994,
+            "absResidual": 0.13740997588226445
+          },
+          "identityResidual": 0.4776419666041256,
+          "oneMinusScoreResidual": 0.17411933339587438,
+          "dLocalOneMinusDot": 0.3482387101611423
+        },
+        {
+          "rank": 7,
+          "documentId": "ITEM#MAT-BAG-S-VALVE#WH-FUKUOKA",
+          "itemId": "ITEM#MAT-BAG-S-VALVE",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "Packaging material bag S with valve",
+          "rawScore": 0.8248718,
+          "handlerDistance": 0.3502563999999999,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000433571627,
+          "cosineSimilarityLocal": 0.6497435005387859,
+          "dLocal": 0.35025649946121407,
+          "formulaA": {
+            "dCalc": 0.3502563999999999,
+            "absResidual": 9.946121415360665e-8
+          },
+          "formulaB": {
+            "dCalc": 0.2123095976853615,
+            "absResidual": 0.13794690177585256
+          },
+          "identityResidual": 0.474615300538786,
+          "oneMinusScoreResidual": 0.1751282994612141,
+          "dLocalOneMinusDot": 0.3502564922054541
+        },
+        {
+          "rank": 8,
+          "documentId": "ITEM#MAT-BAG-S-VALVE#WH-OSAKA",
+          "itemId": "ITEM#MAT-BAG-S-VALVE",
+          "warehouseId": "WH-OSAKA",
+          "productName": "Packaging material bag S with valve",
+          "rawScore": 0.8248718,
+          "handlerDistance": 0.3502563999999999,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000433571627,
+          "cosineSimilarityLocal": 0.6497435005387859,
+          "dLocal": 0.35025649946121407,
+          "formulaA": {
+            "dCalc": 0.3502563999999999,
+            "absResidual": 9.946121415360665e-8
+          },
+          "formulaB": {
+            "dCalc": 0.2123095976853615,
+            "absResidual": 0.13794690177585256
+          },
+          "identityResidual": 0.474615300538786,
+          "oneMinusScoreResidual": 0.1751282994612141,
+          "dLocalOneMinusDot": 0.3502564922054541
+        },
+        {
+          "rank": 9,
+          "documentId": "ITEM#MAT-BAG-S-VALVE#WH-TOKYO",
+          "itemId": "ITEM#MAT-BAG-S-VALVE",
+          "warehouseId": "WH-TOKYO",
+          "productName": "Packaging material bag S with valve",
+          "rawScore": 0.8248718,
+          "handlerDistance": 0.3502563999999999,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 1.0000000433571627,
+          "cosineSimilarityLocal": 0.6497435005387859,
+          "dLocal": 0.35025649946121407,
+          "formulaA": {
+            "dCalc": 0.3502563999999999,
+            "absResidual": 9.946121415360665e-8
+          },
+          "formulaB": {
+            "dCalc": 0.2123095976853615,
+            "absResidual": 0.13794690177585256
+          },
+          "identityResidual": 0.474615300538786,
+          "oneMinusScoreResidual": 0.1751282994612141,
+          "dLocalOneMinusDot": 0.3502564922054541
+        },
+        {
+          "rank": 10,
+          "documentId": "ITEM#MAT-BAG-S-VALVE-V372#WH-FUKUOKA",
+          "itemId": "ITEM#MAT-BAG-S-VALVE-V372",
+          "warehouseId": "WH-FUKUOKA",
+          "productName": "Packaging material bag S with valve V372",
+          "rawScore": 0.8230182,
+          "handlerDistance": 0.35396359999999993,
+          "distanceBasisMismatch": false,
+          "storedVectorNorm": 0.999999992640045,
+          "cosineSimilarityLocal": 0.6460363803644474,
+          "dLocal": 0.35396361963555256,
+          "formulaA": {
+            "dCalc": 0.35396359999999993,
+            "absResidual": 1.9635552628294306e-8
+          },
+          "formulaB": {
+            "dCalc": 0.2150399590191323,
+            "absResidual": 0.13892366061642025
+          },
+          "identityResidual": 0.46905458036444747,
+          "oneMinusScoreResidual": 0.1769818196355526,
+          "dLocalOneMinusDot": 0.35396364518629264
+        }
+      ]
+    }
+  ],
+  "spendUsd": {
+    "before": 1.31,
+    "beforeOcuHours": 5.45,
+    "beforeWindow": "2026-08-19T13:25:00.000Z 〜 2026-08-21T13:30:00.000Z",
+    "thresholdUsd": 20,
+    "windowHours": 48,
+    "note": "--hours 48 を明示して取得している（既定 24 時間はローリングウィンドウのため通算にならない。13.12 で判明）。増加 0.02 USD（0.10 OCU-hour）は本タスクの 5 回の k-NN 検索が SearchOCU を立ち上げたことによる。1 本目の Cold_Start（約 20 秒）を含む。上限 20 USD に対して残り 18.67 USD。",
+    "after": 1.33,
+    "afterOcuHours": 5.55,
+    "afterWindow": "2026-08-19T13:35:00.000Z 〜 2026-08-21T13:40:00.000Z",
+    "increase": 0.02
+  }
+}

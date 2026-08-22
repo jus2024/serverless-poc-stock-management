@@ -36,3 +36,11 @@ jobs:
 
       - name: 型チェック
         run: npx tsc --noEmit
+
+      - name: テスト
+        run: npm run test
+
+      # 要件 18.16: 本検証は専用の Vector_Table 方式を採る前提のため、
+      # 既存検証の測定結果である docs/opensearch-comparison.md は無変更でなければならない。
+      - name: docs/opensearch-comparison.md の無変更確認
+        run: git diff --exit-code -- docs/opensearch-comparison.md

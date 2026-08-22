@@ -1,0 +1,260 @@
+{
+  "schemaVersion": 1,
+  "mode": "storage",
+  "generatedAt": "2026-08-21T13:23:35.385Z",
+  "region": "us-west-2",
+  "readOnly": true,
+  "warnings": [
+    "TableSizeBytes / S2 / kiro-roasters-inventory-vector は未確定です（insufficient-samples）。スナップショットが 1 件しかありません。採用値の確定には 6 時間以上あけた連続 2 回の取得が必要です（要件 14.4）。",
+    "IndexSizeBytes / byEmbeddingEn は未確定です（insufficient-samples）。スナップショットが 1 件しかありません。採用値の確定には 6 時間以上あけた連続 2 回の取得が必要です（要件 14.4）。",
+    "IndexSizeBytes / byEmbeddingJa は未確定です（insufficient-samples）。スナップショットが 1 件しかありません。採用値の確定には 6 時間以上あけた連続 2 回の取得が必要です（要件 14.4）。"
+  ],
+  "notes": [
+    "Vector_Table は GSI を 1 本も持たない（要件 1.1）。したがって TableSizeBytes の差分は ベクトル属性そのものの寄与であり、GSI への複製分を差し引く補正を必要としない。GSI が ProjectionType: ALL で存在する場合はベクトル属性が GSI へ複製されて差分が （1 + GSI 本数）倍に膨らむが、本測定にはその項が存在しない。",
+    "IndexSizeBytes と ItemCount は 2 本のインデックスそれぞれの VectorIndexDescription から 直接取得した値である。TableSizeBytes スナップショットの差分からは算出していない（要件 14.3）。",
+    "TableSizeBytes と IndexSizeBytes は約 6 時間周期で更新されます。採用値は 6 時間以上あけた連続 2 回の取得値の差が 1.00% 以内であることを確認したものだけです（要件 14.4）。"
+  ],
+  "tableName": "kiro-roasters-inventory-vector",
+  "recordCount": 15000,
+  "capturedSnapshots": [
+    {
+      "label": "S2",
+      "field": "TableSizeBytes",
+      "target": "kiro-roasters-inventory-vector",
+      "value": 138127144,
+      "capturedAt": "2026-08-21T13:23:35.385Z",
+      "itemCount": null
+    },
+    {
+      "label": "S2",
+      "field": "IndexSizeBytes",
+      "target": "byEmbeddingEn",
+      "value": 74557051,
+      "capturedAt": "2026-08-21T13:23:35.385Z",
+      "itemCount": 14991
+    },
+    {
+      "label": "S2",
+      "field": "IndexSizeBytes",
+      "target": "byEmbeddingJa",
+      "value": 74557051,
+      "capturedAt": "2026-08-21T13:23:35.385Z",
+      "itemCount": 14991
+    }
+  ],
+  "ledgerSnapshotCount": 5,
+  "ledgerPath": "docs/measurements/storage-snapshots.json",
+  "tableSizeConvergence": [
+    {
+      "field": "TableSizeBytes",
+      "target": "kiro-roasters-inventory-vector",
+      "label": "S1",
+      "snapshots": [
+        {
+          "label": "S1",
+          "field": "TableSizeBytes",
+          "target": "kiro-roasters-inventory-vector",
+          "value": 13402024,
+          "capturedAt": "2026-08-19T13:23:48.653Z",
+          "itemCount": null
+        },
+        {
+          "label": "S1",
+          "field": "TableSizeBytes",
+          "target": "kiro-roasters-inventory-vector",
+          "value": 13402024,
+          "capturedAt": "2026-08-19T20:22:03.815Z",
+          "itemCount": null
+        }
+      ],
+      "comparisons": [
+        {
+          "earlierCapturedAt": "2026-08-19T13:23:48.653Z",
+          "laterCapturedAt": "2026-08-19T20:22:03.815Z",
+          "earlierValue": 13402024,
+          "laterValue": 13402024,
+          "hoursApart": 6.970878333333333,
+          "intervalSatisfied": true,
+          "relativeDifference": 0,
+          "withinTolerance": true,
+          "qualifies": true
+        }
+      ],
+      "refetchAttempts": 0,
+      "maxRefetchAttempts": 3,
+      "remainingRefetchAttempts": 3,
+      "tolerance": 0.01,
+      "minimumIntervalHours": 6,
+      "status": "converged",
+      "adopted": {
+        "label": "S1",
+        "field": "TableSizeBytes",
+        "target": "kiro-roasters-inventory-vector",
+        "value": 13402024,
+        "capturedAt": "2026-08-19T20:22:03.815Z",
+        "itemCount": null
+      },
+      "finalValue": null,
+      "determinate": true,
+      "estimatedErrorRange": null,
+      "notes": []
+    },
+    {
+      "field": "TableSizeBytes",
+      "target": "kiro-roasters-inventory-vector",
+      "label": "S2",
+      "snapshots": [
+        {
+          "label": "S2",
+          "field": "TableSizeBytes",
+          "target": "kiro-roasters-inventory-vector",
+          "value": 138127144,
+          "capturedAt": "2026-08-21T13:23:35.385Z",
+          "itemCount": null
+        }
+      ],
+      "comparisons": [],
+      "refetchAttempts": 0,
+      "maxRefetchAttempts": 3,
+      "remainingRefetchAttempts": 3,
+      "tolerance": 0.01,
+      "minimumIntervalHours": 6,
+      "status": "insufficient-samples",
+      "adopted": null,
+      "finalValue": {
+        "label": "S2",
+        "field": "TableSizeBytes",
+        "target": "kiro-roasters-inventory-vector",
+        "value": 138127144,
+        "capturedAt": "2026-08-21T13:23:35.385Z",
+        "itemCount": null
+      },
+      "determinate": false,
+      "estimatedErrorRange": null,
+      "notes": [
+        "スナップショットが 1 件しかありません。採用値の確定には 6 時間以上あけた連続 2 回の取得が必要です（要件 14.4）。"
+      ]
+    }
+  ],
+  "indexSizeConvergence": [
+    {
+      "field": "IndexSizeBytes",
+      "target": "byEmbeddingEn",
+      "label": "S2",
+      "snapshots": [
+        {
+          "label": "S2",
+          "field": "IndexSizeBytes",
+          "target": "byEmbeddingEn",
+          "value": 74557051,
+          "capturedAt": "2026-08-21T13:23:35.385Z",
+          "itemCount": 14991
+        }
+      ],
+      "comparisons": [],
+      "refetchAttempts": 0,
+      "maxRefetchAttempts": 3,
+      "remainingRefetchAttempts": 3,
+      "tolerance": 0.01,
+      "minimumIntervalHours": 6,
+      "status": "insufficient-samples",
+      "adopted": null,
+      "finalValue": {
+        "label": "S2",
+        "field": "IndexSizeBytes",
+        "target": "byEmbeddingEn",
+        "value": 74557051,
+        "capturedAt": "2026-08-21T13:23:35.385Z",
+        "itemCount": 14991
+      },
+      "determinate": false,
+      "estimatedErrorRange": null,
+      "notes": [
+        "スナップショットが 1 件しかありません。採用値の確定には 6 時間以上あけた連続 2 回の取得が必要です（要件 14.4）。"
+      ]
+    },
+    {
+      "field": "IndexSizeBytes",
+      "target": "byEmbeddingJa",
+      "label": "S2",
+      "snapshots": [
+        {
+          "label": "S2",
+          "field": "IndexSizeBytes",
+          "target": "byEmbeddingJa",
+          "value": 74557051,
+          "capturedAt": "2026-08-21T13:23:35.385Z",
+          "itemCount": 14991
+        }
+      ],
+      "comparisons": [],
+      "refetchAttempts": 0,
+      "maxRefetchAttempts": 3,
+      "remainingRefetchAttempts": 3,
+      "tolerance": 0.01,
+      "minimumIntervalHours": 6,
+      "status": "insufficient-samples",
+      "adopted": null,
+      "finalValue": {
+        "label": "S2",
+        "field": "IndexSizeBytes",
+        "target": "byEmbeddingJa",
+        "value": 74557051,
+        "capturedAt": "2026-08-21T13:23:35.385Z",
+        "itemCount": 14991
+      },
+      "determinate": false,
+      "estimatedErrorRange": null,
+      "notes": [
+        "スナップショットが 1 件しかありません。採用値の確定には 6 時間以上あけた連続 2 回の取得が必要です（要件 14.4）。"
+      ]
+    }
+  ],
+  "contribution": {
+    "s1": {
+      "label": "S1",
+      "field": "TableSizeBytes",
+      "target": "kiro-roasters-inventory-vector",
+      "value": 13402024,
+      "capturedAt": "2026-08-19T20:22:03.815Z",
+      "itemCount": null
+    },
+    "s2": {
+      "label": "S2",
+      "field": "TableSizeBytes",
+      "target": "kiro-roasters-inventory-vector",
+      "value": 138127144,
+      "capturedAt": "2026-08-21T13:23:35.385Z",
+      "itemCount": null
+    },
+    "recordCount": 15000,
+    "vectorAttributeContributionBytes": 124725120,
+    "averagePerRecordBytes": 8315.008,
+    "gsiAdjustmentApplied": false,
+    "gsiNote": "Vector_Table は GSI を 1 本も持たない（要件 1.1）。したがって TableSizeBytes の差分は ベクトル属性そのものの寄与であり、GSI への複製分を差し引く補正を必要としない。GSI が ProjectionType: ALL で存在する場合はベクトル属性が GSI へ複製されて差分が （1 + GSI 本数）倍に膨らむが、本測定にはその項が存在しない。"
+  },
+  "contributionDeterminate": false,
+  "indexTotals": {
+    "indexes": [
+      {
+        "indexName": "byEmbeddingEn",
+        "indexSizeBytes": 74557051,
+        "itemCount": 14991,
+        "capturedAt": "2026-08-21T13:23:35.385Z"
+      },
+      {
+        "indexName": "byEmbeddingJa",
+        "indexSizeBytes": 74557051,
+        "itemCount": 14991,
+        "capturedAt": "2026-08-21T13:23:35.385Z"
+      }
+    ],
+    "totalIndexSizeBytes": 149114102,
+    "totalItemCount": 29982,
+    "derivedFromTableSizeDifference": false,
+    "note": "IndexSizeBytes と ItemCount は 2 本のインデックスそれぞれの VectorIndexDescription から 直接取得した値である。TableSizeBytes スナップショットの差分からは算出していない（要件 14.3）。"
+  },
+  "indexTotalsDeterminate": false,
+  "gsiNote": "Vector_Table は GSI を 1 本も持たない（要件 1.1）。したがって TableSizeBytes の差分は ベクトル属性そのものの寄与であり、GSI への複製分を差し引く補正を必要としない。GSI が ProjectionType: ALL で存在する場合はベクトル属性が GSI へ複製されて差分が （1 + GSI 本数）倍に膨らむが、本測定にはその項が存在しない。",
+  "indexSizeNote": "IndexSizeBytes と ItemCount は 2 本のインデックスそれぞれの VectorIndexDescription から 直接取得した値である。TableSizeBytes スナップショットの差分からは算出していない（要件 14.3）。"
+}
