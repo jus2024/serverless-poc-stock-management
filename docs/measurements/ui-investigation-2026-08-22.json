@@ -1,0 +1,337 @@
+{
+  "schemaVersion": 1,
+  "task": "13.18 追補（UI からの比較検証の深掘り。ブラウザ操作による実測）",
+  "generatedAt": "2026-08-22T00:00:00Z",
+  "note": "task 13.18 は「ブラウザでの DOM 操作は実施していない」と記録した。本ファイルはその欠落を埋めるためにブラウザ UI から実施した追加観測である。すべて日本語 / 全倉庫 / TopK は各行に記載。DynamoDB / OpenSearch の値は UI が応答の searchLatencyMs と distinctSkuCount をそのまま表示したものである",
+  "requirements": [
+    "11.15",
+    "12.1",
+    "12.2",
+    "12.5",
+    "12.6",
+    "12.7",
+    "13.15",
+    "18.9",
+    "18.10"
+  ],
+  "correctionsToPriorRecords": [
+    {
+      "target": "docs/vector-search-comparison.md 第 4.2 節",
+      "was": "不合格の機構を「HNSW が同一ベクトルの 3 兄弟を回収しきれない」と OpenSearch 固有の性質として説明していた",
+      "now": "両バックエンドとも兄弟を取りこぼす。どちらが劣るかはクエリ依存である。q50 では DynamoDB が 1.90 行/SKU、OpenSearch が 2.91 行/SKU で立場が逆転する",
+      "evidence": "uiObservations の distinctSkuCount 列"
+    },
+    {
+      "target": "docs/vector-search-comparison.md 第 9.3 節 q53",
+      "was": "「資材クエリは日英でほぼ同一の挙動である。どちらも袋 × バルブ付に正確に当たり、サイズだけが並び順で異なる」",
+      "now": "日英で別の SKU 群を引き当てている。日本語は容量表記（1kg用 / 100g用 / 200g用）、英語はサイズ表記（L / M / S）で、上位 3 SKU の重なりは 0 である",
+      "evidence": "q53 の itemId 実測（ja: MAT-BAG-1KG-VALVE ほか / en: MAT-BAG-L-VALVE ほか）"
+    },
+    {
+      "target": "docs/vector-search-comparison.md 第 9 節の日英距離に関する要約",
+      "was": "（本ドキュメント外の口頭要約）日本語の距離が系統的に大きい",
+      "now": "方向は一致しない。q01 は日本語が +0.230 大きいが、q03 は −0.071、q53 は −0.031 で日本語のほうが小さい。第 9.3 節の本文は当初から正しく記述している",
+      "evidence": "uiObservations の paired 3 組"
+    }
+  ],
+  "uiObservations": {
+    "pairedLanguageRuns": {
+      "condition": "TopK 30 / 全倉庫 / 各 1 回",
+      "note": "UI の「結果の重なりと順位差」パネルは DynamoDB 対 OpenSearch を比較するもので、日英は比較しない。日英の対比は 2 回実行して目視で行った。可視範囲は順位 1〜7 前後（一意 SKU 3 件）である",
+      "runs": [
+        {
+          "id": "q01",
+          "language": "ja",
+          "query": "花のような香りで酸味の強い浅煎りの豆",
+          "rank1ItemId": "ITEM#GTM-SANT-G2-LIGHT-1KG",
+          "rank1Name": "グアテマラ サントス G2 ライト 1kg",
+          "rank1Distance": 0.5706,
+          "rank1RawScoreDdb": 0.570612,
+          "rank1RawScoreAoss": 0.714694,
+          "top3DistinctSkuFamily": "グアテマラ（産地 + 焙煎度）"
+        },
+        {
+          "id": "q01",
+          "language": "en",
+          "query": "light roast beans with floral aroma and bright acidity",
+          "rank1ItemId": "ITEM#BLEND-FLORAL-LIGHT-200G",
+          "rank1Name": "Blend Floral light roast 200g",
+          "rank1Distance": 0.3403,
+          "rank1RawScoreDdb": 0.340251,
+          "rank1RawScoreAoss": 0.829874,
+          "top3DistinctSkuFamily": "Blend Floral（ブレンド名）"
+        },
+        {
+          "id": "q03",
+          "language": "ja",
+          "query": "ジャスミンとレモンを思わせる華やかな風味",
+          "rank1ItemId": "ITEM#ETH-SUP-G2-CITY-500G",
+          "rank1Name": "エチオピア スプレモ G2 シティ 500g",
+          "rank1Distance": 0.5901,
+          "top3DistinctSkuFamily": "エチオピア焙煎豆"
+        },
+        {
+          "id": "q03",
+          "language": "en",
+          "query": "vibrant flavor reminiscent of jasmine and lemon",
+          "rank1ItemId": "ITEM#...TH-MIX-5P-V288",
+          "rank1Name": "Drip bag Ethiopia mix 5 pack V288",
+          "rank1Distance": 0.6606,
+          "rank1RawScoreAoss": 0.66972,
+          "top3DistinctSkuFamily": "Ethiopia ドリップバッグ"
+        },
+        {
+          "id": "q53",
+          "language": "ja",
+          "query": "コーヒー豆を保存するためのバルブ付の袋",
+          "rank1ItemId": "ITEM#MAT-BAG-1KG-VALVE",
+          "rank1Name": "資材 袋 1kg用 バルブ付",
+          "rank1Distance": 0.3149,
+          "rank1RawScoreDdb": 0.314888,
+          "rank1RawScoreAoss": 0.842556,
+          "top3DistinctSkuFamily": "容量表記の袋（1KG / 100G / 200G）"
+        },
+        {
+          "id": "q53",
+          "language": "en",
+          "query": "bag with valve for storing coffee beans",
+          "rank1ItemId": "ITEM#MAT-BAG-L-VALVE",
+          "rank1Name": "Packaging material bag L with valve",
+          "rank1Distance": 0.3458,
+          "rank1RawScoreDdb": 0.345754,
+          "rank1RawScoreAoss": 0.827123,
+          "top3DistinctSkuFamily": "サイズ表記の袋（L / M / S）"
+        }
+      ],
+      "findings": [
+        "3 組すべてで上位 3 SKU の重なりが 0 件。両言語とももっともらしい商品を返すが、別の SKU ファミリーから返す",
+        "距離の方向は言語で一定しない（q01 は ja が +0.230、q03 は −0.071、q53 は −0.031）",
+        "同じ商品を日英どちらで検索しても同じ結果が返る保証はない。これは recall 差（最大 0.007）からは読み取れない",
+        "知見 8（スコアと距離の対応がバックエンドで逆向き）が 6 回すべてで成立。OpenSearch の生スコアは式 A `(2 − d) / 2` と一致し、DynamoDB は生スコア = 正規化距離"
+      ]
+    },
+    "distinctSkuRecovery": {
+      "condition": "TopK 99 / 日本語 / 全倉庫 / 各 1 回",
+      "metric": "返却行数 99 ÷ 一意 SKU 件数。3.00 なら 3 倉庫兄弟が完全に揃っている",
+      "runs": [
+        {
+          "id": "q02",
+          "intent": "flavor",
+          "query": "チョコレートのような甘さの深煎りブレンド",
+          "rank1Distance": 0.5063,
+          "ddbDistinctSku": 33,
+          "ddbRowsPerSku": 3.0,
+          "aossDistinctSku": 33,
+          "aossRowsPerSku": 3.0,
+          "materialSkuFirstRank": null,
+          "topCategory": "ブレンド"
+        },
+        {
+          "id": "q43",
+          "intent": "usage",
+          "query": "ハンドドリップに向いた焙煎豆",
+          "rank1Distance": 0.5195,
+          "ddbDistinctSku": 33,
+          "ddbRowsPerSku": 3.0,
+          "aossDistinctSku": 42,
+          "aossRowsPerSku": 2.36,
+          "materialSkuFirstRank": null,
+          "topCategory": "ブレンド"
+        },
+        {
+          "id": "q47",
+          "intent": "usage",
+          "query": "1kg の業務用の大容量焙煎豆",
+          "rank1Distance": 0.6915,
+          "ddbDistinctSku": 33,
+          "ddbRowsPerSku": 3.0,
+          "aossDistinctSku": 38,
+          "aossRowsPerSku": 2.61,
+          "materialSkuFirstRank": 1,
+          "topCategory": "資材 ラベル 1kg用"
+        },
+        {
+          "id": "q48",
+          "intent": "usage",
+          "query": "200g の小容量パックの焙煎豆",
+          "rank1Distance": 0.7276,
+          "ddbDistinctSku": 40,
+          "ddbRowsPerSku": 2.48,
+          "aossDistinctSku": 41,
+          "aossRowsPerSku": 2.41,
+          "materialSkuFirstRank": 4,
+          "topCategory": "グアテマラ焙煎豆 + 資材 袋 200g用"
+        },
+        {
+          "id": "q50",
+          "intent": "usage",
+          "query": "アイスコーヒー向けの深煎り豆",
+          "rank1Distance": 0.7566,
+          "ddbDistinctSku": 52,
+          "ddbRowsPerSku": 1.9,
+          "aossDistinctSku": 34,
+          "aossRowsPerSku": 2.91,
+          "materialSkuFirstRank": null,
+          "topCategory": "ブレンド ディープ ダーク、順位 4 から生豆"
+        },
+        {
+          "id": "ad-hoc-1",
+          "intent": "usage（即席。q47 から容量トークンを除去）",
+          "query": "業務用の大容量焙煎豆",
+          "rank1Distance": 0.7629,
+          "ddbDistinctSku": 37,
+          "ddbRowsPerSku": 2.68,
+          "aossDistinctSku": 37,
+          "aossRowsPerSku": 2.68,
+          "materialSkuFirstRank": 1,
+          "topCategory": "資材 袋 XL"
+        },
+        {
+          "id": "B1",
+          "intent": "境界探索（サイズ語あり / 該当商品あり）",
+          "query": "500g の深煎りブレンド",
+          "rank1Distance": 0.4926,
+          "ddbDistinctSku": 33,
+          "ddbRowsPerSku": 3.0,
+          "aossDistinctSku": 33,
+          "aossRowsPerSku": 3.0,
+          "materialSkuFirstRank": null,
+          "topCategory": "ブレンド ディープ 500g"
+        },
+        {
+          "id": "B2",
+          "intent": "境界探索（サイズ語あり / 該当商品なし）",
+          "query": "1kg の深煎りブレンド",
+          "rank1Distance": 0.5855,
+          "ddbDistinctSku": 33,
+          "ddbRowsPerSku": 3.0,
+          "aossDistinctSku": 33,
+          "aossRowsPerSku": 3.0,
+          "materialSkuFirstRank": null,
+          "topCategory": "ブレンド ディープ 500g（1kg のブレンドは存在しないため近い容量へ落ちた）"
+        },
+        {
+          "id": "B3",
+          "intent": "境界探索（サイズ語なし / 該当属性なし）",
+          "query": "カフェインレスの豆",
+          "rank1Distance": 0.7103,
+          "ddbDistinctSku": 33,
+          "ddbRowsPerSku": 3.0,
+          "aossDistinctSku": 35,
+          "aossRowsPerSku": 2.83,
+          "materialSkuFirstRank": null,
+          "topCategory": "ケニア 生豆"
+        }
+      ]
+    }
+  },
+  "conclusions": {
+    "threePhenomenaAreIndependent": [
+      "現象 1: 兄弟の回収漏れ（返却行数 ÷ 一意 SKU が 3.00 から離れる）。両バックエンドで起こり、どちらが劣るかはクエリ依存。DynamoDB は距離 0.72 付近まで 3.00 を保ち、そこから崩れる（q48 2.48 / q50 1.90 / ad-hoc-1 2.68）。OpenSearch は距離に関係なく崩れる（q43 は距離 0.5195 で 2.36）",
+      "現象 2: 資材の混入。クエリの中で強く一致する語がサイズ表現しかないときに起こる（q47 / q48 / ad-hoc-1）。資材の商品名はサイズが第一の記述子であるため（資材 袋 XL、資材 ラベル 1kg用）",
+      "現象 3: カテゴリ内のドリフト。距離が遠いとき同カテゴリの別の性質へ流れる（q50 の生豆、B3 の生豆）"
+    ],
+    "sizeWordHypothesis": {
+      "statement": "サイズ語の存在自体は無害である。問題はサイズ語以外に照合できる属性がないこと",
+      "supporting": [
+        "B1: サイズ語あり + 該当商品あり + 焙煎度あり → 距離 0.4926、資材 0 件、3.00",
+        "B2: サイズ語あり + 該当商品なし + 焙煎度あり → 距離 0.5855、資材 0 件、3.00。同カテゴリの近い容量へ落ちた",
+        "B3: サイズ語なし + 該当属性なし → 距離 0.7103 と遠いが資材 0 件",
+        "q47 / ad-hoc-1: 業務用・大容量が 9 項目のどれにも一致せず、サイズが唯一の強い信号 → 資材が 1 位から"
+      ],
+      "mechanism": "Sku_Metadata の 9 項目のうち、B1 / B2 は焙煎度（深煎り）とカテゴリ（ブレンド）が一致するためサイズ語に勝つ。q47 は業務用・大容量がどの項目にも一致せず、1kg が商品名にしか当たらないため、サイズを第一の記述子とする資材が勝つ"
+    },
+    "distanceIsNotASufficientGuardrail": {
+      "statement": "1 位の正規化距離を単独の閾値にすると誤判定する",
+      "counterexamplePair": [
+        {
+          "query": "1kg の業務用の大容量焙煎豆",
+          "distance": 0.6915,
+          "materialSkuFirstRank": 1,
+          "verdict": "汚染"
+        },
+        {
+          "query": "カフェインレスの豆",
+          "distance": 0.7103,
+          "materialSkuFirstRank": null,
+          "verdict": "健全"
+        }
+      ],
+      "implication": "より遠い B3 のほうが健全である。距離閾値は q47 を見逃すか B3 を誤検知するかのどちらかになる",
+      "recommendedInstead": [
+        "カテゴリ整合性: 豆を求めるクエリの上位に資材が現れたら警告する。返却行の category を見るだけで実装でき、q47（0.6915 汚染）と B3（0.7103 健全）を正しく区別できる",
+        "兄弟の完全性: 返却行数 ÷ 一意 SKU が 3.00 から離れたら近似探索の劣化として扱う。距離とは独立した情報を与える",
+        "距離は補助指標として有効（0.72 超で DynamoDB の回収漏れが始まる）だが単独の閾値にはできない"
+      ]
+    },
+    "unexplained": [
+      "q50 `アイスコーヒー向けの深煎り豆` はサイズ語を含まないのに DynamoDB が 1.90 行/SKU まで落ち、順位 4 から生豆が混じる。現象 1 と現象 3 の両方が同時に起きているが、なぜこのクエリで DynamoDB が特異に崩れるかは未解明である"
+    ]
+  },
+  "latencyConditionDependence": {
+    "why": "task 13.18 の測定はクエリを変えながらの 30 試行であり、同一クエリの反復ではない。UI で同一クエリを反復すると両バックエンドが大幅に速くなるため、条件を併記せずに数値を引用してはならない",
+    "sameQueryRepeated": {
+      "query": "重いボディでコクのあるフレンチロースト",
+      "runs": 10,
+      "ddbSearchLatencyMs": [
+        301,
+        140,
+        23
+      ],
+      "aossSearchLatencyMs": [
+        670,
+        128,
+        99
+      ],
+      "embeddingLatencyMs": [
+        191,
+        202,
+        203
+      ],
+      "note": "1 回目 / 2 回目 / 10 回目。DynamoDB は 13.18 の中央値 19 ms に収束した。OpenSearch の 99 ms は 13.18 の実測最小 116 ms を下回る"
+    },
+    "varyingQueries": {
+      "ddbSearchLatencyMs": [
+        71,
+        74,
+        83,
+        93,
+        103,
+        160,
+        163,
+        186,
+        220,
+        260,
+        263,
+        362,
+        418,
+        481
+      ],
+      "aossSearchLatencyMs": [
+        289,
+        336,
+        357,
+        448,
+        479,
+        487,
+        509,
+        514,
+        572,
+        588,
+        717,
+        892,
+        961,
+        1046
+      ],
+      "note": "暖機後の 14 回。13.18 の実測レンジ（DDB 9〜240 / AOSS 116〜978）とおおむね整合するが、DynamoDB は上端を超える"
+    },
+    "embeddingDoesNotWarmUp": "埋め込み生成は 10 回反復しても 191 → 203 ms で改善しない。us-west-2 の Titan v2 はレイテンシ最適化推論に非対応で、毎回 ValidationException を受けてから標準推論で呼び直すため Bedrock への往復が 2 回発生する（要件 18.22）。この往復の内訳は未実測",
+    "endToEnd": "完全に暖まった定常状態で 埋め込み 203 ms + 検索（並列なので遅い側）99 ms ≈ 302 ms。埋め込みが約 3 分の 2 を占める。検索区間の中央値比 10.9 倍は体感差に直結しない",
+    "verdict": "レイテンシは両バックエンドが同オーダーに収まり、実務上の選定軸にならない（利用者判断）"
+  },
+  "budget": {
+    "bedrockEmbedsAdded": 19,
+    "note": "UI からの検索 19 回（q22 反復 10 / paired 6 / usage+対照 4 相当のうち重複を除く実数）。各 1 回の埋め込みを伴う。通算は本ファイル作成時点で概算 10,172 件。OCU はアイドルから再度立ち上がったが 20 USD の上限には遠い",
+    "mutatingCallsMade": []
+  }
+}
