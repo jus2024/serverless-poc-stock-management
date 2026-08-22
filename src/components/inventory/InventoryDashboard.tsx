@@ -8,9 +8,10 @@ import LoadTestPanel from "./LoadTestPanel";
 import OnlineImpactPanel from "./OnlineImpactPanel";
 import OnlineImpactComparison from "./OnlineImpactComparison";
 import SearchComparisonView from "./SearchComparisonView";
+import VectorSearchComparisonView from "./VectorSearchComparisonView";
 import styles from "./InventoryDashboard.module.css";
 
-type Tab = "inventory" | "loadtest" | "results" | "search";
+type Tab = "inventory" | "loadtest" | "results" | "search" | "vectorSearch";
 
 /** オンライン影響テスト結果の localStorage キー */
 const IMPACT_RESULTS_STORAGE_KEY = "kiro-online-impact-results";
@@ -20,6 +21,7 @@ const tabs: { key: Tab; label: string }[] = [
   { key: "loadtest", label: "負荷テスト" },
   { key: "results", label: "結果ダッシュボード" },
   { key: "search", label: "検索比較" },
+  { key: "vectorSearch", label: "ベクトル検索比較" },
 ];
 
 export default function InventoryDashboard() {
@@ -150,6 +152,14 @@ export default function InventoryDashboard() {
           hidden={activeTab !== "search"}
         >
           {activeTab === "search" && <SearchComparisonView />}
+        </div>
+        <div
+          id="panel-vectorSearch"
+          role="tabpanel"
+          aria-labelledby="tab-vectorSearch"
+          hidden={activeTab !== "vectorSearch"}
+        >
+          {activeTab === "vectorSearch" && <VectorSearchComparisonView />}
         </div>
       </main>
     </div>

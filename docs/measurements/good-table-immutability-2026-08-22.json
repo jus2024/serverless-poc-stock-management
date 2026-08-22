@@ -1,0 +1,325 @@
+{
+  "schemaVersion": 1,
+  "task": "13.20（段階 15：Good_Table の不変性を確認する）",
+  "generatedAt": "2026-08-22T04:46:00Z",
+  "requirements": ["1.5", "6.9"],
+
+  "verdict": {
+    "requirement15": {
+      "requirement": "Good_Table の PK / SK、3 本の GSI（byWarehouse / byLocation / byUnitPrice）の定義、DynamoDB Streams の NEW_AND_OLD_IMAGES 設定、PITR 設定、アイテム件数 15,000、および任意に抽出した 10 件以上のアイテムの属性集合とアイテムサイズが、本機能のデプロイ前と同一であることを確認した結果を記載する",
+      "result": "満たす（比較した全項目で相違 0 件）",
+      "comparedFieldCount": 27,
+      "differenceCount": 0,
+      "drift": [],
+      "caveat": "「比較した全項目で相違 0 件」であり「テーブルの全属性が不変であることの証明」ではない。基準（13.1）が記録していない項目は比較できていない。notComparableBecauseBaselineDidNotRecord を参照"
+    },
+    "requirement69": {
+      "requirement": "Ingestion_Pipeline（kiro-inventory-pipeline）の状態が STOPPED であることを確認できるよう、パイプライン名と取得した状態値を出力する",
+      "result": "満たす",
+      "pipelineName": "kiro-inventory-pipeline",
+      "pipelineStatus": "STOPPED"
+    }
+  },
+
+  "baseline": {
+    "file": "docs/measurements/good-table-snapshot-pre-check.json",
+    "snapshotSchemaVersion": 2,
+    "capturedAtUtc": "2026-08-18T16:56:03.151Z",
+    "producedBy": "task 13.1 / npm run vector:measure -- --pre-check",
+    "baselineFileModified": false,
+    "baselineFileModifiedNote": "基準ファイルは読み取りのみ。--no-write を指定して実行したため上書きしていない（runPreCheck は既存基準がある場合も writeNew で連番退避する実装だが、そもそも書き出していない）"
+  },
+
+  "current": {
+    "capturedAtUtc": "2026-08-22T04:42:49.907Z（Scan 経路） / 2026-08-22T04:44:35.443Z（BatchGetItem 経路）",
+    "tableName": "kiro-roasters-inventory-good",
+    "region": "us-west-2",
+    "accountId": "992382598974",
+    "tableArn": "arn:aws:dynamodb:us-west-2:992382598974:table/kiro-roasters-inventory-good",
+    "tableId": "2080a91f-75a0-476f-a65e-e2a717fec717",
+    "tableStatus": "ACTIVE",
+    "creationDateTime": "2026-08-08T07:42:43.420+09:00"
+  },
+
+  "howCompared": {
+    "note": "同じ結論を 2 つの独立した取得経路で出した。どちらも 13.1 と同一のコード（scripts/vector-search/measure.ts の buildGoodTableSnapshot / selectSampleItems / compareGoodTableSnapshots）でスナップショットを組み立てて比較しているため、アイテムサイズの推定方式が基準と同一であり、値が比較可能である",
+    "pathA": {
+      "name": "Scan 経路（13.1 と完全に同一の手順）",
+      "command": "npm run vector:measure -- --pre-check --no-write --json --region us-west-2",
+      "how": "DescribeTable + DescribeContinuousBackups + Scan(Limit 40) → itemId#warehouseId 昇順で先頭 10 件",
+      "sampleKeysMatchedBaseline": true,
+      "sampleKeysMatchedBaselineNote": "Scan の返却順は保証されないが、今回は基準と同一の 10 キーが選ばれた。基準と同じ抽出集合であることを実際に確認している（推定ではない）",
+      "identical": true,
+      "differenceCount": 0
+    },
+    "pathB": {
+      "name": "BatchGetItem 経路（Scan の返却順に依存しない照合）",
+      "how": "DescribeTable + DescribeContinuousBackups + BatchGetItem（基準が記録した 10 キーをそのまま指定）→ compareGoodTableSnapshots",
+      "why": "基準が抽出した 10 件と『同一のアイテム』を突き合わせたことを、Scan の返却順に依存せずに保証するため（task 15.1 の --teardown-check が使う経路と同じ）",
+      "requestedKeyCount": 10,
+      "returnedItemCount": 10,
+      "missingItemKeys": [],
+      "identical": true,
+      "differenceCount": 0
+    },
+    "agreement": "2 経路の結論は一致した（いずれも identical: true / differences 0 件 / comparedItemCount 10）"
+  },
+
+  "fieldByFieldComparison": [
+    { "field": "tableName", "baseline": "kiro-roasters-inventory-good", "current": "kiro-roasters-inventory-good", "result": "一致" },
+    { "field": "region", "baseline": "us-west-2", "current": "us-west-2", "result": "一致" },
+    { "field": "keySchema（PK / SK）", "baseline": "itemId:HASH, warehouseId:RANGE", "current": "itemId:HASH, warehouseId:RANGE", "result": "一致" },
+    { "field": "globalSecondaryIndexes.count", "baseline": "3", "current": "3", "result": "一致" },
+    { "field": "globalSecondaryIndexes.byLocation.keySchema", "baseline": "warehouseId:HASH, location:RANGE", "current": "warehouseId:HASH, location:RANGE", "result": "一致" },
+    { "field": "globalSecondaryIndexes.byLocation.projectionType", "baseline": "ALL", "current": "ALL", "result": "一致" },
+    { "field": "globalSecondaryIndexes.byLocation.nonKeyAttributes", "baseline": "[]（空）", "current": "[]（空）", "result": "一致", "note": "ProjectionType: ALL のため NonKeyAttributes は返らない。射影属性の明示列挙は存在せず、両側とも空である" },
+    { "field": "globalSecondaryIndexes.byUnitPrice.keySchema", "baseline": "warehouseId:HASH, unitPrice:RANGE", "current": "warehouseId:HASH, unitPrice:RANGE", "result": "一致" },
+    { "field": "globalSecondaryIndexes.byUnitPrice.projectionType", "baseline": "ALL", "current": "ALL", "result": "一致" },
+    { "field": "globalSecondaryIndexes.byUnitPrice.nonKeyAttributes", "baseline": "[]（空）", "current": "[]（空）", "result": "一致" },
+    { "field": "globalSecondaryIndexes.byWarehouse.keySchema", "baseline": "warehouseId:HASH, itemId:RANGE", "current": "warehouseId:HASH, itemId:RANGE", "result": "一致" },
+    { "field": "globalSecondaryIndexes.byWarehouse.projectionType", "baseline": "ALL", "current": "ALL", "result": "一致" },
+    { "field": "globalSecondaryIndexes.byWarehouse.nonKeyAttributes", "baseline": "[]（空）", "current": "[]（空）", "result": "一致" },
+    { "field": "streamEnabled", "baseline": "true", "current": "true", "result": "一致" },
+    { "field": "streamViewType", "baseline": "NEW_AND_OLD_IMAGES", "current": "NEW_AND_OLD_IMAGES", "result": "一致" },
+    { "field": "pointInTimeRecoveryStatus", "baseline": "ENABLED", "current": "ENABLED", "result": "一致", "how": "DescribeContinuousBackups（DescribeTable には現れない項目）" },
+    { "field": "itemCount", "baseline": "15000", "current": "15000", "result": "一致", "note": "itemCountApproximation を参照。概数だが今回は一致したため追加確認（全件 Scan）を行っていない" },
+    { "field": "sampleItems.ITEM#BLEND-CLASSIC-MEDIUM-200G#WH-FUKUOKA", "baseline": "8 属性 / 214 B", "current": "8 属性 / 214 B", "result": "一致" },
+    { "field": "sampleItems.ITEM#BLEND-CLASSIC-MEDIUM-200G#WH-OSAKA", "baseline": "8 属性 / 212 B", "current": "8 属性 / 212 B", "result": "一致" },
+    { "field": "sampleItems.ITEM#BLEND-CLASSIC-MEDIUM-200G#WH-TOKYO", "baseline": "8 属性 / 212 B", "current": "8 属性 / 212 B", "result": "一致" },
+    { "field": "sampleItems.ITEM#BLEND-ESPRESSO-FRENCH-100G-V603#WH-FUKUOKA", "baseline": "8 属性 / 225 B", "current": "8 属性 / 225 B", "result": "一致" },
+    { "field": "sampleItems.ITEM#BLEND-ESPRESSO-FRENCH-100G-V603#WH-OSAKA", "baseline": "8 属性 / 223 B", "current": "8 属性 / 223 B", "result": "一致" },
+    { "field": "sampleItems.ITEM#BLEND-ESPRESSO-FRENCH-100G-V603#WH-TOKYO", "baseline": "8 属性 / 223 B", "current": "8 属性 / 223 B", "result": "一致" },
+    { "field": "sampleItems.ITEM#BLEND-PREMIUM-CITY-100G-V402#WH-FUKUOKA", "baseline": "8 属性 / 216 B", "current": "8 属性 / 216 B", "result": "一致" },
+    { "field": "sampleItems.ITEM#BLEND-PREMIUM-CITY-500G-V302#WH-FUKUOKA", "baseline": "8 属性 / 216 B", "current": "8 属性 / 216 B", "result": "一致" },
+    { "field": "sampleItems.ITEM#BLEND-PREMIUM-CITY-500G-V302#WH-OSAKA", "baseline": "8 属性 / 214 B", "current": "8 属性 / 214 B", "result": "一致" },
+    { "field": "sampleItems.ITEM#BLEND-PREMIUM-CITY-500G-V302#WH-TOKYO", "baseline": "8 属性 / 214 B", "current": "8 属性 / 214 B", "result": "一致" }
+  ],
+
+  "sampleItems": {
+    "count": 10,
+    "requirement": "要件 1.5 は 10 件以上",
+    "selectionMethod": "基準（13.1）が記録した 10 キーをそのまま使用した。基準は Scan(Limit 40) の結果を itemId#warehouseId 昇順に並べて先頭 10 件を採る決定論的な選び方をしており、今回の Scan 経路でも同一の 10 キーが選ばれた。加えて BatchGetItem 経路では基準の 10 キーを明示指定して取得した（同一アイテムであることが保証される）",
+    "attributeNamesAllTen": [
+      "itemId",
+      "itemName",
+      "lastUpdated",
+      "location",
+      "lotNumber",
+      "quantity",
+      "unitPrice",
+      "warehouseId"
+    ],
+    "attributeNamesIdenticalAcrossAllTen": true,
+    "itemSizeBytes": {
+      "ITEM#BLEND-CLASSIC-MEDIUM-200G#WH-FUKUOKA": 214,
+      "ITEM#BLEND-CLASSIC-MEDIUM-200G#WH-OSAKA": 212,
+      "ITEM#BLEND-CLASSIC-MEDIUM-200G#WH-TOKYO": 212,
+      "ITEM#BLEND-ESPRESSO-FRENCH-100G-V603#WH-FUKUOKA": 225,
+      "ITEM#BLEND-ESPRESSO-FRENCH-100G-V603#WH-OSAKA": 223,
+      "ITEM#BLEND-ESPRESSO-FRENCH-100G-V603#WH-TOKYO": 223,
+      "ITEM#BLEND-PREMIUM-CITY-100G-V402#WH-FUKUOKA": 216,
+      "ITEM#BLEND-PREMIUM-CITY-500G-V302#WH-FUKUOKA": 216,
+      "ITEM#BLEND-PREMIUM-CITY-500G-V302#WH-OSAKA": 214,
+      "ITEM#BLEND-PREMIUM-CITY-500G-V302#WH-TOKYO": 214
+    },
+    "itemSizeBytesNote": "アイテムサイズは DynamoDB が返す値ではなく estimateItemSizeBytes による推定である（属性名 + 値の見積り）。基準も同一関数で算出しているため一致の判定に使える。絶対値の正確さではなく基準との一致を根拠にしている",
+    "noEmbeddingAttributes": {
+      "claim": "Good_Table の抽出 10 件には埋め込み属性が 1 つも存在しない（知見 2「専用テーブル分離」の中心的な主張）",
+      "result": "成立",
+      "absentAttributeNames": ["embeddingJa", "embeddingEn", "embeddingModel", "embeddingDimensions", "embeddingUpdatedAt", "metaJa", "metaEn"],
+      "evidence": "10 件すべての属性集合が既存の 8 属性のみで、基準（デプロイ前）と完全に同一である。ベクトル属性および意味的メタデータ属性は 1 件も現れない"
+    }
+  },
+
+  "gsiProjectionAnalysis": {
+    "why": "知見 1（GSI の ProjectionType: ALL がベクトル属性を暗黙に複製する）に対する直接の確認。3 本すべてが ALL のままであるため、基底テーブルに属性が増えていれば GSI にも自動的に複製される。したがって『GSI 定義が不変』だけでは不十分で、『基底テーブルにベクトル属性が増えていない』ことと併せて主張する",
+    "gsiDefinitionsUnchanged": true,
+    "projectionTypeAll": ["byLocation", "byUnitPrice", "byWarehouse"],
+    "nonKeyAttributesPresent": false,
+    "nonKeyAttributesNote": "ProjectionType: ALL の GSI は NonKeyAttributes を返さない（射影属性の明示列挙が存在しない）。よって『射影属性リストの比較』は基準・現在ともに『列挙なし』の一致として扱う。ALL の実質的な射影内容は基底テーブルの属性集合と等しいため、複製の有無は基底テーブル側の属性集合とサイズで判定した",
+    "noVectorReplication": {
+      "result": "複製されていない",
+      "evidence": [
+        "抽出 10 件の属性集合が基準と同一で、埋め込み属性が 0 件（sampleItems.noEmbeddingAttributes）",
+        "TableSizeBytes 3,074,326 B に対し 3 本の GSI の IndexSizeBytes がいずれも 3,074,326 B で完全一致している。基底テーブルと同一サイズであり、ベクトル分（1 件あたり約 8 KB）が入り込んでいない",
+        "参考値として Vector_Table は TableSizeBytes 138,202,024 B（Good_Table の約 45 倍）。ベクトルはこちらに入っている"
+      ],
+      "caveatOnSizes": "TableSizeBytes と IndexSizeBytes は 13.1 の基準に記録が無いため『デプロイ前との比較』はできない。ここで使ったのは同一時点の基底テーブルと GSI の相互比較（内部整合）であり、時系列の差分ではない"
+    }
+  },
+
+  "vectorSeparation": {
+    "why": "知見 2（専用テーブル分離）の確認。ベクトルは Good_Table ではなく kiro-roasters-inventory-vector 側に存在する",
+    "goodTable": {
+      "vectorIndexes": [],
+      "vectorIndexCount": 0,
+      "attributeDefinitions": ["itemId:S", "location:S", "unitPrice:N", "warehouseId:S"],
+      "tableSizeBytes": 3074326,
+      "itemCount": 15000
+    },
+    "vectorTable": {
+      "tableName": "kiro-roasters-inventory-vector",
+      "vectorIndexes": [
+        { "indexName": "byEmbeddingEn", "indexStatus": "ACTIVE", "searchable": true, "indexSizeBytes": 74602024, "itemCount": 15000 },
+        { "indexName": "byEmbeddingJa", "indexStatus": "ACTIVE", "searchable": true, "indexSizeBytes": 74602024, "itemCount": 15000 }
+      ],
+      "tableSizeBytes": 138202024,
+      "itemCount": 15000,
+      "sampleItemAttributeNames": [
+        "embeddingDimensions",
+        "embeddingEn",
+        "embeddingJa",
+        "embeddingModel",
+        "embeddingUpdatedAt",
+        "itemId",
+        "itemName",
+        "location",
+        "lotNumber",
+        "metaEn",
+        "metaJa",
+        "quantity",
+        "unitPrice",
+        "warehouseId"
+      ],
+      "sampleItemKey": { "itemId": "ITEM#BLEND-CLASSIC-MEDIUM-200G", "warehouseId": "WH-FUKUOKA" },
+      "sampleItemNote": "Good_Table の抽出 1 件目と同一キーの Vector_Table 側レコード。14 属性で、Good_Table 側に無い 6 属性（embeddingJa / embeddingEn / embeddingModel / embeddingDimensions / embeddingUpdatedAt / metaJa / metaEn のうち 7 属性）が Vector_Table 側にのみ存在する。ベクトル値そのものは記録していない"
+    },
+    "vectorIndexAbsenceIsNotAnArtifact": {
+      "concern": "『Good_Table に VectorIndexes が無い』は、古い SDK / CLI が VectorIndexes フィールドをそもそも解釈できないために空に見えているだけの可能性がある",
+      "resolution": "同一プロセス・同一 SDK（リポジトリ同梱の @aws-sdk/client-dynamodb 3.1112.0。VectorIndexes をモデルに含む境界は 3.1103.0 以降。task 19.1 / 19.2 の実測）で Vector_Table を DescribeTable すると VectorIndexes が 2 本返る。同じ経路で Good_Table は 0 本である。したがって空は『モデル未対応による不表示』ではなく『実際に存在しない』ことを意味する（要件 1.6）",
+      "cliCaveat": "参考：ローカルの aws CLI での describe-table は Vector_Table に対しても VectorIndexes を null で返した。CLI の同梱モデルが未対応であるため、CLI 出力だけでは『存在しない』を主張できない。この判定には CLI を使っていない"
+    }
+  },
+
+  "itemCountApproximation": {
+    "concern": "DescribeTable の ItemCount は約 6 時間周期で更新される概数である（13.14 で 9 件の遅れを実測し、2 回目の取得で解消した経緯がある）",
+    "baselineItemCount": 15000,
+    "currentItemCount": 15000,
+    "agreed": true,
+    "fullScanExecuted": false,
+    "fullScanCostRru": 0,
+    "whyNoFullScan": "概数どうしが完全に一致したため、全件 Scan による実数確認の必要が無い。全件 Scan は約 3.07 MB / 15,000 件の読み取りで RRU を消費するため、疑わしい場合に限って実行する方針とした",
+    "corroboration": [
+      "3 本の GSI の ItemCount がいずれも 15,000（DescribeTable の同一応答）",
+      "Vector_Table の ItemCount が 15,000 で、これは Good_Table から複製した件数である（要件 1.3 / 1.7 は 15,000 一致を前提に埋め込みバッチを走らせており、13.11 が完走している）",
+      "AOSS の SearchableDocuments が 15,000 で一定（13.19 の実測）"
+    ],
+    "note": "概数が一致したことを『15,000 件を数えた』とは主張しない。主張しているのは『基準と同じ値を返している』ことである"
+  },
+
+  "pipeline": {
+    "requirement": "要件 6.9 / 6.10",
+    "pipelineName": "kiro-inventory-pipeline",
+    "status": "STOPPED",
+    "statusReason": "The pipeline is stopped",
+    "how": "aws osis get-pipeline --pipeline-name kiro-inventory-pipeline",
+    "asOfUtc": "2026-08-22T04:43Z",
+    "baselineStatus": "STOPPED（13.1 / 2026-08-18T16:56:03.151Z）",
+    "result": "STOPPED のまま。相違なし",
+    "minUnits": 1,
+    "maxUnits": 4,
+    "createdAt": "2026-08-08T07:43:34+09:00",
+    "lastUpdatedAt": "2026-08-11T22:47:56+09:00",
+    "lastUpdatedAtSignificance": "最終更新は 2026-08-11 で、本仕様の作業開始（13.1 の基準取得は 2026-08-18）より前である。本機能の期間中にパイプラインの設定が変更されていないことを示す",
+    "sourceTableArn": "arn:aws:dynamodb:us-west-2:992382598974:table/kiro-roasters-inventory-good",
+    "sinkCollection": "kiro-inventory-search",
+    "sinkNote": "パイプラインのシンクは既存の SEARCH コレクション kiro-inventory-search であり、本機能の Vector_Collection（kiro-inventory-vector）ではない。設定本文も基準時点と同じ構成のまま停止している",
+    "startedOrModifiedByThisTask": false
+  },
+
+  "notComparableBecauseBaselineDidNotRecord": {
+    "note": "以下は 13.1 の基準スナップショットに記録が無いため『デプロイ前との比較』ができない。省略せず、比較不能である旨と現在値を明示する。いずれも要件 1.5 が列挙する比較項目には含まれていない",
+    "fields": [
+      { "field": "TableSizeBytes", "current": 3074326, "why": "基準スキーマ（GoodTableSnapshot 版 2）に項目が無い" },
+      { "field": "GlobalSecondaryIndexes[].IndexSizeBytes", "current": "byLocation / byUnitPrice / byWarehouse すべて 3074326", "why": "同上" },
+      { "field": "GlobalSecondaryIndexes[].ItemCount", "current": "3 本すべて 15000", "why": "同上" },
+      { "field": "AttributeDefinitions", "current": "itemId:S / location:S / unitPrice:N / warehouseId:S", "why": "同上。PK / SK の型は keySchema の比較では確認できないため、現在値のみ記録する" },
+      { "field": "BillingModeSummary.BillingMode", "current": "PAY_PER_REQUEST", "why": "同上" },
+      { "field": "DeletionProtectionEnabled", "current": false, "why": "同上" },
+      { "field": "WarmThroughput", "current": "テーブル / 3 GSI すべて read 12000 / write 4000 / ACTIVE", "why": "同上" },
+      { "field": "LatestStreamArn / LatestStreamLabel", "current": "arn:aws:dynamodb:us-west-2:992382598974:table/kiro-roasters-inventory-good/stream/2026-08-07T22:42:43.420 / 2026-08-07T22:42:43.420", "why": "基準は streamEnabled と streamViewType のみを記録している。ストリームラベルがテーブル作成時刻（2026-08-08）のままであることは、ストリームが無効化と再有効化を経ていないことを示す傍証になるが、基準値との比較ではない" },
+      { "field": "PITR の RecoveryPeriodInDays / EarliestRestorableDateTime", "current": "35 日 / 2026-08-08T07:43:14+09:00（LatestRestorableDateTime は 2026-08-22T13:38:25.290+09:00）", "why": "基準は pointInTimeRecoveryStatus のみを記録している。EarliestRestorableDateTime がテーブル作成直後のままであることは PITR が途中で無効化されていないことを示す傍証だが、基準値との比較ではない" },
+      { "field": "TableId / TableArn / CreationDateTime", "current": "2080a91f-75a0-476f-a65e-e2a717fec717 / arn:aws:dynamodb:us-west-2:992382598974:table/kiro-roasters-inventory-good / 2026-08-08T07:42:43.420+09:00", "why": "基準に記録が無い。TableId と CreationDateTime が作成時のままであることは、テーブルが削除・再作成されていないことを示す（再作成されれば TableId が変わる）が、基準値との比較ではない" },
+      { "field": "抽出 10 件の属性『値』", "current": "未記録", "why": "基準は属性名の集合とサイズ推定のみを記録しており、値そのものを保持していない。したがって『同じ属性名・同じサイズで値だけが書き換わった』変更は本比較では検出できない。要件 1.4（Good_Table への書き込み操作を行わない）を IAM とコードで担保する設計であり、本タスクの比較はその補強である" }
+    ]
+  },
+
+  "budgetAndLedger": {
+    "spend": {
+      "command": "npm run vector:measure -- --watch-spend --no-write --hours 48 --region us-west-2",
+      "asOfUtc": "2026-08-22T04:45Z",
+      "windowUtc": { "start": "2026-08-20T04:45:00Z", "end": "2026-08-22T04:50:00Z" },
+      "ocuHour": 7.4833,
+      "usd": 1.80,
+      "capUsd": 20,
+      "remainingUsd": 18.20,
+      "previousUsd": 1.80,
+      "deltaUsd": 0.0,
+      "changed": false,
+      "thresholdCrossed": false,
+      "note": "13.19 時点（7.4833 OCU-hour / 1.80 USD）から変化なし。本タスクは検索を 1 件も実行していない。0 OCU 区間の合計・最長が 13.19 の記録と異なるのは 48 時間窓の起点が動いたためで、累積 OCU-hour は同値である"
+    },
+    "bedrockLedger": {
+      "successfulEmbeds": 10153,
+      "changed": false,
+      "how": "本タスクは Bedrock を呼んでいない。CloudWatch AWS/Bedrock Invocations（ModelId=amazon.titan-embed-text-v2:0）を 2026-08-22T03:57:00Z〜04:55:00Z で照会し Datapoints 0 件（13.18 の最終埋め込み 03:56:32Z 以降の呼び出しが無いことを確認）"
+    },
+    "vectorSearchesExecutedByThisTask": 0,
+    "vectorSearchesNote": "13.19 が確定させたアイドル区間（2026-08-22T04:10:00Z から継続）を汚さないため、本タスクでは検索を実行していない。本タスクの AWS 呼び出しは DynamoDB / OSIS / CloudWatch の読み取りのみである"
+  },
+
+  "callsMade": {
+    "mutatingCallsMade": [],
+    "mutatingCallsMadeNote": "作成・変更・削除は 1 件も行っていない。OSIS パイプラインの状態も変更していない（要件 6.10）。デプロイも実行していない",
+    "readOnlyCalls": [
+      "dynamodb:DescribeTable（kiro-roasters-inventory-good）× 3（--pre-check / BatchGetItem 経路 / aws CLI）",
+      "dynamodb:DescribeContinuousBackups（kiro-roasters-inventory-good）× 3",
+      "dynamodb:Scan（kiro-roasters-inventory-good / Limit 40 / ConsistentRead false）× 1",
+      "dynamodb:BatchGetItem（kiro-roasters-inventory-good / 10 キー）× 1",
+      "dynamodb:DescribeTable（kiro-roasters-inventory-vector）× 2",
+      "dynamodb:BatchGetItem（kiro-roasters-inventory-vector / 1 キー）× 1",
+      "osis:GetPipeline（kiro-inventory-pipeline）× 2",
+      "cloudwatch:GetMetricData（AWS/AOSS SearchOCU / IndexingOCU、--watch-spend 経由）",
+      "cloudwatch:GetMetricStatistics（AWS/Bedrock Invocations）",
+      "sts:GetCallerIdentity"
+    ],
+    "consumedCapacityEstimate": {
+      "note": "ReturnConsumedCapacity を指定していないため実測値ではなく推定である",
+      "goodTableScanRru": "約 0.5〜1（40 件 × 約 215 B ≒ 8.6 KB / 結果整合性読み取り）",
+      "goodTableBatchGetRru": "約 5（10 件 × 0.5 RRU。各アイテムは 4 KB 未満 / 結果整合性読み取り）",
+      "vectorTableBatchGetRru": "約 1.5（1 件 約 9.2 KB / 結果整合性読み取り）",
+      "fullScanRru": 0,
+      "totalEstimateRru": "約 7〜8"
+    }
+  },
+
+  "verification": {
+    "performed": [
+      "npx tsc --noEmit（成功）",
+      "npx tsc --noEmit -p amplify/tsconfig.json（成功）",
+      "npm run lint（成功）",
+      "npx vitest --run scripts/vector-search/measure.test.ts（70 テスト成功。本タスクが依拠する compareGoodTableSnapshots / selectSampleItems / buildGoodTableSnapshot の担保）",
+      "git status で作業ツリーに一時ファイルが残っていないことを確認"
+    ],
+    "notPerformed": [
+      "デプロイ（コード変更なし。VECTOR_COLLECTION_ENABLED の扱いに触れていない）",
+      "全件 Scan による実アイテム件数の確定（itemCountApproximation 参照）",
+      "ベクトル検索の実行（0 件）"
+    ],
+    "temporaryArtifacts": "照合には scripts/vector-search/measure.ts の公開関数を使う一時スクリプトを用い、実行後に削除した。リポジトリに残していない"
+  },
+
+  "openItemsForUser": [
+    {
+      "kind": "後続タスクへの申し送り",
+      "target": "task 14.1（Verification_Report 執筆）/ task 15.1（撤収確認）",
+      "issue": "要件 1.5 の比較は成立したが、基準スナップショット（版 2）が TableSizeBytes / GSI の IndexSizeBytes / AttributeDefinitions / 属性値を記録していないため、これらは時系列比較ができない",
+      "proposal": "Verification_Report には『要件 1.5 が列挙する項目はすべて一致（相違 0 件）』と記載し、併せて『基準が記録していない項目は比較対象外』であることと、GSI へのベクトル複製が無いことの根拠（基底テーブルの属性集合が不変 + GSI の IndexSizeBytes が基底テーブルと同値）を明示する。15.1 の --teardown-check は同じ基準ファイルを読むため、撤収後も同一の比較が再現できる"
+    }
+  ],
+
+  "artifacts": [
+    "docs/measurements/good-table-snapshot-pre-check.json（13.1 の基準。本タスクでは読み取りのみ）",
+    "docs/measurements/measure-pre-check-2026-08-18T16-56-03-151Z.json（13.1 の実行レポート）"
+  ]
+}

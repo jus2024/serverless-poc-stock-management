@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "mode": "watch-spend",
+  "generatedAt": "2026-08-19T20:29:36.257Z",
+  "region": "us-west-2",
+  "readOnly": true,
+  "warnings": [
+    "SearchOCU / IndexingOCU のデータ点が 0 件のため、累積課金を評価できていません（照会した次元: CollectionGroupName=kiro-inventory-vector-group / リージョン: us-west-2 / 区間: 2026-08-18T20:25:00.000Z 〜 2026-08-19T20:30:00.000Z）。**累積 0 USD と測定できたわけではありません。** データ点の不在は課金が 0 であることの証拠にならず、上限 20 USD に対する残余も未知です。0 課金の確認には請求データ（Cost Explorer / Billing）を用いてください。"
+  ],
+  "notes": [
+    "累積 0.0000 OCU-hour × 0.24 USD = 0.00 USD で、上限 20 USD を超えていません。残り 20.00 USD です。",
+    "照会した次元: CollectionGroupName=kiro-inventory-vector-group（AWS/AOSS / SearchOCU / IndexingOCU）。--collection（kiro-inventory-vector）は削除要求文の対象を示すためにのみ使い、メトリクスの照会には使いません。",
+    "本モードは常駐しません。検証期間中に定期実行して累積を確認する運用です（設計「累積課金の監視」）。取得区間は直近 24 時間です。検証開始からの累積を見るには --hours で区間を広げてください。",
+    "本スクリプトは削除を実行しません。削除は検証担当者が行い、--teardown-check で確認します。"
+  ],
+  "collectionName": "kiro-inventory-vector",
+  "collectionGroupName": "kiro-inventory-vector-group",
+  "ocuDimension": {
+    "name": "CollectionGroupName",
+    "value": "kiro-inventory-vector-group"
+  },
+  "windowStart": "2026-08-18T20:25:00.000Z",
+  "windowEnd": "2026-08-19T20:30:00.000Z",
+  "periodSeconds": 300,
+  "spend": {
+    "hourlyUsd": 0.24,
+    "thresholdUsd": 20,
+    "periodSeconds": 300,
+    "points": [],
+    "totalOcuHours": 0,
+    "totalUsd": 0,
+    "warning": null,
+    "terminated": false,
+    "retainedSampleCount": 0,
+    "skippedSampleCount": 0
+  },
+  "analysis": {
+    "periodSeconds": 300,
+    "sampleCount": 0,
+    "startTime": null,
+    "endTime": null,
+    "searchOcu": {
+      "count": 0,
+      "minimum": null,
+      "average": null,
+      "maximum": null,
+      "startTime": null,
+      "endTime": null
+    },
+    "indexingOcu": {
+      "count": 0,
+      "minimum": null,
+      "average": null,
+      "maximum": null,
+      "startTime": null,
+      "endTime": null
+    },
+    "combinedOcu": {
+      "count": 0,
+      "minimum": null,
+      "average": null,
+      "maximum": null,
+      "startTime": null,
+      "endTime": null
+    },
+    "totalOcuHours": 0,
+    "zeroOcuIntervals": [],
+    "qualifyingZeroOcuIntervals": [],
+    "longestZeroOcuMinutes": 0,
+    "totalZeroOcuMinutes": 0,
+    "qualifyingZeroOcuMinutes": 0,
+    "scaleToZeroApplicable": false,
+    "activityPartition": [],
+    "searchActiveIntervals": [],
+    "idleIntervals": [],
+    "alwaysOnMonthlyUsd": null
+  }
+}

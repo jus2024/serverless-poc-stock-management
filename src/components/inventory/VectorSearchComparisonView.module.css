@@ -1,0 +1,109 @@
+/* VectorSearchComparisonView — ベクトル検索比較ビューの外枠 */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text, #1f2937);
+}
+
+/* 埋め込み生成セクション（要件 11.16 / 16.8） */
+.embedSection,
+.latencySection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 8px;
+  background: var(--color-surface, #fff);
+  padding: 1rem;
+}
+
+.live {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary, #6b7280);
+}
+
+/* 埋め込み生成のメタ情報 */
+.metaList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  margin: 0;
+}
+
+.metaEntry {
+  display: flex;
+  align-items: baseline;
+  gap: 0.375rem;
+  background: var(--color-bg, #f7fafc);
+  border-radius: 4px;
+  padding: 0.125rem 0.5rem;
+}
+
+.metaTerm {
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary, #6b7280);
+}
+
+.metaValue {
+  margin: 0;
+  font-size: 0.75rem;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  color: var(--color-text, #1f2937);
+}
+
+/* 埋め込み生成の失敗表示 */
+.embedError {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border: 1px solid var(--color-error-border, #fca5a5);
+  border-radius: 6px;
+  background: var(--color-error-bg, #fef2f2);
+  padding: 0.75rem;
+}
+
+.embedErrorHead {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-error, #b91c1c);
+}
+
+.embedErrorBody {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary, #6b7280);
+  word-break: break-word;
+}
+
+/* レイテンシ比較のテキスト併記（要件 11.17） */
+.latencyText {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary, #6b7280);
+}
+
+/* DynamoDB パネル内に差し込む制約メッセージ（要件 15.7） */
+.panelNotice {
+  margin: 0;
+  border-left: 3px solid var(--color-warning-border, #f59e0b);
+  background: var(--color-warning-bg, #fffbeb);
+  padding: 0.5rem 0.625rem;
+  font-size: 0.75rem;
+  color: var(--color-warning-text, #92400e);
+}

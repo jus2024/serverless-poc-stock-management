@@ -1,0 +1,425 @@
+{
+  "schemaVersion": 1,
+  "task": "13.19（段階 14：scale-to-zero 判定のためアイドル OCU を観測する）",
+  "generatedAt": "2026-08-22T04:30:00Z",
+  "requirements": ["7.3", "7.4", "7.6", "7.7", "7.8", "14.9", "18.3", "18.7"],
+
+  "scopeChange": {
+    "decidedBy": "利用者",
+    "decision": "壁時計 24 時間の新規連続観測を行わず、既存の観測データ（CloudWatch に残存する OCU 系列）による確定を選択した",
+    "reason": "観測期間は短縮できない（本タスクの前提）。24 時間の待機を新たに費やす代わりに、Collection Group の OCU 系列が保持している全期間を遡って回収し、確定できる出力と確定できない出力を分けて記録する方針を採った",
+    "consequence": "適用可否の二値判定と 14.9 の区間分解は遡及データで確定できる。要件 7.3 が求める『検索 0 件かつインデックス 0 件を 24 時間連続で維持した専用観測』と、要件 18.3 の『scale-to-zero 状態からの Cold_Start』は未実測として理由付きで記録する",
+    "searchesExecutedByThisTask": 0,
+    "note": "本タスクは検索を 1 件も実行していない。実行したのは CloudWatch の読み取り（GetMetricData / GetMetricStatistics / ListMetrics）と AOSS の読み取り（BatchGetCollection / BatchGetCollectionGroup）のみである"
+  },
+
+  "target": {
+    "region": "us-west-2",
+    "accountId": "992382598974",
+    "collectionGroupName": "kiro-inventory-vector-group",
+    "collectionGroupId": "u4g3b8nxs0q0e6vgto7c",
+    "collectionGroupCreatedAtUtc": "2026-08-18T16:28:38.481Z",
+    "collectionGroupGeneration": "NEXTGEN",
+    "collectionName": "kiro-inventory-vector",
+    "collectionId": "v5c9ka15hfr1m5h580i9",
+    "collectionType": "VECTORSEARCH",
+    "collectionCreatedAtUtc": "2026-08-20T21:10:42.919Z",
+    "standbyReplicas": "ENABLED",
+    "vectorOptions": { "ServerlessVectorAcceleration": "ENABLED" },
+    "capacityLimits": {
+      "minIndexingCapacityInOCU": 0.0,
+      "minSearchCapacityInOCU": 0.0,
+      "maxIndexingCapacityInOCU": 2.0,
+      "maxSearchCapacityInOCU": 2.0,
+      "note": "要件 7.1 の構成値どおり min 0 / max 2 が受理されている（13.5 の Deployment_Validator の判定と一致）"
+    },
+    "metricQuery": {
+      "namespace": "AWS/AOSS",
+      "dimensionKeys": ["ClientId", "CollectionGroupId", "CollectionGroupName"],
+      "how": "GetMetricData + SEARCH() 式。SearchOCU / IndexingOCU / OCUUtilization は CollectionName では公開されないため、CollectionGroupName を検索語とする SEARCH() で引く（scripts/vector-search/measure.ts の既存経路をそのまま使用）",
+      "expressionExample": "SEARCH('{AWS/AOSS,ClientId,CollectionGroupId,CollectionGroupName} MetricName=\"SearchOCU\" \"kiro-inventory-vector-group\"', 'Average', 300)",
+      "periodSeconds": 300,
+      "seriesResolved": {
+        "SearchOCU": { "seriesCount": 1, "seriesWithDataCount": 1, "label": "kiro-inventory-vector-group / u4g3b8nxs0q0e6vgto7c / SearchOCU" },
+        "IndexingOCU": { "seriesCount": 1, "seriesWithDataCount": 1, "label": "kiro-inventory-vector-group / u4g3b8nxs0q0e6vgto7c / IndexingOCU" }
+      },
+      "alignment": { "pairedCount": 667, "searchOnlyCount": 0, "indexingOnlyCount": 0 }
+    }
+  },
+
+  "verdict": {
+    "requirements": ["7.4", "7.6", "18.7"],
+    "criterion": "SearchOCU と IndexingOCU がともに 0 の連続 1 時間以上の区間が存在するか",
+    "result": "適用可（scale-to-zero は適用される）",
+    "binary": "適用される",
+    "basis": "遡及可能な全期間（メトリクス系列の全長）に 60 分以上の 0 OCU 区間が 4 件存在し、最長は 1,555.0 分である。判定は 1 時間の基準に対して 25 倍以上の余裕を持って成立する",
+    "idleMonthlyUsd": 0,
+    "alwaysOnMonthlyUsd": null,
+    "alwaysOnMonthlyUsdNote": "適用可のため要件 7.4 の常時課金見積は算出対象外（分析側も null を返している）",
+    "independentLiveConfirmation": {
+      "how": "BatchGetCollectionGroup の currentCapacity（CloudWatch とは別経路）",
+      "asOfUtc": "2026-08-22T04:28:00Z",
+      "searchCapacityInOcu": 0.0,
+      "indexingCapacityInOcu": 0.0,
+      "autoscalingStatus": "NO_ACTION",
+      "note": "最終検索（2026-08-22T03:56:32Z）から約 32 分後の時点で、Collection Group の現在容量が indexing / search ともに 0.0 OCU であることを AOSS の API 側からも確認した。CloudWatch の 0 と独立に整合する"
+    },
+    "verificationOfPriorFigures": {
+      "claimIn1318": "直近 48 時間で 0 OCU 区間 6 件 / 合計 2,695.0 分 / 最長 1,130.0 分、うち 60 分以上が 4 件 / 合計 2,665.0 分",
+      "independentRerun48h": {
+        "windowUtc": { "start": "2026-08-20T04:25:00Z", "end": "2026-08-22T04:30:00Z" },
+        "sampleCount": 577,
+        "zeroOcuIntervalCount": 7,
+        "totalZeroOcuMinutes": 2685.0,
+        "longestZeroOcuMinutes": 1100.0,
+        "intervalsOver60MinCount": 4,
+        "minutesOver60Min": 2635.0
+      },
+      "reconciliation": "差は窓の境界だけで説明できる。48 時間窓の起点が 13.18 実行時より約 26 分後ろへ動いたため最長区間が 1,130.0 → 1,100.0 分に切られ（−30 分）、代わりに本タスク時点の進行中アイドル（20.0 分）が 1 件として現れて区間数が 6 → 7 になった（合計 2,695.0 − 30 + 20 = 2,685.0）。13.18 の値は同一系列を別の窓で切った像であり、独立に再現した",
+      "conclusion": "13.18 の暫定判定（適用可）を、より長い遡及窓で独立に確認した"
+    }
+  },
+
+  "retrospectiveWindows": {
+    "note": "統計はどの窓を覆うかで意味が変わる。窓を明示せずに数値を引用しないこと。**いずれも専用に構成した 24 時間連続観測ではない**",
+    "lifetimeOfMetricSeries": {
+      "purpose": "遡及可能な最長窓。要件 7.4 / 7.6 の二値判定の根拠",
+      "windowUtc": { "start": "2026-08-19T20:50:00Z", "end": "2026-08-22T04:25:00Z" },
+      "lengthMinutes": 3335,
+      "lengthHours": 55.58,
+      "sampleCount": 667,
+      "periodSeconds": 300,
+      "gapCount": 0,
+      "searchOcu": { "count": 667, "minimum": 0, "average": 0.10374812593703149, "maximum": 2 },
+      "indexingOcu": { "count": 667, "minimum": 0, "average": 0.030884557721139433, "maximum": 1 },
+      "combinedOcu": { "count": 667, "minimum": 0, "average": 0.13463268365817094, "maximum": 3 },
+      "totalOcuHours": 7.483333333333334,
+      "zeroOcuIntervalCount": 7,
+      "totalZeroOcuMinutes": 3135.0,
+      "zeroOcuShareOfWindow": 0.94,
+      "longestZeroOcuMinutes": 1555.0,
+      "intervalsOver60MinCount": 4,
+      "minutesOver60Min": 3090.0,
+      "partitionConserved": true,
+      "windowSelection": "--hours 72 と --hours 120 の 2 回で同一の結果（667 件 / 7.4833 OCU-hour / 最長 1,555.0 分）を得た。窓をこれ以上広げてもデータ点が増えないため、この系列が遡及可能な全長である",
+      "seriesStartCaveat": "Collection Group の作成は 2026-08-18T16:28:38Z だが、OCU 系列の最初のデータ点は 2026-08-19T20:50:00Z である。その間の約 28.4 時間はデータ点が存在せず、**『0 OCU を測定した』ではなく『測定値が存在しない』**。この区間を 0 として扱っていない"
+    },
+    "trailing24h": {
+      "purpose": "『直近 24 時間』を切った場合の像。要件 7.3 が求める窓ではない（検索を実行した区間を 4 つ含む）",
+      "windowUtc": { "start": "2026-08-21T04:25:00Z", "end": "2026-08-22T04:30:00Z" },
+      "sampleCount": 289,
+      "searchOcu": { "count": 289, "minimum": 0, "average": 0.10934256055363323, "maximum": 2 },
+      "indexingOcu": { "count": 289, "minimum": 0, "average": 0.006920415224913495, "maximum": 1 },
+      "combinedOcu": { "count": 289, "minimum": 0, "average": 0.11626297577854672, "maximum": 3 },
+      "totalOcuHours": 2.8,
+      "zeroOcuIntervalCount": 6,
+      "totalZeroOcuMinutes": 1340.0,
+      "longestZeroOcuMinutes": 655.0,
+      "intervalsOver60MinCount": 3,
+      "minutesOver60Min": 1290.0,
+      "scaleToZeroApplicable": true,
+      "caveat": "この窓の平均値（SearchOCU 0.1093）は検索区間を含む混合値である。アイドル時の値として引用してはならない"
+    },
+    "strongestIdleInterval": {
+      "purpose": "要件 7.3 の趣旨（検索 0 件・インデックス 0 件のアイドル）に最も近い実測窓。**ただし 24 時間に達しない**",
+      "windowUtc": { "start": "2026-08-21T13:50:00Z", "end": "2026-08-22T00:45:00Z" },
+      "lengthMinutes": 655.0,
+      "lengthHours": 10.92,
+      "sampleCount": 131,
+      "searchOcu": { "count": 131, "minimum": 0, "average": 0, "maximum": 0 },
+      "indexingOcu": { "count": 131, "minimum": 0, "average": 0, "maximum": 0 },
+      "ocuHours": 0,
+      "qualification": [
+        "131 サンプルすべてで SearchOCU = 0 かつ IndexingOCU = 0（区間の定義そのもの）",
+        "SearchRequestRate のデータ点 0 件（検索リクエストが 1 件も無い）",
+        "IngestionRequestRate のデータ点 0 件（インデックスリクエストが 1 件も無い）",
+        "SearchableDocuments = 15,000 で全期間一定（投入完了後であり、インメモリベクトルを保持した状態）"
+      ],
+      "why24hNotReached": "この区間は 13.15 / 13.16 の実行後に始まり、13.17 の事前確認検索が終了させた。24 時間続く前に次のタスクの検索が入っている"
+    },
+    "secondIdleInterval": {
+      "windowUtc": { "start": "2026-08-21T00:20:00Z", "end": "2026-08-21T12:40:00Z" },
+      "lengthMinutes": 740.0,
+      "lengthHours": 12.33,
+      "sampleCount": 148,
+      "searchOcu": { "count": 148, "minimum": 0, "average": 0, "maximum": 0 },
+      "indexingOcu": { "count": 148, "minimum": 0, "average": 0, "maximum": 0 },
+      "ocuHours": 0,
+      "note": "OCU の 0 区間としては 2026-08-21T12:45:00Z まで 745.0 分続くが、末尾の 12:40〜12:45 バケットに IngestionRequestRate のデータ点（Sum 3 / Max 2）があり、SearchableDocuments が 14,990 → 15,000 に増えている。したがって『リクエスト 0 件』が成立するのは 12:40:00Z までの 740.0 分である。この区間の SearchableDocuments は 14,990"
+    }
+  },
+
+  "requirement73": {
+    "requirement": "検索リクエスト 0 件かつインデックスリクエスト 0 件の状態を 24 時間連続で維持し、SearchOCU / IndexingOCU の 5 分間隔 24 時間分の系列から各メトリクスの最小・平均・最大を出力する",
+    "status": "未実施（専用の 24 時間連続観測は行っていない）",
+    "reason": "壁時計 24 時間は短縮できず、利用者判断で既存観測データによる確定を選択した（本ファイル scopeChange 参照）",
+    "determinableRetrospectively": [
+      "SearchOCU / IndexingOCU の 5 分間隔系列の取得そのもの（period 300 秒 / 欠測 0 件 / 667 サンプル）",
+      "各メトリクスの最小・平均・最大（窓を明示した上で。retrospectiveWindows 参照）",
+      "0 OCU 連続区間の列挙と最長・合計（requirement 7.4 / 7.6 の二値判定に必要なすべて）",
+      "要件 14.9 の区間分解（検索継続区間 30 分以上 / アイドル区間 6 時間以上の区間長と消費 OCU-hour）"
+    ],
+    "notDeterminableRetrospectively": [
+      "『検索 0 件かつインデックス 0 件を 24 時間連続で維持した』という条件を満たす窓での最小・平均・最大。遡及データ中の最長のリクエスト無し 0 OCU 区間は 740.0 分（12.33 時間）で、24 時間に達しない",
+      "24 時間連続維持後の Cold_Start（requirement18Dot3 参照）"
+    ],
+    "longestZeroOcuIntervalIs24hButDisqualified": {
+      "interval": { "start": "2026-08-19T20:50:00Z", "end": "2026-08-20T22:45:00Z" },
+      "lengthMinutes": 1555.0,
+      "lengthHours": 25.92,
+      "observation": "0 OCU 連続区間としては 25.92 時間あり 24 時間を超えている。しかし要件 7.3 の代替にはならない",
+      "disqualifyingFacts": [
+        "Collection の作成は 2026-08-20T21:10:42.919Z であり、この区間の先頭 24.33 時間は **Collection がまだ存在しない**（Collection Group のみ。13.4 が 1 時間観測した状態の延長）",
+        "SearchableDocuments は区間の最終 5 分バケット（2026-08-20T22:40:00Z）まで 0 件である。すなわち **インメモリベクトルを 1 件も保持していない状態**の 0 OCU である",
+        "要件 7.9 は『ベクトルコレクションの OCU 使用量は主にインメモリベクトルに起因する』ことをリスクとして挙げている。空の Collection の 0 OCU は、15,000 × 2 本のベクトルを保持した Collection の 0 OCU を示す証拠にならない",
+        "リクエスト 0 件でもない。末尾の 22:40〜22:45 バケットに SearchRequestRate（Sum 61 / Max 60）と IngestionRequestRate（Sum 61 / Max 60）のデータ点があり、投入が始まっている。加えて 2026-08-20T21:10:00Z のバケットに IngestionRequestRate（Sum 2 / Max 2）があり、これは Collection 作成時の CreateIndex に対応する"
+      ],
+      "conclusion": "二値判定（≥ 1 時間）の根拠としては有効だが、要件 7.3 の『24 時間分の系列』としては採用しない。**投入後の状態で 24 時間連続のアイドルを観測した事実は無い**"
+    }
+  },
+
+  "requirement78": {
+    "requirement": "OCUUtilization の最小・平均・最大を測定区間について出力する（右サイジング判断）",
+    "status": "測定不能",
+    "value": null,
+    "doNotRecordAsZero": "0 と記録してはならない。『使用率 0 を測定した』ではなく『メトリクスが公開されていない』である",
+    "evidence": [
+      {
+        "check": "cloudwatch:ListMetrics --namespace AWS/AOSS（リージョン us-west-2 / アカウント 992382598974）",
+        "asOfUtc": "2026-08-22T04:27:00Z",
+        "seriesReturned": 100,
+        "nextTokenPresent": false,
+        "metricNamesReturned": [
+          "2xx", "4xx", "ActiveCollection", "DeletedDocuments", "IndexingOCU",
+          "IngestionRequestErrors", "IngestionRequestLatency", "IngestionRequestRate",
+          "IngestionRequestSuccess", "SearchOCU", "SearchRequestErrors",
+          "SearchRequestLatency", "SearchRequestRate", "SearchableDocuments", "StorageUsedInHot"
+        ],
+        "ocuUtilizationPresent": false,
+        "note": "OCU 系で公開されているのは SearchOCU と IndexingOCU の 2 つのみで、いずれも次元キー集合 {ClientId, CollectionGroupId, CollectionGroupName} を持つ。OCUUtilization はどの次元でも現れない"
+      },
+      {
+        "check": "cloudwatch:ListMetrics --namespace AWS/AOSS --metric-name OCUUtilization（名前を明示した絞り込み）",
+        "result": "{ \"Metrics\": [] }",
+        "note": "メトリクス名を直接指定しても系列は 1 本も返らない"
+      },
+      {
+        "check": "GetMetricData + SEARCH()（他の 2 つの OCU メトリクスと同一の次元キー集合・同一の式形）",
+        "windowUtc": { "start": "2026-08-17T04:20:00Z", "end": "2026-08-22T04:25:00Z" },
+        "statistics": ["Minimum", "Average", "Maximum"],
+        "seriesCount": 0,
+        "seriesWithDataCount": 0,
+        "dataPointCount": 0,
+        "note": "同じ式形で SearchOCU / IndexingOCU は系列 1 本 / データ点 667 件を返す。したがって 0 件は次元指定の誤りによる空振りではなく、メトリクスの不存在を示す"
+      }
+    ],
+    "scopeOfClaim": "示したのは『us-west-2 のアカウント 992382598974 において、NextGen VECTORSEARCH の Collection Group kiro-inventory-vector-group に対して OCUUtilization が公開されていない』ことである。AOSS の仕様として存在しないことを示したのではない（ListMetrics は直近約 14 日にデータのあるメトリクスのみを列挙する）",
+    "consequence": "要件 7.8 は本検証では満たせない。要件 18.3 が Verification_Report への記載を求める OCUUtilization も測定不能として記載する"
+  },
+
+  "requirement149": {
+    "requirement": "検索を継続実行する区間（連続 30 分以上）とアイドル区間（検索を一切実行しない連続 6 時間以上）のそれぞれについて、区間長（分）と消費 OCU-時間を出力する",
+    "status": "実測（遡及。窓は lifetimeOfMetricSeries）",
+    "windowUtc": { "start": "2026-08-19T20:50:00Z", "end": "2026-08-22T04:25:00Z" },
+    "searchActiveIntervalsOver30Min": [
+      {
+        "startUtc": "2026-08-20T22:45:00Z",
+        "endUtc": "2026-08-21T00:20:00Z",
+        "lengthMinutes": 95.0,
+        "ocuHours": 4.683333333333334,
+        "searchOcuHours": 3.1333333333333333,
+        "indexingOcuHours": 1.55,
+        "whatRanHere": "13.11 の埋め込みバッチによる Vector_Collection への投入。**純粋な検索区間ではない**（消費の 33% が IndexingOCU）"
+      },
+      {
+        "startUtc": "2026-08-22T03:15:00Z",
+        "endUtc": "2026-08-22T03:50:00Z",
+        "lengthMinutes": 35.0,
+        "ocuHours": 0.9666666666666666,
+        "searchOcuHours": 0.9666666666666668,
+        "indexingOcuHours": 0.0,
+        "whatRanHere": "13.17 の recall 測定（AOSS 側 360 検索）。IndexingOCU が 0 であるため、**要件 14.9 が意図する検索継続区間はこちらである**。35.0 分で 0.9667 OCU-hour = 0.23 USD 相当"
+      }
+    ],
+    "idleIntervalsOver6h": [
+      {
+        "startUtc": "2026-08-19T20:50:00Z",
+        "endUtc": "2026-08-20T22:45:00Z",
+        "lengthMinutes": 1555.0,
+        "ocuHours": 0,
+        "caveat": "投入前かつ大部分は Collection 未作成。requirement73.longestZeroOcuIntervalIs24hButDisqualified 参照"
+      },
+      {
+        "startUtc": "2026-08-21T00:20:00Z",
+        "endUtc": "2026-08-21T12:45:00Z",
+        "lengthMinutes": 745.0,
+        "ocuHours": 0,
+        "caveat": "末尾 5 分にインデックスリクエストあり（SearchableDocuments 14,990 → 15,000）。リクエスト 0 件が成立するのは 740.0 分"
+      },
+      {
+        "startUtc": "2026-08-21T13:50:00Z",
+        "endUtc": "2026-08-22T00:45:00Z",
+        "lengthMinutes": 655.0,
+        "ocuHours": 0,
+        "caveat": "投入完了後・リクエスト 0 件・SearchableDocuments 15,000 一定。最も条件の揃ったアイドル区間"
+      }
+    ],
+    "idleOcuHourConclusion": "アイドル区間の消費 OCU-hour は 3 区間すべてで 0.00 である。要件 18.3 が求める『アイドル時の OCU 使用量（OCU-hour、小数第 2 位）』は **0.00** と記載できる。ただし根拠となる最長のアイドル区間は 10.92 時間であり 24 時間ではない",
+    "partitionConserved": true,
+    "partitionConservedMeaning": "区間分解の消費 OCU-hour の総和が窓全体の累積 7.4833 OCU-hour と一致した（区間の検出に欠落も重複もない）"
+  },
+
+  "requirement18Dot3": {
+    "coldStartFromScaleToZero": {
+      "requirement": "scale-to-zero 状態からの Cold_Start 所要時間（秒、小数第 1 位）",
+      "status": "未実測",
+      "reason": "確定した 0 OCU 状態（本仕様の基準では 60 分以上の連続 0 OCU）からの検索を 1 度も実行していない。本タスクで検索を実行すればアイドル記録を汚し、かつ利用者が承認したスコープ外になるため実行しなかった",
+      "closestAvailableEvidence": [
+        {
+          "source": "task 13.15（docs/measurements/measure-score-calibration-2026-08-21T13-36-09-269Z.json / q01 ja）",
+          "atUtc": "2026-08-21T13:36:09Z 直前",
+          "coldStartFlag": true,
+          "tookSeconds": 19.3,
+          "searchLatencySeconds": 19.9,
+          "handlerLatencySeconds": 20.1,
+          "tookMs": 19349,
+          "searchLatencyMs": 19879,
+          "handlerLatencyMs": 20109,
+          "precedingConfirmedZeroOcuMinutes": 25.0,
+          "precedingZeroOcuIntervalUtc": { "start": "2026-08-21T13:10:00Z", "end": "2026-08-21T13:35:00Z" },
+          "caveat": "直前の 0 OCU は 25.0 分であり、本仕様の scale-to-zero 基準（60 分）に達していない"
+        },
+        {
+          "source": "task 13.18（docs/measurements/capacity-latency-2026-08-22T03-53-37-635Z.json / q01 ja）",
+          "atUtc": "2026-08-22T03:53:00.976Z",
+          "coldStartFlag": true,
+          "tookSeconds": 18.4,
+          "searchLatencySeconds": 19.0,
+          "handlerLatencySeconds": 19.2,
+          "tookMs": 18356,
+          "searchLatencyMs": 18962,
+          "handlerLatencyMs": 19202,
+          "precedingConfirmedZeroOcuMinutes": 5.0,
+          "precedingZeroOcuIntervalUtc": { "start": "2026-08-22T03:50:00Z", "end": "2026-08-22T03:55:00Z" },
+          "caveat": "13.18 は『直前のアイドル約 16 分』と記録したが、それは AOSS への検索が無かった時間である。**SearchOCU が実際に 0 になっていたのは直前の 1 バケット（5.0 分）のみ**で、13.17 の検索終了後も約 14 分は OCU が 0 に落ちていない。本タスクの 5 分系列で確認した"
+        }
+      ],
+      "observationFromTheTwo": "0 OCU 継続 5.0 分で took 18.4 秒、25.0 分で 19.3 秒。差は 0.9 秒で、この 2 点からは継続時間と Cold_Start 所要時間の関係を判定できない（n = 2）。60 分以上の 0 OCU からの値が同水準になるかは**推定にとどまり実測していない**",
+      "whatIsMeasured": "『OCU が 0 に落ちた直後の検索は 18〜20 秒かかる』ことは 2 回の独立した観測で一致している。いずれも要件 9.9 の打ち切り 30,000 ms 以内",
+      "whatIsNotMeasured": "『60 分以上の 0 OCU 状態（= 本仕様が scale-to-zero と呼ぶ状態）からの Cold_Start 所要時間』",
+      "ocuDecayObservation": "検索終了から SearchOCU が 0 に落ちるまでの遅れを 2 例で観測した。13.17 の最終検索（2026-08-22T03:36Z 頃）に対して 0 になったのは 03:50 バケット、13.18 の最終検索（03:56:32Z）に対して 0 になったのは 04:10 バケットである。いずれも約 14 分後であり、**課金は最終検索の時点では止まらない**"
+    }
+  },
+
+  "requirement77": {
+    "requirement": "累積 OCU 課金見積が 20 USD を超えた場合、測定を終了し削除実行を要求する警告を出力する",
+    "command": "npm run vector:measure -- --watch-spend --no-write --hours 48",
+    "asOfUtc": "2026-08-22T04:26:35Z",
+    "windowUtc": { "start": "2026-08-20T04:25:00Z", "end": "2026-08-22T04:30:00Z" },
+    "ocuHour": 7.4833,
+    "usd": 1.80,
+    "capUsd": 20,
+    "remainingUsd": 18.20,
+    "previousUsd": 1.73,
+    "deltaUsd": 0.07,
+    "deltaExplanation": "13.18 は 7.2167 OCU-hour（1.73 USD）を記録した。増分 0.2667 OCU-hour は 13.18 自身の検索の余韻（2026-08-22T04:00Z / 04:05Z の 2 バケット）が当時の窓の外にあったものである。本タスクは検索を 1 件も実行していないため、本タスク由来の増分は 0 である",
+    "thresholdCrossed": false,
+    "measurementTerminated": false,
+    "deletionWarningEmitted": false,
+    "lifetimeCoverage": {
+      "hours48": { "ocuHour": 7.4833, "usd": 1.80 },
+      "hours120": { "ocuHour": 7.4833, "usd": 1.80 },
+      "conclusion": "--hours 48 と --hours 120 が同値であるため、48 時間窓が通算をすでに覆っている。既定の 24 時間はローリングウィンドウであり通算ではないため使用していない"
+    },
+    "warningPathVerification": {
+      "how": "警告が発火していないため、発火したとは主張しない。代わりに経路の存在をコードとテストで確認した",
+      "implementation": "scripts/vector-search/measure.ts の accumulateSpend が 累積 OCU-hour × 単価 > 閾値 を初めて満たした点で積算を打ち切り、SpendWarning（削除実行を要求する Collection / Collection Group を含む）を生成する",
+      "tests": [
+        "measure.test.ts Property 50（累積の単調性と警告時点。閾値超過が無い場合は警告 null、ある場合は初回超過点のみ thresholdCrossed が true）",
+        "measure.test.ts『20 USD を初めて超えた時点で打ち切り、削除実行を要求する警告を出す』（63 サンプルで 20.16 USD に達する系列を与え、63 件目で打ち切ることを確認）"
+      ],
+      "result": "npx vitest --run scripts/vector-search/measure.test.ts → 70 テスト成功"
+    },
+    "caveat": "積算対象は SearchOCU / IndexingOCU から導く OCU-hour のみである。Collection には vectorOptions.ServerlessVectorAcceleration: ENABLED が付いており、OCU-hour に還元されない課金要素が存在しうる。したがって 1.80 USD は下限見積である。実費の確定には請求データ（Cost Explorer / Billing の AOSS 利用種別）を用いる"
+  },
+
+  "timeline": [
+    { "atUtc": "2026-08-18T16:28:38Z", "event": "Collection Group 作成（min OCU 0/0 受理、max 2/2、NEXTGEN）" },
+    { "atUtc": "2026-08-18T16:28Z 〜 2026-08-19T20:50Z", "event": "OCU メトリクスのデータ点が存在しない約 28.4 時間。**0 とみなさない（測定値の不存在）**" },
+    { "atUtc": "2026-08-19T20:50:00Z", "event": "SearchOCU / IndexingOCU の最初のデータ点（値 0）" },
+    { "atUtc": "2026-08-20T21:10:42Z", "event": "Collection 作成。同バケットに IngestionRequestRate（CreateIndex）" },
+    { "atUtc": "2026-08-20T22:40:00Z", "event": "SearchableDocuments が 0 → 65 件。投入開始" },
+    { "atUtc": "2026-08-20T22:45:00Z 〜 2026-08-21T00:20:00Z", "event": "投入区間 95.0 分 / 4.6833 OCU-hour（検索 3.1333 / インデックス 1.5500）" },
+    { "atUtc": "2026-08-21T00:20:00Z 〜 12:40:00Z", "event": "アイドル 740.0 分 / 0 OCU / リクエスト 0 件（ドキュメント 14,990）" },
+    { "atUtc": "2026-08-21T12:40:00Z", "event": "SearchableDocuments が 14,990 → 15,000" },
+    { "atUtc": "2026-08-21T12:45:00Z 〜 13:10:00Z", "event": "検索区間 25.0 分 / 0.7667 OCU-hour（検索 0.6000 / インデックス 0.1667。インデックス分は 12:40 バケットの 10 件追加に約 5 分遅れて現れたもの）" },
+    { "atUtc": "2026-08-21T13:10:00Z 〜 13:35:00Z", "event": "0 OCU 25.0 分。この直後の検索が 13.15 の Cold_Start（took 19.3 秒）" },
+    { "atUtc": "2026-08-21T13:35:00Z 〜 13:50:00Z", "event": "検索区間 15.0 分 / 0.3333 OCU-hour（13.15 / 13.16）" },
+    { "atUtc": "2026-08-21T13:50:00Z 〜 2026-08-22T00:45:00Z", "event": "**最も条件の揃ったアイドル区間** 655.0 分 / 0 OCU / リクエスト 0 件 / ドキュメント 15,000" },
+    { "atUtc": "2026-08-22T00:45:00Z 〜 01:00:00Z", "event": "検索区間 15.0 分 / 0.3 OCU-hour（18.3 / 19.2 の疎通確認。13.17 / 13.18 のブロック解除を確認した検索）" },
+    { "atUtc": "2026-08-22T01:00:00Z 〜 03:15:00Z", "event": "アイドル 135.0 分 / 0 OCU / リクエスト 0 件" },
+    { "atUtc": "2026-08-22T03:15:00Z 〜 03:50:00Z", "event": "検索継続区間 35.0 分 / 0.9667 OCU-hour（13.17 の recall。要件 14.9 の検索区間として採用）" },
+    { "atUtc": "2026-08-22T03:50:00Z 〜 03:55:00Z", "event": "0 OCU 5.0 分。この直後の検索が 13.18 の Cold_Start（took 18.4 秒）" },
+    { "atUtc": "2026-08-22T03:55:00Z 〜 04:10:00Z", "event": "検索区間 15.0 分 / 0.4333 OCU-hour（13.18 のレイテンシ測定と UI 検証。最終検索 03:56:32Z）" },
+    { "atUtc": "2026-08-22T04:10:00Z 〜", "event": "アイドル継続中。本タスクの取得時点（04:25Z / 04:30Z）で 15.0〜20.0 分。currentCapacity も 0.0/0.0 / NO_ACTION" }
+  ],
+
+  "artifacts": [
+    "docs/measurements/measure-ocu-2026-08-22T04-24-12-566Z.json",
+    "docs/measurements/capacity-latency-2026-08-22.json",
+    "docs/measurements/capacity-latency-2026-08-22T03-53-37-635Z.json",
+    "docs/measurements/measure-score-calibration-2026-08-21T13-36-09-269Z.json"
+  ],
+
+  "commandsUsed": [
+    "npm run vector:measure -- --ocu --hours 120 --region us-west-2 --json（成果物 measure-ocu-2026-08-22T04-24-12-566Z.json）",
+    "npm run vector:measure -- --ocu --hours 72 --region us-west-2 --json --no-write",
+    "npm run vector:measure -- --ocu --hours 24 --region us-west-2 --out /tmp/ocu24（比較用。docs には残さない）",
+    "npm run vector:measure -- --watch-spend --no-write --hours 48 --region us-west-2",
+    "npm run vector:measure -- --watch-spend --no-write --hours 120 --region us-west-2",
+    "aws cloudwatch list-metrics --namespace AWS/AOSS --region us-west-2",
+    "aws cloudwatch list-metrics --namespace AWS/AOSS --metric-name OCUUtilization --region us-west-2",
+    "aws cloudwatch get-metric-statistics --namespace AWS/AOSS --metric-name SearchableDocuments / SearchRequestRate / IngestionRequestRate（次元 CollectionName + CollectionId + ClientId）",
+    "aws opensearchserverless batch-get-collection --names kiro-inventory-vector",
+    "aws opensearchserverless batch-get-collection-group --names kiro-inventory-vector-group"
+  ],
+  "mutatingCallsMade": [],
+
+  "verification": {
+    "performed": [
+      "npx vitest --run scripts/vector-search/measure.test.ts（70 テスト成功。accumulateSpend の Property 50 と 20 USD 打ち切りの単体テストを含む）",
+      "npx tsc --noEmit（成功）",
+      "npx tsc --noEmit -p amplify/tsconfig.json（成功）",
+      "npm run lint（成功）"
+    ],
+    "notPerformed": [
+      "24 時間連続のアイドル観測（利用者判断。requirement73 参照）",
+      "scale-to-zero 状態からの Cold_Start 計測（requirement18Dot3 参照）",
+      "デプロイ（コード変更なし。本タスクの成果物は本 JSON と tasks.md の記録のみ）",
+      "検索の実行（0 件。アイドル記録を汚さないため）"
+    ]
+  },
+
+  "openItemsForUser": [
+    {
+      "kind": "requirements.md の文面判断",
+      "target": "要件 7.3",
+      "issue": "『24 時間連続で維持したとき』という前提が満たされていないため、7.3 の出力を遡及データで代替したことが要件本文から読めない",
+      "proposal": "本文は変更せず、7.3 に運用上の注意を追記する案：『**運用上の注意：**24 時間連続の専用観測を実施できない場合は、遡及可能な最長窓での 0 OCU 区間の列挙で要件 7.4 / 7.6 の二値判定を確定させ、7.3 の 24 時間分の系列は未実施として理由と、代替した窓（区間長・ドキュメント件数・リクエスト有無）を明記する。タスク 13.19 で確認』",
+      "note": "既に保留中の要件 15.2 / filterKindsUnverified の文面判断があるため、その待ち行列に追加する。本タスクでは適用していない"
+    },
+    {
+      "kind": "requirements.md の文面判断",
+      "target": "要件 7.8",
+      "issue": "OCUUtilization の取得を SHALL で求めているが、当該アカウント・当該 Collection Group では公開されておらず満たせない",
+      "proposal": "『**実測で判明：**OCUUtilization は AWS/AOSS の ListMetrics に現れず（us-west-2 / NextGen VECTORSEARCH Collection Group）、SEARCH() でも系列 0 本である。本項は測定不能として扱い、Verification_Report には測定不能である旨と証拠（ListMetrics の返却メトリクス名一覧）を記載する。タスク 13.19 で確認』",
+      "note": "13.19 の観測で確定した事実であり、A（前提・リスク・制約）表への追加行としても記載しうる"
+    },
+    {
+      "kind": "後続タスクへの申し送り",
+      "target": "task 14.1（Verification_Report 執筆）",
+      "issue": "要件 18.3 は Cold_Start 所要時間と OCUUtilization の記載を求めるが、前者は 60 分以上の 0 OCU 状態からの値が未実測、後者は測定不能である",
+      "proposal": "Verification_Report には、Cold_Start を『0 OCU 到達直後の実測値 18.4 秒 / 19.3 秒（直前の 0 OCU 継続はそれぞれ 5.0 分 / 25.0 分）』として実測ラベル付きで記載し、『60 分以上の 0 OCU からの値は未実測』を併記する。OCUUtilization は測定不能として証拠付きで記載する（要件 18.18 の実測 / 推定ラベル運用に従う）"
+    }
+  ]
+}

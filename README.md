@@ -151,6 +151,7 @@ amplify/
 
 docs/
   opensearch-comparison.md        # 検索比較の詳細知見
+  vector-search-comparison.md     # ベクトル検索比較の詳細知見
   dynamodb-vs-rds-search.md       # DynamoDB vs RDS 比較考察
   observability.md                # 可観測性設定
 ```
@@ -235,6 +236,7 @@ npx ampx sandbox delete --yes
 | ドキュメント | 内容 |
 |-------------|------|
 | [docs/opensearch-comparison.md](docs/opensearch-comparison.md) | OpenSearch vs DynamoDB 検索比較の詳細知見・デプロイ Tips |
+| [docs/vector-search-comparison.md](docs/vector-search-comparison.md) | DynamoDB Vector Search vs OpenSearch VECTORSEARCH のベクトル検索比較検証（上記の続き） |
 | [docs/dynamodb-vs-rds-search.md](docs/dynamodb-vs-rds-search.md) | DynamoDB vs RDS の検索パターン比較考察 |
 | [docs/observability.md](docs/observability.md) | X-Ray / CloudWatch の設定と確認方法 |
 

@@ -6,7 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest --run",
+    "vector:recall": "tsx scripts/vector-search/recall-cli.ts",
+    "vector:measure": "tsx scripts/vector-search/measure.ts",
+    "vector:validate": "tsx scripts/vector-search/validate-scale-to-zero.ts",
+    "vector:probe-range": "tsx scripts/vector-search/probe-range-filter.ts",
+    "vector:verify": "tsx scripts/vector-search/verify-embeddings.ts"
   },
   "dependencies": {
     "@ag-ui/client": "^0.0.55",
@@ -27,9 +33,15 @@
   "devDependencies": {
     "@aws-amplify/backend": "^1.21.1",
     "@aws-amplify/backend-cli": "^1.8.2",
-    "@aws-sdk/client-dynamodb": "^3.1075.0",
+    "@aws-sdk/client-bedrock-runtime": "3.1075.0",
+    "@aws-sdk/client-cloudwatch": "3.1112.0",
+    "@aws-sdk/client-dynamodb": "3.1112.0",
+    "@aws-sdk/client-opensearchserverless": "3.1112.0",
+    "@aws-sdk/client-osis": "3.1112.0",
     "@aws-sdk/util-dynamodb": "^3.996.5",
     "@eslint/eslintrc": "^3.3.5",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.2",
     "@types/node": "^22.19.15",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -39,7 +51,10 @@
     "esbuild": "^0.27.4",
     "eslint": "^9.39.4",
     "eslint-config-next": "^15.5.14",
+    "fast-check": "4.9.0",
+    "jsdom": "26.1.0",
     "tsx": "^4.19.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "4.1.10"
   }
 }

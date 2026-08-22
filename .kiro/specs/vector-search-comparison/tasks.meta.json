@@ -1,0 +1,1383 @@
+{
+  "pbtResults": {
+    "8.8 【ローカル】検索系ハンドラの property テストを書く": {
+      "status": "passed",
+      "lastRunTimestamp": 1787000288544
+    }
+  },
+  "executionHistory": {
+    "1.1 【ローカル】テストランナーと property テスト基盤を導入する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969266458
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969280773
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969730557
+      }
+    ],
+    "1.2 【ローカル】`package.json` にスクリプトを追加する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969266516
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969741231
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970045700
+      }
+    ],
+    "2.1 【ローカル】`amplify/functions/shared/vector/master-data-i18n.ts` に 10 種のマッピング表を定義する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969266544
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969742290
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970047130
+      }
+    ],
+    "2.2 【ローカル】マスターデータの整合性ユニットテストを書く": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969266576
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970887419
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786973465376
+      }
+    ],
+    "3.1 【ローカル】`sku-metadata.ts` に日英メタデータ導出を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969266617
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970056925
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970591371
+      }
+    ],
+    "3.2 【ローカル】`sku-metadata` の property テストを書く": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969266655
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970888871
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786973466539
+      }
+    ],
+    "3.3 【ローカル】`embedding-text.ts` に埋め込みテキスト組み立てと正規化を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969266691
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970890303
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786973467915
+      }
+    ],
+    "3.4 【ローカル】`embedding-text` の property テストを書く": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969266717
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786973476584
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974087123
+      }
+    ],
+    "3.5 【ローカル】`language.ts` に言語ルーティングを実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969266749
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969743711
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970048515
+      }
+    ],
+    "3.6 【ローカル】`topk.ts` に TopK 正規化を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969266784
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969745115
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970049960
+      }
+    ],
+    "3.7 【ローカル】`score-normalize.ts` にスコア正規化を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969266817
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969746164
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970051091
+      }
+    ],
+    "3.8 【ローカル】`constraints.ts` に機能制約メタデータを定義する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969266858
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970058143
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970592696
+      }
+    ],
+    "3.9 【ローカル】`errors.ts` にエラー分類と応答生成を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969266889
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970059529
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970594145
+      }
+    ],
+    "3.10 【ローカル】言語ルーティング・TopK・スコア正規化・エラー分類の property テストを書く": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969266927
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970891662
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786973469768
+      }
+    ],
+    "3.11 【ローカル】`embedding-generator.ts` に Bedrock 呼び出しをカプセル化する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969266958
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786973477981
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974088374
+      }
+    ],
+    "3.12 【ローカル】`embedding-generator` の property テストを書く": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969266992
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974102916
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974928764
+      }
+    ],
+    "4.1 【ローカル】`vector-types.ts` に API 契約型を定義する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267025
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970627461
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970878437
+      }
+    ],
+    "4.2 【ローカル】`vector-overlap.ts` に重なり指標の計算を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267068
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970892643
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786973470778
+      }
+    ],
+    "4.3 【ローカル】`vector-overlap` の property テストを書く": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267107
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786973479350
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974089766
+      }
+    ],
+    "5.1 【ローカル】`ground-truth.ts` に言語別 Ground_Truth 構築を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267142
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974104303
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974928816
+      }
+    ],
+    "5.2 【ローカル】`recall.ts` に SKU 粒度の recall 算出と集計を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267167
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974961754
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786975848081
+      }
+    ],
+    "5.3 【ローカル】`paired-queries.ts` に Paired_Query_Set を定義する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267194
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970060682
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970595523
+      }
+    ],
+    "5.4 【ローカル】Recall 評価コアの property テストを書く": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267240
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786976516387
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786979103868
+      }
+    ],
+    "5.5 【ローカル】**3 行複製に対する recall 1.0 の回帰テストを書く（本機能で最も重要なテスト。省略しない）**": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267283
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786976518103
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786979105747
+      }
+    ],
+    "6. チェックポイント — 純関数層": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267326
+      }
+    ],
+    "7.1 【ローカル】`dynamodb-tables.ts` に Vector_Table と Query_Vector_Cache を**追記のみ**で追加する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267373
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786973480673
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974091231
+      }
+    ],
+    "7.2 【ローカル】`vector-index.ts` と Index_Provisioner を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267417
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974105706
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974929164
+      }
+    ],
+    "7.3 【ローカル】`vector-collection.ts` に OpenSearch VECTORSEARCH 一式を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267458
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974106883
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974930184
+      }
+    ],
+    "7.4 【ローカル】CDK スナップショットテストで**既存リソースの差分ゼロ**を機械的に固定する（省略しない）": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267510
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786999109660
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787000356958
+      }
+    ],
+    "7.5 【ローカル】IAM と description の property テストを書く（省略しない）": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267543
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786999111112
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787000358628
+      }
+    ],
+    "8.1 【ローカル】`vector-query-embed/handler.ts` を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267578
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974963146
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786975849391
+      }
+    ],
+    "8.2 【ローカル】`vector-search-ddb/handler.ts` を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267615
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974964614
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786975850793
+      }
+    ],
+    "8.3 【ローカル】`vector-search-aoss/handler.ts` を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267648
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974965927
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786975854264
+      }
+    ],
+    "8.4 【ローカル】`vector-capabilities/handler.ts` を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267676
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974966996
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786975854817
+      }
+    ],
+    "8.5 【ローカル】`vector-embed-batch/handler.ts` の `phase = \"copy\"` を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267709
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786975860832
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786976510607
+      }
+    ],
+    "8.6 【ローカル】`vector-embed-batch/handler.ts` の `phase = \"embed\"` を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267744
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786976519519
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786979107129
+      }
+    ],
+    "8.7 【ローカル】Lambda 定義・API Gateway ルート・IAM を配線する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267777
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786979190312
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786999088094
+      }
+    ],
+    "8.8 【ローカル】検索系ハンドラの property テストを書く": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267834
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786999112082
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787000359531
+      }
+    ],
+    "8.9 【ローカル】バッチ処理の property テストを書く": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267867
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786999113480
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787000360938
+      }
+    ],
+    "9. チェックポイント — バックエンド層": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267908
+      }
+    ],
+    "10.1 【ローカル】`src/lib/inventory/vector-api.ts` に API クライアントを実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267940
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786979191725
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786999089358
+      }
+    ],
+    "10.2 【ローカル】`VectorSearchForm.tsx` を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267967
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787000394997
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787000946193
+      }
+    ],
+    "10.3 【ローカル】`VectorComparisonPanel.tsx` を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969267999
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787000395598
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787001331975
+      }
+    ],
+    "10.4 【ローカル】`VectorOverlapSummary.tsx` を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268043
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787000397027
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787000947560
+      }
+    ],
+    "10.5 【ローカル】`VectorConstraintTable.tsx` を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268086
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787000398423
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787000948972
+      }
+    ],
+    "10.6 【ローカル】`VectorSearchComparisonView.tsx` で状態を統合する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268143
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787001333225
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787002007579
+      }
+    ],
+    "10.7 【ローカル】`InventoryDashboard.tsx` にタブを 1 件だけ追加する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268174
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787002015514
+      }
+    ],
+    "10.8 【ローカル】UI の property テストとユニットテストを書く": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268207
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787002016941
+      }
+    ],
+    "11.1 【ローカル】`validate-scale-to-zero.ts`（Deployment_Validator）を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268250
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786976520907
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786979108635
+      }
+    ],
+    "11.2 【ローカル】`measure.ts`（Measurement_Collector）を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268293
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786979192683
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786999090754
+      }
+    ],
+    "11.3 【ローカル】`measure.ts` の算出ロジックの property テストを書く": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268347
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786999114611
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787000362397
+      }
+    ],
+    "11.4 【ローカル】recall 測定 CLI と機械可読出力を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268382
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786979194017
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786999091760
+      }
+    ],
+    "11.5 【ローカル】`probe-range-filter.ts`（Q1 の実測プローブ）を実装する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268408
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786976521950
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786979109883
+      }
+    ],
+    "12.1 【ローカル】`.github/workflows/ci.yml` の Web App ジョブを更新する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268442
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787000399500
+      },
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787000950429
+      }
+    ],
+    "13.1 【実 AWS】段階 0：事前確認スナップショットを取得する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268475
+      },
+      {
+        "executionId": "ce9a519f-bd42-4910-b436-ccd366855618",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787264055070
+      }
+    ],
+    "13.2 【実 AWS】段階 1〜2：Stage A をデプロイする（`vectorCollectionEnabled=false`）": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268509
+      },
+      {
+        "executionId": "ce9a519f-bd42-4910-b436-ccd366855618",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787264056533
+      }
+    ],
+    "13.3 【実 AWS】段階 3：Deployment_Validator を実行して min OCU 0 の受理可否を判定する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268543
+      },
+      {
+        "executionId": "ce9a519f-bd42-4910-b436-ccd366855618",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787264057813
+      }
+    ],
+    "13.4 【実 AWS】【壁時計 1 時間】段階 4：Collection 未作成の Collection Group が課金されないことを裏取りする": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268581
+      },
+      {
+        "executionId": "ce9a519f-bd42-4910-b436-ccd366855618",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787264059664
+      }
+    ],
+    "13.5 【実 AWS】段階 5：Good_Table → Vector_Table の複製を実行する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268609
+      },
+      {
+        "executionId": "ce9a519f-bd42-4910-b436-ccd366855618",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787264060720
+      }
+    ],
+    "13.6 【実 AWS】S1 スナップショットを取得する（埋め込み書き込み開始前）": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268643
+      },
+      {
+        "executionId": "ce9a519f-bd42-4910-b436-ccd366855618",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787264062062
+      }
+    ],
+    "13.7 【実 AWS】段階 6：Stage B をデプロイする（`vectorCollectionEnabled=true`）": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268689
+      },
+      {
+        "executionId": "ce9a519f-bd42-4910-b436-ccd366855618",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787264063412
+      }
+    ],
+    "13.8 【実 AWS】段階 7：`byEmbeddingJa` を作成し ACTIVE 到達を待つ": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268724
+      },
+      {
+        "executionId": "ce9a519f-bd42-4910-b436-ccd366855618",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787264083878
+      },
+      {
+        "executionId": "ce9a519f-bd42-4910-b436-ccd366855618",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787265369281
+      }
+    ],
+    "13.9 【実 AWS】**Q6：2 本目の `UpdateTable` が受理されるかを観測する**": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268759
+      },
+      {
+        "executionId": "ce9a519f-bd42-4910-b436-ccd366855618",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787265370515
+      }
+    ],
+    "13.10 【実 AWS】段階 8：`byEmbeddingEn` を作成し ACTIVE 到達を待つ": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268794
+      },
+      {
+        "executionId": "ce9a519f-bd42-4910-b436-ccd366855618",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787265371807
+      }
+    ],
+    "13.11 【実 AWS】【壁時計 約 100〜115 分】段階 9：日英 2 本の埋め込みバッチを実行する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268826
+      },
+      {
+        "executionId": "6cfcac27-4f17-4142-abec-1464fb4eab37",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787265562213
+      },
+      {
+        "executionId": "fbee92c4-1c93-4cc8-821d-7a46fbeff119",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787317137132
+      }
+    ],
+    "13.12 【実 AWS】段階 10：2 本それぞれのバックフィル完了を確認する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268876
+      },
+      {
+        "executionId": "fbee92c4-1c93-4cc8-821d-7a46fbeff119",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787317173310
+      },
+      {
+        "executionId": "fbee92c4-1c93-4cc8-821d-7a46fbeff119",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787317477464
+      }
+    ],
+    "13.13 【実 AWS】Q5：`SearchVectors` の生レスポンスを記録して `rawScore` マッピングを確定する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268910
+      },
+      {
+        "executionId": "fbee92c4-1c93-4cc8-821d-7a46fbeff119",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787317489107
+      },
+      {
+        "executionId": "fbee92c4-1c93-4cc8-821d-7a46fbeff119",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787318457800
+      }
+    ],
+    "13.14 【実 AWS】【壁時計 6 時間 × 最大 3 回】S2 と `IndexSizeBytes` を取得して収束判定する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268942
+      },
+      {
+        "executionId": "fbee92c4-1c93-4cc8-821d-7a46fbeff119",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787318504840
+      },
+      {
+        "executionId": "c95df0be-75fe-462f-bb29-8b0e9de4333a",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787354678604
+      }
+    ],
+    "13.15 【実 AWS】段階 11：Q2 スコア正規化キャリブレーションを実行して式を確定する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969268982
+      },
+      {
+        "executionId": "fbee92c4-1c93-4cc8-821d-7a46fbeff119",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787318527579
+      },
+      {
+        "executionId": "fbee92c4-1c93-4cc8-821d-7a46fbeff119",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787322008954
+      }
+    ],
+    "13.16 【実 AWS】段階 12：Q1 範囲フィルタの実測プローブを実行して対応可否を確定する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969269115
+      },
+      {
+        "executionId": "53642dfd-0fa6-40ed-b3f1-7ca0ddf4e110",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787355730655
+      },
+      {
+        "executionId": "53642dfd-0fa6-40ed-b3f1-7ca0ddf4e110",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787355979276
+      }
+    ],
+    "13.17 【実 AWS】段階 13：言語別 recall を測定する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969269178
+      },
+      {
+        "executionId": "53642dfd-0fa6-40ed-b3f1-7ca0ddf4e110",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787355999612
+      }
+    ],
+    "13.18 【実 AWS】段階 13：消費キャパシティと転送量、レイテンシを測定する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969269220
+      },
+      {
+        "executionId": "2e3c9075-8fef-43cb-b69b-18aa62c2300b",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787370279335
+      }
+    ],
+    "13.19 【実 AWS】【壁時計 24 時間】段階 14：scale-to-zero 判定のためアイドル OCU を観測する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969269267
+      },
+      {
+        "executionId": "2e3c9075-8fef-43cb-b69b-18aa62c2300b",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787371774408
+      }
+    ],
+    "13.20 【実 AWS】段階 15：Good_Table の不変性を確認する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969269310
+      },
+      {
+        "executionId": "401dd4ec-9af9-4466-9b2b-453dbbd72c58",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787373628797
+      }
+    ],
+    "13.21 【実 AWS】【壁時計】512 / 256 次元のトレードオフを測定する（任意）": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969269349
+      },
+      {
+        "executionId": "401dd4ec-9af9-4466-9b2b-453dbbd72c58",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787374589499
+      }
+    ],
+    "14.1 【ローカル】`docs/vector-search-comparison.md` を執筆する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969269395
+      },
+      {
+        "executionId": "401dd4ec-9af9-4466-9b2b-453dbbd72c58",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787375111932
+      }
+    ],
+    "14.2 【ローカル】README にリンクを追加し、既存ドキュメントの差分ゼロを確認する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969269441
+      },
+      {
+        "executionId": "401dd4ec-9af9-4466-9b2b-453dbbd72c58",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787377498097
+      }
+    ],
+    "15.1 【実 AWS】検証リソースを削除し、削除完了を検証する": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969269485
+      }
+    ],
+    "16. 最終チェックポイント": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786969269519
+      }
+    ],
+    "1. テスト基盤とプロジェクト設定の整備": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786970045811
+      }
+    ],
+    "2. 日英マスターデータの新規追加（新規シードデータ）": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786973465436
+      }
+    ],
+    "4. フロントエンド共有純関数（`src/lib/inventory/`）": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974089822
+      }
+    ],
+    "3. 共有純関数モジュール（`amplify/functions/shared/vector/`）": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786974928851
+      }
+    ],
+    "5. Recall 評価コア（`scripts/vector-search/`）": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1786979105798
+      }
+    ],
+    "7. CDK インフラ定義（`amplify/custom/`）": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787000358687
+      }
+    ],
+    "8. Lambda ハンドラの実装と配線（`amplify/functions/`）": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787000360991
+      }
+    ],
+    "11. 運用スクリプト（`scripts/vector-search/`）": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787000362454
+      }
+    ],
+    "12. CI の更新": [
+      {
+        "executionId": "d4bd52e3-bd6e-4f4e-b399-df66a0d885bb",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787000950542
+      }
+    ],
+    "17.1 【ローカル】検索 Lambda に OpenSearch の読み出し検証経路を追加する": [
+      {
+        "executionId": "c5e4db35-0147-4c0e-9a36-3279a0c2f1d2",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787309794426
+      },
+      {
+        "executionId": "c5e4db35-0147-4c0e-9a36-3279a0c2f1d2",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787313714771
+      }
+    ],
+    "17.2 【ローカル】埋め込みバッチから OpenSearch 検証を外し、検証不一致を失敗として計上する": [
+      {
+        "executionId": "c5e4db35-0147-4c0e-9a36-3279a0c2f1d2",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787315140320
+      }
+    ],
+    "17.3 【実 AWS】Verification_Run を実行して要件 3.6 の一致件数を得る": [
+      {
+        "executionId": "fbee92c4-1c93-4cc8-821d-7a46fbeff119",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787317137187
+      }
+    ],
+    "17. OpenSearch 側の格納値検証の分離（案 D）": [
+      {
+        "executionId": "fbee92c4-1c93-4cc8-821d-7a46fbeff119",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787317137252
+      }
+    ],
+    "18.1 【ローカル】`embedding-generator.ts` にレイテンシ最適化推論のフォールバックを実装する": [
+      {
+        "executionId": "c95df0be-75fe-462f-bb29-8b0e9de4333a",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787353581476
+      }
+    ],
+    "18.2 【ローカル】`errors.ts` のエラー分類を是正し、真因と矛盾する定型文を止める": [
+      {
+        "executionId": "c95df0be-75fe-462f-bb29-8b0e9de4333a",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787353585943
+      }
+    ],
+    "18.4 【ローカル】`Backfilling` フィールド不在を測定不能として明示する": [
+      {
+        "executionId": "c95df0be-75fe-462f-bb29-8b0e9de4333a",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787353592182
+      },
+      {
+        "executionId": "c95df0be-75fe-462f-bb29-8b0e9de4333a",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787354399226
+      }
+    ],
+    "18.3 【実 AWS】`POST /vector-search/embed` の成功とフォールバックの記録を確認する": [
+      {
+        "executionId": "53642dfd-0fa6-40ed-b3f1-7ca0ddf4e110",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787355058193
+      },
+      {
+        "executionId": "53642dfd-0fa6-40ed-b3f1-7ca0ddf4e110",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787355493443
+      }
+    ],
+    "18. クエリ埋め込みの推論経路フォールバック（案 B）とエラー分類の是正": [
+      {
+        "executionId": "53642dfd-0fa6-40ed-b3f1-7ca0ddf4e110",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787355493494
+      }
+    ],
+    "19.2 【実 AWS】`POST /vector-search/dynamodb` が `INDEX_NOT_FOUND` を返さないことを確認する": [
+      {
+        "executionId": "2e3c9075-8fef-43cb-b69b-18aa62c2300b",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787358864917
+      },
+      {
+        "executionId": "2e3c9075-8fef-43cb-b69b-18aa62c2300b",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787359316605
+      }
+    ],
+    "19. `kiro-vector-search-ddb` の SDK 同梱（`DescribeTable` の応答欠落の是正）": [
+      {
+        "executionId": "2e3c9075-8fef-43cb-b69b-18aa62c2300b",
+        "chatSessionId": "sess_49df03f8-e428-45d6-b1df-1f0b39b3394c",
+        "timestamp": 1787359316678
+      }
+    ]
+  }
+}
