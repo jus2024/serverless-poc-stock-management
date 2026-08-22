@@ -223,6 +223,65 @@
           "topCategory": "ケニア 生豆"
         }
       ]
+    },
+    "warehouseFilter": {
+      "requirements": [
+        "8.6",
+        "13.14"
+      ],
+      "property": "45",
+      "condition": "日本語 / TopK 30 / warehouseId=WH-TOKYO / 1 回",
+      "query": "重いボディでコクのあるフレンチロースト",
+      "allWarehouses": {
+        "rows": 30,
+        "distinctSku": 10,
+        "rowsPerSku": 3.0,
+        "rankDiffRange": "0〜2"
+      },
+      "filtered": {
+        "rows": 30,
+        "distinctSku": 30,
+        "rowsPerSku": 1.0,
+        "rankDiffRange": "全件 0（並びが完全一致）",
+        "top10Distances": [
+          0.5356,
+          0.5418,
+          0.5427,
+          0.543,
+          0.5438,
+          0.544,
+          0.5457,
+          0.5459,
+          0.547,
+          0.5471
+        ],
+        "allRowsInRequestedWarehouse": true
+      },
+      "findings": [
+        "一意 SKU が 10 → 30。知見 3 の 3 分の 1 希釈が倉庫行数ちょうどであることの直接証拠",
+        "距離の完全同値が消え両バックエンドの並びが完全一致。近似探索でも同値がなければ順序は一致する",
+        "Property 45 の「十分大きな TopK において部分集合」の条件付けが必要。同一 TopK では部分集合にならない（フィルタ版は 4 位以降で全倉庫版が未到達の SKU へ進む）"
+      ]
+    },
+    "inputValidation": {
+      "requirements": [
+        "11.6"
+      ],
+      "property": "30",
+      "tested": "TopK = 1.5",
+      "searchExecuted": false,
+      "previousResultsPreserved": true,
+      "errorShown": true,
+      "errorSource": "ブラウザ標準（input type=number の step 違反）",
+      "message": "有効な値を入力してください。有効値として最も近いのは 1 と 2 です。",
+      "requirementWordingMatched": false,
+      "verdict": "振る舞い（検索しない・結果保持）は要件を満たす。文面がアプリ定義でなくブラウザ標準である点は差異として記録",
+      "notTested": [
+        "0",
+        "101",
+        "空クエリ",
+        "全角スペースのみ"
+      ]
     }
   },
   "conclusions": {
@@ -333,5 +392,49 @@
     "bedrockEmbedsAdded": 19,
     "note": "UI からの検索 19 回（q22 反復 10 / paired 6 / usage+対照 4 相当のうち重複を除く実数）。各 1 回の埋め込みを伴う。通算は本ファイル作成時点で概算 10,172 件。OCU はアイドルから再度立ち上がったが 20 USD の上限には遠い",
     "mutatingCallsMade": []
+  },
+  "teardown": {
+    "date": "2026-08-22",
+    "scope": "案 A（部分撤収）",
+    "decidedBy": "利用者",
+    "command": "unset VECTOR_COLLECTION_ENABLED && npx ampx sandbox",
+    "deleted": [
+      "Collection kiro-inventory-vector",
+      "Index inventory-vector",
+      "DynamoDB ベクトルインデックス 2 本",
+      "検索 Lambda 4 本",
+      "Index_Provisioner",
+      "API ルート 4 本",
+      "データアクセスポリシー"
+    ],
+    "retained": [
+      "Vector_Table（ItemCount 15,000 / 138,202,024 B / 日英ベクトル保持）",
+      "Query_Vector_Cache",
+      "Collection Group kiro-inventory-vector-group",
+      "Lambda kiro-vector-embed-batch",
+      "API ルート /vector-search/embed-batch"
+    ],
+    "retainedMonthlyCostUsd": 0.07,
+    "goodTableIdenticalToBaseline": true,
+    "osisPipelineStatus": "STOPPED",
+    "vectorIndexCheckMethod": "AWS CLI 2.35.9 は VectorIndexes を解釈できず Stage B でも null を返すため使用不可。同梱 SDK 3.1112.0 で DescribeTable を呼び 0 本を確認",
+    "cumulativeSpendUsd": 2.5,
+    "cumulativeOcuHour": 10.4167,
+    "sporadicVsBatchedCost": {
+      "recallRun": {
+        "searches": 360,
+        "minutes": 35.0,
+        "ocuHour": 0.9667,
+        "usdPerSearch": 0.00064
+      },
+      "uiInvestigation": {
+        "searches": 25,
+        "ocuHour": 2.93,
+        "usdPerSearch": 0.028
+      },
+      "ratio": "約 44 倍",
+      "cause": "検索終了から SearchOCU が 0 に落ちるまで約 14 分の遅れ",
+      "implication": "OpenSearch のコストは検索回数ではなく検索の時間的な密度で決まる"
+    }
   }
 }

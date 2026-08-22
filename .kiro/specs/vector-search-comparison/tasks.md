@@ -514,7 +514,7 @@ DynamoDB Vector Search（`SearchVectors`）と OpenSearch Serverless VECTORSEARC
     - 明らかな問題で早期に失敗させる順序（lint → 型 → テスト → docs 差分）にする
     - _要件: 18.16_
 
-- [ ] 13. 実 AWS デプロイと測定（利用者が手動でデプロイ / 段階ゲートに従う）
+- [x] 13. 実 AWS デプロイと測定（利用者が手動でデプロイ / 段階ゲートに従う）
   - [x] 13.1 【実 AWS】段階 0：事前確認スナップショットを取得する
     - OSIS `kiro-inventory-pipeline` の状態を取得し、`STOPPED` であることを確認する。`STOPPED` 以外なら状態値を含む警告を出し、**起動も設定変更も行わない**
     - Good_Table の `DescribeTable`（PK / SK、3 GSI 定義、Streams の `NEW_AND_OLD_IMAGES`、PITR、アイテム件数 15,000）と任意抽出 10 件以上のアイテムの属性集合とアイテムサイズを、task 13.20 の比較基準としてファイルに保存する
@@ -807,7 +807,7 @@ DynamoDB Vector Search（`SearchVectors`）と OpenSearch Serverless VECTORSEARC
     - **記録先：作成しない。**未実測のタスクに対して `docs/measurements/` の測定 JSON を作らない（**測定していない数値を成果物として残さない**）。本判断の記録は本タスクの記述と 14.1 の該当節が担う
     - _要件: 14.12（未充足 / 未実測。14.1 に明記する）_
 
-- [ ] 14. 検証結果の文書化
+- [x] 14. 検証結果の文書化
   - [x] 14.1 【ローカル】`docs/vector-search-comparison.md` を執筆する
     - 測定条件：実施日（YYYY-MM-DD）、リージョン（us-west-2）、対象レコード件数、埋め込みモデル名、次元数、距離関数、Distinct_Sku_K と要求 TopK、対象言語、クエリ文字列の全件と件数、倉庫フィルタの適用有無、埋め込み生成の所要時間（分）と Bedrock 呼び出し回数と概算費用
     - DynamoDB 側：レイテンシ（最小・中央値・最大・試行回数）、言語別 Recall_At_K（平均・最小、小数第 3 位）、ベクトル属性の寄与と 2 本の `IndexSizeBytes` 合計（MB、小数第 2 位）、1 検索の消費キャパシティ（RCU、小数第 1 位）、`VectorSearchRequestBytes`
@@ -857,8 +857,8 @@ DynamoDB Vector Search（`SearchVectors`）と OpenSearch Serverless VECTORSEARC
     - 検証：`npx tsc --noEmit` / `npx tsc --noEmit -p amplify/tsconfig.json` / `npm run lint` がいずれも成功（コード変更なし）。`git diff --exit-code -- docs/opensearch-comparison.md` の差分 0 行を確認（要件 18.16）
     - _要件: 18.1, 18.16_
 
-- [ ] 15. 撤収
-  - [ ] 15.1 【実 AWS】検証リソースを削除し、削除完了を検証する
+- [x] 15. 撤収
+  - [x] 15.1 【実 AWS】検証リソースを削除し、削除完了を検証する
     - 削除順序：`vectorCollectionEnabled=false` で再デプロイ（Collection / Index / 検索 Lambda）→ Collection Group → `byEmbeddingEn` → `byEmbeddingJa`（作成の逆順、1 回 1 本）→ Vector_Table（2 本のインデックスが同時に消える）→ Query_Vector_Cache → 本検証で追加した IAM ポリシー・ロールと Lambda
     - `npm run vector:measure -- --teardown-check` で確認する：
       - `ListTables` に `kiro-roasters-inventory-vector` と `kiro-vector-query-cache` が無い
@@ -868,10 +868,38 @@ DynamoDB Vector Search（`SearchVectors`）と OpenSearch Serverless VECTORSEARC
       - **Good_Table が 13.1 のスナップショットと同一**（PK / SK、3 GSI、Streams、PITR、15,000 件、抽出 10 件以上の属性集合とアイテムサイズ）
       - OSIS `kiro-inventory-pipeline` が `STOPPED` のまま
     - 確認結果を `docs/vector-search-comparison.md` の撤収手順節に追記する
+    - **スコープ変更（利用者判断）：部分撤収（案 A）を実施した。**上記の削除順序のうち**手順 1（`vectorCollectionEnabled=false` での再デプロイ）のみ**を実行し、**Vector_Table / Query_Vector_Cache / Collection Group / 埋め込みバッチ Lambda は意図的に残置した。**課金しうるリソースはすべて削除済みである
+      - **案 A を選んだ理由：**本リポジトリは複数の検証テーマを載せた再利用可能なテストベッドであり、README がベクトル検索の有効化手順を前提に書かれている。Vector_Table を残すと**再検証時の DynamoDB 側の復旧が 18 分（インデックスのバックフィル）で済み、Bedrock 呼び出しが 0 回**になる。完全撤収した場合は複製 → 埋め込み 95 分 → インデックス 18 分の約 2 時間が毎回必要になる
+      - **残置分の費用は Vector_Table のストレージ約 0.07 USD/月のみ**（推定）。Collection を含まない Collection Group が 0 課金であることは 13.4 の 1 時間観測と 13.19 の約 24.3 時間の実測で確認済み
+      - **却下した案 B（tasks.md の全 6 手順による完全撤収）：**`backend.ts` と `dynamodb-tables.ts` から Vector_Table / Query_Vector_Cache / Collection Group の定義を外すコード変更を要する。`--teardown-check` は完全に通るが、再検証コストが上がり README の記述と実際の状態が食い違う
+      - **`npx ampx sandbox delete` は使っていない。**Good_Table と 15,000 レコード、`docs/opensearch-comparison.md` の測定基盤ごと消えるため
+    - **実行したコマンド（利用者が手動実行）：**`unset VECTOR_COLLECTION_ENABLED` → `npx ampx sandbox`
+    - **削除されたもの（実測で確認）：**Collection `kiro-inventory-vector` / Index `inventory-vector` / DynamoDB ベクトルインデックス 2 本 / 検索 Lambda 4 本（`query-embed` / `search-ddb` / `search-aoss` / `capabilities`）/ Index_Provisioner / API ルート 4 本 / データアクセスポリシー
+    - **残置したもの（実測で確認）：**Vector_Table（`ACTIVE` / `ItemCount 15,000` / `TableSizeBytes 138,202,024`。**日英ベクトルは保持**）/ Query_Vector_Cache / Collection Group `kiro-inventory-vector-group` / Lambda `kiro-vector-embed-batch` / API ルート `/vector-search/embed-batch`
+    - **`--teardown-check` の結果（2026-08-22T14:09:58Z / 終了コード 2）：**
+      - **[OK] `ListCollections` に `kiro-inventory-vector` が無い**（残るのは既存の `kiro-inventory-search` のみ）
+      - **[OK] Good_Table が段階 0 のスナップショットと同一（要件 1.5）。10 件の抽出アイテムを含め相違なし**
+      - **[OK] OSIS `kiro-inventory-pipeline` が `STOPPED` のまま**（要件 6.9 / 6.10。`LastUpdatedAt` 2026-08-11T22:47:56+09:00 で本検証の開始前）
+      - [NG]（**意図的**）`ListTables` に Vector_Table と Query_Vector_Cache が無い — 案 A のため残置
+      - [NG]（**意図的**）`ListCollectionGroups` に `kiro-inventory-vector-group` が無い — 同上
+      - [NG]（**集計窓の性質による見かけの NG**）`SearchOCU` / `IndexingOCU` が 0 — 直近 24 時間の最大 2.0000 OCU だが、これは同日 11:10〜11:50Z の UI 実測を含む窓であり撤収後の現在値ではない。**直近 3 時間で切り直すと `IndexingOCU` は最小・平均・最大すべて 0、0 OCU 区間 2 件 / 合計 110.0 分 / 最長 65.0 分**で 60 分以上の連続 0 OCU が成立している。`--teardown-check` の既定窓がローリングウィンドウであることは 13.14 で記録した性質と同じ
+    - **DynamoDB ベクトルインデックスの削除確認に AWS CLI は使えない。**`aws dynamodb describe-table` は `VectorIndexes` を `null` で返すが、CLI 2.35.9 は当該フィールドを解釈できず **Stage B で 2 本存在した時点でも `null` を返していた**（13.20 / 19.2 で実測）。そのため**リポジトリ同梱の `@aws-sdk/client-dynamodb` 3.1112.0**（境界 3.1103.0 以降）で `DescribeTable` を呼び、Vector_Table の `VectorIndexes` キーが**不在（0 本）**であることを確認した。Good_Table も 0 本（要件 1.6、全期間を通じて）
+    - **累積課金：10.4167 OCU-hour × 0.24 USD = 2.50 USD**（上限 20 USD / 残り 17.50 USD）。13.19 時点の 1.80 USD から **0.70 USD 増加**しており、UI からの追加観測（約 25 回の検索）に由来する
+      - **この増分が OpenSearch のコスト特性を定量化した。**13.19 が観測した「検索終了から `SearchOCU` が 0 に落ちるまで約 14 分の遅れ」の帰結である。recall 測定は 35.0 分に集中した 360 検索で 0.9667 OCU-hour（1 検索あたり約 0.00064 USD）だったのに対し、数時間に散発した UI 実測は約 25 検索で約 2.93 OCU-hour（約 0.028 USD）を消費した。**同じ 1 検索が散発すると約 44 倍高くつく**（推定。検索回数は概算）。**OpenSearch のコストは検索回数ではなく検索の時間的な密度で決まる**
+    - **撤収直前に 2 件の測定を追加した（撤収後は測定不能になるため）：**
+      - **倉庫フィルタ（要件 8.6 / 13.14 / Property 45）：**日本語 / TopK 30 / `WH-TOKYO` で **一意 SKU が 10 件から 30 件へ増え、`返却行数 ÷ 一意 SKU` が 3.00 から 1.00 になった。**知見 3 の希釈が倉庫行数ちょうどであることの直接の証拠である。距離の完全同値が消えて**両バックエンドの並びが完全に一致**した（全倉庫では順位差 0〜2）。Property 45 の「十分大きな TopK において部分集合」という条件付けが必要であることも確認した（同一 TopK では部分集合にならない）
+      - **入力検証（要件 11.6 / Property 30）：**TopK に `1.5` を入力して検索ボタンを押すと、**検索は実行されず直前の結果が保持された**（Property 30 が実機で成立）。ただし表示されたのは**ブラウザ標準のバリデーションメッセージ**であり、要件 11.6 が求める「許容範囲 1〜100 の整数を示すエラー」の文面ではない。振る舞いは要件を満たすため欠陥ではないが差異として記録した。`0` / `101` / 空クエリ / 全角スペースのみは**未実測**
+    - 記録先：`docs/vector-search-comparison.md` 第 16.4 節（撤収の確認結果）/ 第 9.6 節（倉庫フィルタ）/ 第 9.7 節（入力検証）/ 第 10.4 節（散発と集中のコスト差）/ 第 13 節（未実測一覧の更新）
     - _要件: 1.5, 6.9, 7.4, 7.7, 18.14, 18.15_
 
-- [ ] 16. 最終チェックポイント
+- [x] 16. 最終チェックポイント
   - すべてのテストが通ることを確認する。`npm run lint`、`tsc --noEmit`、`npm run test`、既存リソースのスナップショット差分ゼロ、`docs/opensearch-comparison.md` の差分 0 行を確認し、疑問があれば利用者に確認する
+  - **実施結果（すべて通過）：**`npm run lint` / `npx tsc --noEmit` / `npx tsc --noEmit -p amplify/tsconfig.json` / `npm run test`（**498 テスト / 38 ファイル 全通過**）/ `existing-resources-snapshot.test.ts`（27 テスト通過 = 既存リソースの差分ゼロ）/ `git diff --exit-code -- docs/opensearch-comparison.md`（差分 0 行、要件 18.16）
+  - **`npm run test` の 3 件失敗を修正した（本チェックポイントで判明）。**`VectorConstraintTable` Property 53 と `VectorSearchComparisonView` Property 30 / 31 が**フルスイートの並列実行時のみ** `Test timed out in 5000ms` で落ちていた。3 件とも単独実行では通っていた（10 テスト / 3 テスト通過を確認）。**`.github/workflows/ci.yml` は `npm run test` を実行するため、この状態では CI が失敗する**
+    - **原因：**property テストは規約により最小 100 回反復し、UI 側は各反復で React ツリーを丸ごと `render()` する。単独実行では 1 本 1〜3 秒に収まるが、8 並列の負荷下で既定の `testTimeout` 5,000 ms を超える。**論理の欠陥ではなく既定値が実態に合っていないだけ**であり、反復回数は規約上減らせない
+    - **対処：**`vitest.config.ts` に `testTimeout: 30_000` / `hookTimeout: 30_000` を設定し、理由をヘッダーコメントに記録した。**個別テストへの timeout 引数は採らない**（Property 32 / 54 / 57 も同一構造で潜在的に同じリスクを持つため設定で一括して扱う）。無限ループやデッドロックは 30 秒で依然として検出できる
+    - **検証：**修正後に `npm run test` を **4 回連続で実行し、いずれも 498/498 / 終了コード 0**（所要 12〜14 秒）
+  - **未解決として残したもの（利用者に確認済み）：**`amplify/functions/shared/vector/constraints.ts` の `filterKindsUnverified` が要件 15.2 の改訂前の文面のままである（修正にはデプロイが必要で、撤収済みのため本仕様では実施しない）。第 6 節と第 9.6 節に記録済み
 
 - [x] 17. OpenSearch 側の格納値検証の分離（案 D）
 
