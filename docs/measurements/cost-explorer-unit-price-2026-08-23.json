@@ -1,0 +1,168 @@
+{
+  "measurementId": "cost-explorer-unit-price-2026-08-23",
+  "recordedAt": "2026-08-23T14:08:17Z",
+  "purpose": "第 1.7 節および第 10.2 節が『単価未確定のため算出不能』としていた DynamoDB ベクトル検索の単価を、検証翌日の実請求から確定させる",
+  "source": {
+    "api": "ce:GetCostAndUsage",
+    "endpointRegion": "us-east-1",
+    "timePeriod": {
+      "start": "2026-08-14",
+      "end": "2026-08-24"
+    },
+    "granularity": "MONTHLY",
+    "metrics": [
+      "UnblendedCost",
+      "UsageQuantity"
+    ],
+    "groupBy": [
+      {
+        "type": "DIMENSION",
+        "key": "USAGE_TYPE"
+      }
+    ],
+    "note": "単価は UnblendedCost ÷ UsageQuantity で逆算した。公式の料金表では確認していない"
+  },
+  "usageTypes": [
+    {
+      "usageType": "USW2-VectorSearch",
+      "quantity": 0.0600498625,
+      "unit": "GB",
+      "unblendedCostUsd": 0.00012,
+      "impliedUnitPriceUsd": 0.002,
+      "role": "DynamoDB ベクトル検索（SearchVectors の VectorSearchUnits に対応）"
+    },
+    {
+      "usageType": "USW2-VectorWriteRequest",
+      "quantity": 0.1389570981,
+      "unit": "GB",
+      "unblendedCostUsd": 0.072258,
+      "impliedUnitPriceUsd": 0.52,
+      "role": "DynamoDB ベクトル書き込み。WRU ではなく専用の GB 課金項目"
+    },
+    {
+      "usageType": "USW2-ReadRequestUnits",
+      "quantity": 463964.5,
+      "unit": "ReadRequestUnits",
+      "unblendedCostUsd": 0.057996,
+      "impliedUnitPricePerMillionUsd": 0.125,
+      "role": "通常読み取り。us-west-2 の全テーブル合算でベクトル作業に分離不能"
+    },
+    {
+      "usageType": "USW2-WriteRequestUnits",
+      "quantity": 166459.0,
+      "unit": "WriteRequestUnits",
+      "unblendedCostUsd": 0.104037,
+      "impliedUnitPricePerMillionUsd": 0.625,
+      "role": "通常書き込み。同上"
+    },
+    {
+      "usageType": "USW2-SearchOCU",
+      "quantity": 8.9483333335,
+      "unit": "OCU-hours",
+      "unblendedCostUsd": 2.1476,
+      "impliedUnitPriceUsd": 0.24,
+      "role": "OpenSearch 検索 OCU"
+    },
+    {
+      "usageType": "USW2-IndexingOCU",
+      "quantity": 1.7250000001,
+      "unit": "OCU-hours",
+      "unblendedCostUsd": 0.414,
+      "impliedUnitPriceUsd": 0.24,
+      "role": "OpenSearch インデックス OCU"
+    },
+    {
+      "usageType": "USW2-StorageUsedInHotByteHour",
+      "quantity": 0.0077134227,
+      "unit": "GB-Month",
+      "unblendedCostUsd": 0.002314,
+      "impliedUnitPriceUsd": 0.3,
+      "role": "OpenSearch ストレージ"
+    },
+    {
+      "usageType": "USW2-TimedStorage-ByteHrs",
+      "quantity": 0.0200020391,
+      "unit": "GB-Month",
+      "unblendedCostUsd": 0.0,
+      "impliedUnitPriceUsd": null,
+      "role": "DynamoDB ストレージ。無料枠に収まり単価を逆算できない"
+    }
+  ],
+  "monthlyProjection": {
+    "scenario": "月 300,000 検索 / TopK 30 / 1 検索 81,984.685 B（第 3.5 節の実測）",
+    "dynamodbSearchQuantityGb": 24.5954,
+    "dynamodbSearchCostUsd": 0.0492,
+    "dynamodbSearchCostRangeUsd": [
+      0.0458,
+      0.0492
+    ],
+    "gbDefinitionUnresolved": true,
+    "opensearchOcuCostUsdEstimate": [
+      193,
+      350
+    ],
+    "ratio": "DynamoDB の検索コストは OpenSearch の 1/3,900〜1/7,100"
+  },
+  "crossValidation": [
+    {
+      "claim": "VectorWriteRequest の数量が実測ストレージ寄与と整合する",
+      "billed": {
+        "quantityGb": 0.1389570981
+      },
+      "independentMeasurement": {
+        "vectorStorageContributionBytes": 124800000,
+        "gb": 0.1248
+      },
+      "ratio": 1.1134,
+      "verdict": "整合（約 11.3% のオーバーヘッド）"
+    },
+    {
+      "claim": "VectorSearch の数量が実施検索回数と整合する",
+      "billed": {
+        "quantityGb": 0.0600498625
+      },
+      "derivedSearchCount": 730,
+      "expectedComponents": [
+        "recall 測定 DynamoDB 側 360",
+        "消費キャパシティ測定 200",
+        "範囲フィルタプローブ 8",
+        "UI 実測 約 25",
+        "TopK 掃引ほか"
+      ],
+      "verdict": "同じ桁で整合"
+    }
+  ],
+  "correctionsToPriorRecords": [
+    {
+      "target": "第 1.7 節「総額の比較ができていない」",
+      "before": "VectorSearchUnits の単価未確認のため総額比較が未成立",
+      "after": "0.002 USD/GB を確定。月 300,000 検索で約 0.05 USD。検索コストの比較は成立",
+      "reason": "検証翌日に Cost Explorer へ実績が反映された"
+    },
+    {
+      "target": "第 10.1 節 DynamoDB オンデマンド読み書きの前提単価",
+      "before": "0.25 USD/100 万 RRU、1.25 USD/100 万 WRU（前提値）",
+      "after": "0.125 USD/100 万 RRU、0.625 USD/100 万 WRU（実測）",
+      "impact": "第 10.2 / 10.3 節の WRU・RRU 由来の推定額はいずれも実勢の約 2 倍。結論は不変"
+    },
+    {
+      "target": "第 10.2 節 DynamoDB 書き込みの課金構造",
+      "before": "ベクトル書き込みを WRU に換算して約 0.21 USD と推定",
+      "after": "ベクトル書き込みは USW2-VectorWriteRequest（GB 課金）。初回投入の実額 0.072258 USD",
+      "impact": "課金項目の構造そのものの誤り"
+    },
+    {
+      "target": "第 10.2 節 本検証で発生した OCU 課金",
+      "before": "7.4833 OCU-hour / 1.80 USD（検証期間の総額）",
+      "after": "10.673 OCU-hour / 2.562 USD（確定総額）",
+      "reason": "執筆時点の途中集計であり、その後の UI 実測ぶんを含んでいなかった"
+    }
+  ],
+  "caveats": [
+    "単価は実請求からの逆算であり、公式の料金表で確認していない（us-west-2 / オンデマンド）",
+    "GB の定義（10^9 か 2^30 か）が未確定のため月額換算に 0.046〜0.049 USD の幅がある",
+    "ReadRequestUnits / WriteRequestUnits は us-west-2 の全テーブル合算でベクトル作業に帰属できない",
+    "DynamoDB ストレージ単価は無料枠のため逆算不能。第 10.1 節の前提値 0.25 USD/GB-月は依然として未確認",
+    "OCU をベクトル検証に帰属させたのは、同期間に既存 SEARCH コレクションがアイドルで OSIS が STOPPED だったことを根拠とする推論であり、使用タイプはコレクション単位に分解されない"
+  ]
+}
