@@ -135,7 +135,7 @@ const DYNAMODB_CAPABILITIES: VectorBackendCapabilities = {
   supportsAggregation: false,
   supportsGeoQuery: false,
   supportsNestedQuery: false,
-  filterKindsUnverified: "範囲条件の対応可否は公式ドキュメント間で矛盾しており実測で確定させる",
+  filterKindsUnverified: "範囲条件は実測で非対応を確認済み。実装は等価条件のみを受け付ける",
 };
 
 const OPENSEARCH_CAPABILITIES: VectorBackendCapabilities = {

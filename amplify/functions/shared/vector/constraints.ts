@@ -72,8 +72,11 @@ export interface VectorBackendCapabilities {
   /** ネストクエリに対応するか（要件 15.4） */
   readonly supportsNestedQuery: boolean;
   /**
-   * 対応フィルタ種別が公式ドキュメント間で未解決である旨（V3 / Q1、要件 15.2）。
-   * 未解決の項目がないバックエンドでは省略する。
+   * 対応フィルタ種別に関する補足（V3 / Q1、要件 15.2）。補足のないバックエンドでは省略する。
+   *
+   * DynamoDB 側は公式ドキュメント間で記述が矛盾していた範囲条件について、**実測で非対応を
+   * 確定した事実**を載せる。フィールド名は `GET /vector-search/capabilities` の応答契約として
+   * 維持している（当初は未確定である旨を載せる設計だったため `Unverified` を含む）。
    */
   readonly filterKindsUnverified?: string;
 }
@@ -102,17 +105,27 @@ export interface VectorCapabilitiesResponse {
 }
 
 /**
- * DynamoDB 側の範囲フィルタ対応可否が未確定である旨（前提 A3 / V3 / Q1）。
+ * DynamoDB 側の範囲フィルタ対応可否（前提 A3 / V3 / Q1）。**実測で非対応を確定済み**。
  *
  * 開発者ガイドは `SearchConditionExpression` が等価条件のみと記述する一方、
  * SDK API リファレンスは `INLINE_FILTER` 要素が比較・範囲演算子に対応すると記述しており、
- * 公式ドキュメント間で矛盾している。実装既定は等価条件のみとし、実測プローブ
- * （`scripts/vector-search/probe-range-filter.ts`）で二値に確定させる（要件 18.5）。
+ * 公式ドキュメント間で矛盾していた。実測プローブ
+ * （`scripts/vector-search/probe-range-filter.ts`）で二値に確定させた（要件 18.5、タスク 13.16）。
+ *
+ * 実測結果は等価条件 `#f = :eq` が HTTP 200、`>` `>=` `<` `<=` および `>= AND <=` の複合が
+ * HTTP 400 `Invalid comparator used in SearchConditionExpression`、`BETWEEN` と `IN` が
+ * HTTP 400 `Invalid operator used in SearchConditionExpression`。すなわち開発者ガイドの記述が
+ * 正しく、SDK API リファレンスの記述が誤りである。逐語のエラー本文は
+ * `docs/measurements/range-filter-probe-2026-08-21T23-43-31-870Z.json` に記録済み。
+ *
+ * `supportedFilterKinds: ['equality']` は当初から正しく、変更していない。
  */
-const DYNAMODB_FILTER_KINDS_UNVERIFIED =
-  '範囲条件（大小比較・BETWEEN）の対応可否は公式ドキュメント間で矛盾しており（開発者ガイドは等価条件のみ、' +
-  'SDK API リファレンスは INLINE_FILTER 要素が比較・範囲演算子に対応と記述）、実測で確定させる対象である。' +
-  '確定までの実装既定は等価条件のみで、範囲条件を含むフィルタ要求は SearchVectors を呼ばずに拒否する。';
+const DYNAMODB_FILTER_KINDS_NOTE =
+  '範囲条件（大小比較・BETWEEN・IN）は実測で非対応を確認済みである。公式ドキュメント間で記述が' +
+  '矛盾していたが（開発者ガイドは等価条件のみ、SDK API リファレンスは INLINE_FILTER 要素が' +
+  '比較・範囲演算子に対応と記述）、実測では開発者ガイドの記述が正しく、比較演算子は ' +
+  'Invalid comparator、BETWEEN と IN は Invalid operator で拒否された。実装は等価条件のみを' +
+  '受け付け、範囲条件を含むフィルタ要求は SearchVectors を呼ばずに拒否する。';
 
 /**
  * DynamoDB Vector Search の機能制約（要件 15.1 / 15.2 / 15.3 / 15.4）。
@@ -135,7 +148,7 @@ export const DYNAMODB_VECTOR_CAPABILITIES: VectorBackendCapabilities = Object.fr
   supportsAggregation: false,
   supportsGeoQuery: false,
   supportsNestedQuery: false,
-  filterKindsUnverified: DYNAMODB_FILTER_KINDS_UNVERIFIED,
+  filterKindsUnverified: DYNAMODB_FILTER_KINDS_NOTE,
 } satisfies VectorBackendCapabilities);
 
 /**

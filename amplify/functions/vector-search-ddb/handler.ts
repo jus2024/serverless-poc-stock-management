@@ -944,13 +944,13 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     // ---- ステップ 6: フィルタ構築（要件 8.6 / 8.7） ----
     const capabilities = getVectorCapabilities('dynamodb');
 
-    // 範囲条件の対応可否は未確定であり、実装既定は等価条件のみ（前提 A3 / V3 / Q1）。
-    // 対応種別の出典は `constraints.ts` のみであり、実測で `range` が追加されれば本判定も追従する
+    // 範囲条件は実測で非対応を確定済みであり、実装は等価条件のみを受け付ける（前提 A3 / V3 / Q1）。
+    // 対応種別の出典は `constraints.ts` のみであり、対応種別が変われば本判定も追従する
     if (requestsRangeFilter(raw.rangeFilter) && !supportsFilterKind(capabilities, 'range')) {
       return errorResponse(
         toClientError('RANGE_FILTER_UNSUPPORTED', STAGE, {
           detail:
-            '範囲条件の対応可否は未確定であり、実装既定は等価条件のみです。' +
+            '範囲条件は実測で非対応を確認済みです。実装は等価条件のみを受け付けます。' +
             '倉庫の等価条件のみを指定してください。',
         })
       );

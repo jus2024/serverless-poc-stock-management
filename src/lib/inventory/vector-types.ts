@@ -159,8 +159,11 @@ export interface VectorBackendCapabilities {
   /** ネストクエリに対応するか */
   readonly supportsNestedQuery: boolean;
   /**
-   * 対応フィルタ種別が公式ドキュメント間で未解決である旨（要件 15.2）。
-   * 未解決の項目がないバックエンドでは省略される。
+   * 対応フィルタ種別に関する補足（要件 15.2）。補足のないバックエンドでは省略される。
+   *
+   * DynamoDB 側は公式ドキュメント間で記述が矛盾していた範囲条件について、**実測で非対応を
+   * 確定した事実**が入る。フィールド名は応答契約として維持している（当初は未確定である旨を
+   * 載せる設計だったため `Unverified` を含む）。
    */
   readonly filterKindsUnverified?: string;
 }
