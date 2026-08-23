@@ -1,0 +1,440 @@
+{
+  "schemaVersion": 1,
+  "mode": "storage",
+  "generatedAt": "2026-08-21T23:22:51.651Z",
+  "region": "us-west-2",
+  "readOnly": true,
+  "warnings": [],
+  "notes": [
+    "Vector_Table は GSI を 1 本も持たない（要件 1.1）。したがって TableSizeBytes の差分は ベクトル属性そのものの寄与であり、GSI への複製分を差し引く補正を必要としない。GSI が ProjectionType: ALL で存在する場合はベクトル属性が GSI へ複製されて差分が （1 + GSI 本数）倍に膨らむが、本測定にはその項が存在しない。",
+    "IndexSizeBytes と ItemCount は 2 本のインデックスそれぞれの VectorIndexDescription から 直接取得した値である。TableSizeBytes スナップショットの差分からは算出していない（要件 14.3）。",
+    "TableSizeBytes と IndexSizeBytes は約 6 時間周期で更新されます。採用値は 6 時間以上あけた連続 2 回の取得値の差が 1.00% 以内であることを確認したものだけです（要件 14.4）。"
+  ],
+  "tableName": "kiro-roasters-inventory-vector",
+  "recordCount": 15000,
+  "capturedSnapshots": [
+    {
+      "label": "INDEX",
+      "field": "TableSizeBytes",
+      "target": "kiro-roasters-inventory-vector",
+      "value": 138202024,
+      "capturedAt": "2026-08-21T23:22:51.651Z",
+      "itemCount": null
+    },
+    {
+      "label": "INDEX",
+      "field": "IndexSizeBytes",
+      "target": "byEmbeddingEn",
+      "value": 74602024,
+      "capturedAt": "2026-08-21T23:22:51.651Z",
+      "itemCount": 15000
+    },
+    {
+      "label": "INDEX",
+      "field": "IndexSizeBytes",
+      "target": "byEmbeddingJa",
+      "value": 74602024,
+      "capturedAt": "2026-08-21T23:22:51.651Z",
+      "itemCount": 15000
+    }
+  ],
+  "ledgerSnapshotCount": 14,
+  "ledgerPath": "docs/measurements/storage-snapshots.json",
+  "tableSizeConvergence": [
+    {
+      "field": "TableSizeBytes",
+      "target": "kiro-roasters-inventory-vector",
+      "label": "INDEX",
+      "snapshots": [
+        {
+          "label": "INDEX",
+          "field": "TableSizeBytes",
+          "target": "kiro-roasters-inventory-vector",
+          "value": 138127144,
+          "capturedAt": "2026-08-21T13:24:10.692Z",
+          "itemCount": null
+        },
+        {
+          "label": "INDEX",
+          "field": "TableSizeBytes",
+          "target": "kiro-roasters-inventory-vector",
+          "value": 138202024,
+          "capturedAt": "2026-08-21T23:22:51.651Z",
+          "itemCount": null
+        }
+      ],
+      "comparisons": [
+        {
+          "earlierCapturedAt": "2026-08-21T13:24:10.692Z",
+          "laterCapturedAt": "2026-08-21T23:22:51.651Z",
+          "earlierValue": 138127144,
+          "laterValue": 138202024,
+          "hoursApart": 9.978044166666667,
+          "intervalSatisfied": true,
+          "relativeDifference": 0.0005418155091563637,
+          "withinTolerance": true,
+          "qualifies": true
+        }
+      ],
+      "refetchAttempts": 0,
+      "maxRefetchAttempts": 3,
+      "remainingRefetchAttempts": 3,
+      "tolerance": 0.01,
+      "minimumIntervalHours": 6,
+      "status": "converged",
+      "adopted": {
+        "label": "INDEX",
+        "field": "TableSizeBytes",
+        "target": "kiro-roasters-inventory-vector",
+        "value": 138202024,
+        "capturedAt": "2026-08-21T23:22:51.651Z",
+        "itemCount": null
+      },
+      "finalValue": null,
+      "determinate": true,
+      "estimatedErrorRange": null,
+      "notes": []
+    },
+    {
+      "field": "TableSizeBytes",
+      "target": "kiro-roasters-inventory-vector",
+      "label": "S1",
+      "snapshots": [
+        {
+          "label": "S1",
+          "field": "TableSizeBytes",
+          "target": "kiro-roasters-inventory-vector",
+          "value": 13402024,
+          "capturedAt": "2026-08-19T13:23:48.653Z",
+          "itemCount": null
+        },
+        {
+          "label": "S1",
+          "field": "TableSizeBytes",
+          "target": "kiro-roasters-inventory-vector",
+          "value": 13402024,
+          "capturedAt": "2026-08-19T20:22:03.815Z",
+          "itemCount": null
+        }
+      ],
+      "comparisons": [
+        {
+          "earlierCapturedAt": "2026-08-19T13:23:48.653Z",
+          "laterCapturedAt": "2026-08-19T20:22:03.815Z",
+          "earlierValue": 13402024,
+          "laterValue": 13402024,
+          "hoursApart": 6.970878333333333,
+          "intervalSatisfied": true,
+          "relativeDifference": 0,
+          "withinTolerance": true,
+          "qualifies": true
+        }
+      ],
+      "refetchAttempts": 0,
+      "maxRefetchAttempts": 3,
+      "remainingRefetchAttempts": 3,
+      "tolerance": 0.01,
+      "minimumIntervalHours": 6,
+      "status": "converged",
+      "adopted": {
+        "label": "S1",
+        "field": "TableSizeBytes",
+        "target": "kiro-roasters-inventory-vector",
+        "value": 13402024,
+        "capturedAt": "2026-08-19T20:22:03.815Z",
+        "itemCount": null
+      },
+      "finalValue": null,
+      "determinate": true,
+      "estimatedErrorRange": null,
+      "notes": []
+    },
+    {
+      "field": "TableSizeBytes",
+      "target": "kiro-roasters-inventory-vector",
+      "label": "S2",
+      "snapshots": [
+        {
+          "label": "S2",
+          "field": "TableSizeBytes",
+          "target": "kiro-roasters-inventory-vector",
+          "value": 138127144,
+          "capturedAt": "2026-08-21T13:23:35.385Z",
+          "itemCount": null
+        },
+        {
+          "label": "S2",
+          "field": "TableSizeBytes",
+          "target": "kiro-roasters-inventory-vector",
+          "value": 138202024,
+          "capturedAt": "2026-08-21T23:22:27.972Z",
+          "itemCount": null
+        }
+      ],
+      "comparisons": [
+        {
+          "earlierCapturedAt": "2026-08-21T13:23:35.385Z",
+          "laterCapturedAt": "2026-08-21T23:22:27.972Z",
+          "earlierValue": 138127144,
+          "laterValue": 138202024,
+          "hoursApart": 9.981274166666667,
+          "intervalSatisfied": true,
+          "relativeDifference": 0.0005418155091563637,
+          "withinTolerance": true,
+          "qualifies": true
+        }
+      ],
+      "refetchAttempts": 0,
+      "maxRefetchAttempts": 3,
+      "remainingRefetchAttempts": 3,
+      "tolerance": 0.01,
+      "minimumIntervalHours": 6,
+      "status": "converged",
+      "adopted": {
+        "label": "S2",
+        "field": "TableSizeBytes",
+        "target": "kiro-roasters-inventory-vector",
+        "value": 138202024,
+        "capturedAt": "2026-08-21T23:22:27.972Z",
+        "itemCount": null
+      },
+      "finalValue": null,
+      "determinate": true,
+      "estimatedErrorRange": null,
+      "notes": []
+    }
+  ],
+  "indexSizeConvergence": [
+    {
+      "field": "IndexSizeBytes",
+      "target": "byEmbeddingEn",
+      "label": "S2",
+      "snapshots": [
+        {
+          "label": "S2",
+          "field": "IndexSizeBytes",
+          "target": "byEmbeddingEn",
+          "value": 74557051,
+          "capturedAt": "2026-08-21T13:23:35.385Z",
+          "itemCount": 14991
+        },
+        {
+          "label": "INDEX",
+          "field": "IndexSizeBytes",
+          "target": "byEmbeddingEn",
+          "value": 74557051,
+          "capturedAt": "2026-08-21T13:24:10.692Z",
+          "itemCount": 14991
+        },
+        {
+          "label": "S2",
+          "field": "IndexSizeBytes",
+          "target": "byEmbeddingEn",
+          "value": 74602024,
+          "capturedAt": "2026-08-21T23:22:27.972Z",
+          "itemCount": 15000
+        },
+        {
+          "label": "INDEX",
+          "field": "IndexSizeBytes",
+          "target": "byEmbeddingEn",
+          "value": 74602024,
+          "capturedAt": "2026-08-21T23:22:51.651Z",
+          "itemCount": 15000
+        }
+      ],
+      "comparisons": [
+        {
+          "earlierCapturedAt": "2026-08-21T13:23:35.385Z",
+          "laterCapturedAt": "2026-08-21T13:24:10.692Z",
+          "earlierValue": 74557051,
+          "laterValue": 74557051,
+          "hoursApart": 0.0098075,
+          "intervalSatisfied": false,
+          "relativeDifference": 0,
+          "withinTolerance": true,
+          "qualifies": false
+        },
+        {
+          "earlierCapturedAt": "2026-08-21T13:24:10.692Z",
+          "laterCapturedAt": "2026-08-21T23:22:27.972Z",
+          "earlierValue": 74557051,
+          "laterValue": 74602024,
+          "hoursApart": 9.971466666666666,
+          "intervalSatisfied": true,
+          "relativeDifference": 0.0006028388720391823,
+          "withinTolerance": true,
+          "qualifies": true
+        },
+        {
+          "earlierCapturedAt": "2026-08-21T23:22:27.972Z",
+          "laterCapturedAt": "2026-08-21T23:22:51.651Z",
+          "earlierValue": 74602024,
+          "laterValue": 74602024,
+          "hoursApart": 0.0065775,
+          "intervalSatisfied": false,
+          "relativeDifference": 0,
+          "withinTolerance": true,
+          "qualifies": false
+        }
+      ],
+      "refetchAttempts": 2,
+      "maxRefetchAttempts": 3,
+      "remainingRefetchAttempts": 1,
+      "tolerance": 0.01,
+      "minimumIntervalHours": 6,
+      "status": "converged",
+      "adopted": {
+        "label": "S2",
+        "field": "IndexSizeBytes",
+        "target": "byEmbeddingEn",
+        "value": 74602024,
+        "capturedAt": "2026-08-21T23:22:27.972Z",
+        "itemCount": 15000
+      },
+      "finalValue": null,
+      "determinate": true,
+      "estimatedErrorRange": null,
+      "notes": []
+    },
+    {
+      "field": "IndexSizeBytes",
+      "target": "byEmbeddingJa",
+      "label": "S2",
+      "snapshots": [
+        {
+          "label": "S2",
+          "field": "IndexSizeBytes",
+          "target": "byEmbeddingJa",
+          "value": 74557051,
+          "capturedAt": "2026-08-21T13:23:35.385Z",
+          "itemCount": 14991
+        },
+        {
+          "label": "INDEX",
+          "field": "IndexSizeBytes",
+          "target": "byEmbeddingJa",
+          "value": 74557051,
+          "capturedAt": "2026-08-21T13:24:10.692Z",
+          "itemCount": 14991
+        },
+        {
+          "label": "S2",
+          "field": "IndexSizeBytes",
+          "target": "byEmbeddingJa",
+          "value": 74602024,
+          "capturedAt": "2026-08-21T23:22:27.972Z",
+          "itemCount": 15000
+        },
+        {
+          "label": "INDEX",
+          "field": "IndexSizeBytes",
+          "target": "byEmbeddingJa",
+          "value": 74602024,
+          "capturedAt": "2026-08-21T23:22:51.651Z",
+          "itemCount": 15000
+        }
+      ],
+      "comparisons": [
+        {
+          "earlierCapturedAt": "2026-08-21T13:23:35.385Z",
+          "laterCapturedAt": "2026-08-21T13:24:10.692Z",
+          "earlierValue": 74557051,
+          "laterValue": 74557051,
+          "hoursApart": 0.0098075,
+          "intervalSatisfied": false,
+          "relativeDifference": 0,
+          "withinTolerance": true,
+          "qualifies": false
+        },
+        {
+          "earlierCapturedAt": "2026-08-21T13:24:10.692Z",
+          "laterCapturedAt": "2026-08-21T23:22:27.972Z",
+          "earlierValue": 74557051,
+          "laterValue": 74602024,
+          "hoursApart": 9.971466666666666,
+          "intervalSatisfied": true,
+          "relativeDifference": 0.0006028388720391823,
+          "withinTolerance": true,
+          "qualifies": true
+        },
+        {
+          "earlierCapturedAt": "2026-08-21T23:22:27.972Z",
+          "laterCapturedAt": "2026-08-21T23:22:51.651Z",
+          "earlierValue": 74602024,
+          "laterValue": 74602024,
+          "hoursApart": 0.0065775,
+          "intervalSatisfied": false,
+          "relativeDifference": 0,
+          "withinTolerance": true,
+          "qualifies": false
+        }
+      ],
+      "refetchAttempts": 2,
+      "maxRefetchAttempts": 3,
+      "remainingRefetchAttempts": 1,
+      "tolerance": 0.01,
+      "minimumIntervalHours": 6,
+      "status": "converged",
+      "adopted": {
+        "label": "S2",
+        "field": "IndexSizeBytes",
+        "target": "byEmbeddingJa",
+        "value": 74602024,
+        "capturedAt": "2026-08-21T23:22:27.972Z",
+        "itemCount": 15000
+      },
+      "finalValue": null,
+      "determinate": true,
+      "estimatedErrorRange": null,
+      "notes": []
+    }
+  ],
+  "contribution": {
+    "s1": {
+      "label": "S1",
+      "field": "TableSizeBytes",
+      "target": "kiro-roasters-inventory-vector",
+      "value": 13402024,
+      "capturedAt": "2026-08-19T20:22:03.815Z",
+      "itemCount": null
+    },
+    "s2": {
+      "label": "S2",
+      "field": "TableSizeBytes",
+      "target": "kiro-roasters-inventory-vector",
+      "value": 138202024,
+      "capturedAt": "2026-08-21T23:22:27.972Z",
+      "itemCount": null
+    },
+    "recordCount": 15000,
+    "vectorAttributeContributionBytes": 124800000,
+    "averagePerRecordBytes": 8320,
+    "gsiAdjustmentApplied": false,
+    "gsiNote": "Vector_Table は GSI を 1 本も持たない（要件 1.1）。したがって TableSizeBytes の差分は ベクトル属性そのものの寄与であり、GSI への複製分を差し引く補正を必要としない。GSI が ProjectionType: ALL で存在する場合はベクトル属性が GSI へ複製されて差分が （1 + GSI 本数）倍に膨らむが、本測定にはその項が存在しない。"
+  },
+  "contributionDeterminate": true,
+  "indexTotals": {
+    "indexes": [
+      {
+        "indexName": "byEmbeddingEn",
+        "indexSizeBytes": 74602024,
+        "itemCount": 15000,
+        "capturedAt": "2026-08-21T23:22:27.972Z"
+      },
+      {
+        "indexName": "byEmbeddingJa",
+        "indexSizeBytes": 74602024,
+        "itemCount": 15000,
+        "capturedAt": "2026-08-21T23:22:27.972Z"
+      }
+    ],
+    "totalIndexSizeBytes": 149204048,
+    "totalItemCount": 30000,
+    "derivedFromTableSizeDifference": false,
+    "note": "IndexSizeBytes と ItemCount は 2 本のインデックスそれぞれの VectorIndexDescription から 直接取得した値である。TableSizeBytes スナップショットの差分からは算出していない（要件 14.3）。"
+  },
+  "indexTotalsDeterminate": true,
+  "gsiNote": "Vector_Table は GSI を 1 本も持たない（要件 1.1）。したがって TableSizeBytes の差分は ベクトル属性そのものの寄与であり、GSI への複製分を差し引く補正を必要としない。GSI が ProjectionType: ALL で存在する場合はベクトル属性が GSI へ複製されて差分が （1 + GSI 本数）倍に膨らむが、本測定にはその項が存在しない。",
+  "indexSizeNote": "IndexSizeBytes と ItemCount は 2 本のインデックスそれぞれの VectorIndexDescription から 直接取得した値である。TableSizeBytes スナップショットの差分からは算出していない（要件 14.3）。"
+}

@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "mode": "wait-index",
+  "generatedAt": "2026-08-21T13:01:30.871Z",
+  "region": "us-west-2",
+  "readOnly": true,
+  "warnings": [],
+  "notes": [
+    "ポーリングは 60 秒間隔、上限 180 分です（要件 5.14）。",
+    "1 回のポーリングで DescribeTable を 1 度だけ呼び、2 本の状態を同一スナップショットから読んでいます。",
+    "ACTIVE 到達時刻とバックフィル完了までの経過秒はインデックスごとに記録しています。"
+  ],
+  "wait": {
+    "tableName": "kiro-roasters-inventory-vector",
+    "pollIntervalSeconds": 60,
+    "timeoutMinutes": 180,
+    "startedAt": "2026-08-21T13:01:30.404Z",
+    "endedAt": "2026-08-21T13:01:30.871Z",
+    "elapsedSeconds": 0.467,
+    "pollCount": 1,
+    "records": [
+      {
+        "indexName": "byEmbeddingJa",
+        "pollStartedAt": "2026-08-21T13:01:30.404Z",
+        "activeReachedAt": "2026-08-21T13:01:30.871Z",
+        "activeElapsedSeconds": 0.467,
+        "backfillCompletedAt": "2026-08-21T13:01:30.871Z",
+        "backfillElapsedSeconds": 0.467,
+        "activeToBackfillSeconds": 0,
+        "finalIndexStatus": "ACTIVE",
+        "finalBackfilling": false,
+        "searchable": true,
+        "timedOut": false,
+        "pollCount": 1,
+        "error": null
+      },
+      {
+        "indexName": "byEmbeddingEn",
+        "pollStartedAt": "2026-08-21T13:01:30.404Z",
+        "activeReachedAt": "2026-08-21T13:01:30.871Z",
+        "activeElapsedSeconds": 0.467,
+        "backfillCompletedAt": "2026-08-21T13:01:30.871Z",
+        "backfillElapsedSeconds": 0.467,
+        "activeToBackfillSeconds": 0,
+        "finalIndexStatus": "ACTIVE",
+        "finalBackfilling": false,
+        "searchable": true,
+        "timedOut": false,
+        "pollCount": 1,
+        "error": null
+      }
+    ],
+    "allSearchable": true,
+    "timedOut": false
+  }
+}

@@ -14,6 +14,10 @@ export interface InventoryTables {
   goodTable: dynamodb.Table;
   /** load-test-executions — PK: executionId, オンデマンド */
   executionsTable: dynamodb.Table;
+  /** kiro-roasters-inventory-vector — PK: itemId, SK: warehouseId, GSI なし, オンデマンド */
+  vectorTable: dynamodb.Table;
+  /** kiro-vector-query-cache — PK: queryId, TTL 300s, オンデマンド */
+  queryCacheTable: dynamodb.Table;
   // 以下は負荷テスト時に再有効化
   // badTable?: dynamodb.Table;
   // goodGsiTable?: dynamodb.Table;
@@ -25,6 +29,8 @@ export interface InventoryTables {
  *
  * - Good_Table: itemId を PK にしてアクセスを分散させる設計 + GSI 3本（オンデマンド課金）
  * - Executions Table: 負荷テスト実行状態を記録するテーブル
+ * - Vector_Table: ベクトル検索比較の検証専用テーブル（GSI なし、Streams なし、PITR 無効）
+ * - Query_Vector_Cache: クエリベクトルの短期受け渡し用テーブル（TTL 300 秒）
  *
  * 負荷テスト用テーブル（Bad, Good(GSI無し), Bad_OnDemand）はコスト節約のため
  * コメントアウト中。再有効化手順は下部のブロックコメントを参照。
@@ -32,6 +38,8 @@ export interface InventoryTables {
 export class InventoryTablesConstruct extends Construct implements InventoryTables {
   public readonly goodTable: dynamodb.Table;
   public readonly executionsTable: dynamodb.Table;
+  public readonly vectorTable: dynamodb.Table;
+  public readonly queryCacheTable: dynamodb.Table;
 
   constructor(scope: Construct, id: string) {
     super(scope, id);
@@ -80,6 +88,39 @@ export class InventoryTablesConstruct extends Construct implements InventoryTabl
       tableName: 'load-test-executions',
       partitionKey: { name: 'executionId', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
+
+    // ─── Vector_Table: ベクトル検索比較の検証専用テーブル ──────────────
+    // Good_Table と同一キースキーマ・同一データ（15,000 レコード）を複製する。
+    // GSI を 1 本も持たないのは意図的な設計:
+    //   1. Good_Table の GSI 3 本はすべて ProjectionType: ALL のため、
+    //      ベクトル属性を Good_Table に追加すると GSI へ 3 重複製されてしまう
+    //   2. GSI が無いことで TableSizeBytes の差分がそのまま
+    //      ベクトル属性の寄与になり、ストレージ測定が単純になる
+    // Streams は設定しない（OSIS パイプラインを停止維持するため）。
+    // ベクトルインデックス（byEmbeddingJa / byEmbeddingEn）は
+    // amplify/custom/vector-index.ts のカスタムリソースで本テーブルに作成する。
+    this.vectorTable = new dynamodb.Table(this, 'VectorTable', {
+      tableName: 'kiro-roasters-inventory-vector',
+      partitionKey: { name: 'itemId', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'warehouseId', type: dynamodb.AttributeType.STRING },
+      // DynamoDB Vector Search はオンデマンド課金が前提条件
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      // 検証用途のため PITR は無効（追加課金を避ける）
+      pointInTimeRecovery: false,
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
+
+    // ─── Query_Vector_Cache: クエリベクトルの短期受け渡し用 ────────────
+    // POST /vector-search/embed が生成したクエリベクトルと言語を queryId で保管し、
+    // 2 つの検索 Lambda が同一ベクトル・同一言語で検索できるようにする。
+    // TTL 属性 expiresAt（生成時刻 + 300 秒）で自動失効させる。
+    this.queryCacheTable = new dynamodb.Table(this, 'QueryVectorCacheTable', {
+      tableName: 'kiro-vector-query-cache',
+      partitionKey: { name: 'queryId', type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      timeToLiveAttribute: 'expiresAt',
       removalPolicy: RemovalPolicy.DESTROY,
     });
 

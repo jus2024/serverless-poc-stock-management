@@ -1,0 +1,1236 @@
+{
+  "artifact": "task 13.17 の観察例（日本語クエリと対応する英語クエリの上位結果）",
+  "purpose": "recall 測定 CLI は返却行の productName を保持しないため、同一エンドポイント・同一 TopK で少数のクエリを投げ直して商品名を記録する（要件 18.9 / 18.10）。",
+  "startedAtUtc": "2026-08-22T03:35:45.704Z",
+  "finishedAtUtc": "2026-08-22T03:36:02.871Z",
+  "baseUrl": "https://7x62kbhicg.execute-api.us-west-2.amazonaws.com/api",
+  "region": "us-west-2",
+  "requestedTopK": 30,
+  "distinctSkuKEquivalent": 10,
+  "dedupeUnit": "itemId",
+  "displayedDistinctSkusPerBackend": 5,
+  "bedrockCallsAdded": 10,
+  "searchCallsAdded": 20,
+  "observations": [
+    {
+      "queryId": "q01",
+      "intent": "flavor",
+      "ja": {
+        "queryText": "花のような香りで酸味の強い浅煎りの豆",
+        "inferencePath": "standard",
+        "embeddingLatencyMs": 419,
+        "dynamodb": {
+          "indexName": "byEmbeddingJa",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 380,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#GTM-SANT-G2-LIGHT-1KG",
+              "warehouseId": "WH-OSAKA",
+              "productName": "グアテマラ サントス G2 ライト 1kg",
+              "category": "焙煎豆",
+              "origin": "グアテマラ",
+              "distance": 0.5706123113632202
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#GTM-SANT-G1-LIGHT-500G",
+              "warehouseId": "WH-OSAKA",
+              "productName": "グアテマラ サントス G1 ライト 500g",
+              "category": "焙煎豆",
+              "origin": "グアテマラ",
+              "distance": 0.5806984901428223
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#GTM-SHB-SHB-LIGHT-200G-V315",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "グアテマラ SHB SHB ライト 200g V315",
+              "category": "焙煎豆",
+              "origin": "グアテマラ",
+              "distance": 0.5894536375999451
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#GTM-SHB-G2-LIGHT-200G",
+              "warehouseId": "WH-TOKYO",
+              "productName": "グアテマラ SHB G2 ライト 200g",
+              "category": "焙煎豆",
+              "origin": "グアテマラ",
+              "distance": 0.5894677639007568
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#GTM-SHB-SHB-LIGHT-1KG-V275",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "グアテマラ SHB SHB ライト 1kg V275",
+              "category": "焙煎豆",
+              "origin": "グアテマラ",
+              "distance": 0.5904291272163391
+            }
+          ]
+        },
+        "opensearch": {
+          "indexName": "inventory-vector",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 518,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#GTM-SANT-G2-LIGHT-1KG",
+              "warehouseId": "WH-OSAKA",
+              "productName": "グアテマラ サントス G2 ライト 1kg",
+              "category": "焙煎豆",
+              "origin": "グアテマラ",
+              "distance": 0.57061232
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#GTM-SANT-G1-LIGHT-500G",
+              "warehouseId": "WH-OSAKA",
+              "productName": "グアテマラ サントス G1 ライト 500g",
+              "category": "焙煎豆",
+              "origin": "グアテマラ",
+              "distance": 0.5806985
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#GTM-SHB-SHB-LIGHT-200G-V315",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "グアテマラ SHB SHB ライト 200g V315",
+              "category": "焙煎豆",
+              "origin": "グアテマラ",
+              "distance": 0.5894537
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#GTM-SHB-G2-LIGHT-200G",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "グアテマラ SHB G2 ライト 200g",
+              "category": "焙煎豆",
+              "origin": "グアテマラ",
+              "distance": 0.5894678
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#GTM-SHB-SHB-LIGHT-1KG-V275",
+              "warehouseId": "WH-TOKYO",
+              "productName": "グアテマラ SHB SHB ライト 1kg V275",
+              "category": "焙煎豆",
+              "origin": "グアテマラ",
+              "distance": 0.59042906
+            }
+          ]
+        }
+      },
+      "en": {
+        "queryText": "light roast beans with floral aroma and bright acidity",
+        "inferencePath": "standard",
+        "embeddingLatencyMs": 184,
+        "dynamodb": {
+          "indexName": "byEmbeddingEn",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 120,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#BLEND-FLORAL-LIGHT-200G",
+              "warehouseId": "WH-OSAKA",
+              "productName": "Blend Floral light roast 200g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.34025147557258606
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#BLEND-FLORAL-LIGHT-100G",
+              "warehouseId": "WH-TOKYO",
+              "productName": "Blend Floral light roast 100g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.3403853178024292
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#BLEND-FLORAL-LIGHT-500G",
+              "warehouseId": "WH-OSAKA",
+              "productName": "Blend Floral light roast 500g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.3427125811576843
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#BLEND-FRUITY-LIGHT-100G",
+              "warehouseId": "WH-OSAKA",
+              "productName": "Blend Fruity light roast 100g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.3837500512599945
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#BLEND-FRUITY-LIGHT-500G",
+              "warehouseId": "WH-TOKYO",
+              "productName": "Blend Fruity light roast 500g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.3880196213722229
+            }
+          ]
+        },
+        "opensearch": {
+          "indexName": "inventory-vector",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 190,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#BLEND-FLORAL-LIGHT-200G",
+              "warehouseId": "WH-OSAKA",
+              "productName": "Blend Floral light roast 200g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.3402514000000001
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#BLEND-FLORAL-LIGHT-100G",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Blend Floral light roast 100g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.34038520000000005
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#BLEND-FLORAL-LIGHT-500G",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Blend Floral light roast 500g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.34271260000000003
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#BLEND-FRUITY-LIGHT-100G",
+              "warehouseId": "WH-OSAKA",
+              "productName": "Blend Fruity light roast 100g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.38375008
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#BLEND-FRUITY-LIGHT-500G",
+              "warehouseId": "WH-TOKYO",
+              "productName": "Blend Fruity light roast 500g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.3880196
+            }
+          ]
+        }
+      },
+      "languageOverlapTop5": {
+        "dynamodb": 0,
+        "opensearch": 0,
+        "identicalOrderDynamodb": false,
+        "identicalOrderOpensearch": false
+      }
+    },
+    {
+      "queryId": "q03",
+      "intent": "flavor",
+      "ja": {
+        "queryText": "ジャスミンとレモンを思わせる華やかな風味",
+        "inferencePath": "standard",
+        "embeddingLatencyMs": 178,
+        "dynamodb": {
+          "indexName": "byEmbeddingJa",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 62,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#ETH-SUP-G2-CITY-500G",
+              "warehouseId": "WH-TOKYO",
+              "productName": "エチオピア スプレモ G2 シティ 500g",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.5901355743408203
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#ETH-SUP-G2-MEDIUM-200G",
+              "warehouseId": "WH-TOKYO",
+              "productName": "エチオピア スプレモ G2 ミディアム 200g",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.5939373970031738
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#ETH-SHB-SHB-CITY-200G",
+              "warehouseId": "WH-OSAKA",
+              "productName": "エチオピア SHB SHB シティ 200g",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.5963232517242432
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#ETH-SUP-G1-CITY-200G",
+              "warehouseId": "WH-TOKYO",
+              "productName": "エチオピア スプレモ G1 シティ 200g",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.5969094634056091
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#ETH-SANT-G2-CITY-200G",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "エチオピア サントス G2 シティ 200g",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.600792646408081
+            }
+          ]
+        },
+        "opensearch": {
+          "indexName": "inventory-vector",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 100,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#ETH-SUP-G2-CITY-500G",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "エチオピア スプレモ G2 シティ 500g",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.5901356
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#ETH-SUP-G2-MEDIUM-200G",
+              "warehouseId": "WH-OSAKA",
+              "productName": "エチオピア スプレモ G2 ミディアム 200g",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.5939374
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#ETH-SHB-SHB-CITY-200G",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "エチオピア SHB SHB シティ 200g",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.5963232
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#ETH-SUP-G1-CITY-200G",
+              "warehouseId": "WH-OSAKA",
+              "productName": "エチオピア スプレモ G1 シティ 200g",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.5969095200000001
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#ETH-SANT-G2-CITY-200G",
+              "warehouseId": "WH-OSAKA",
+              "productName": "エチオピア サントス G2 シティ 200g",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.6007925999999999
+            }
+          ]
+        }
+      },
+      "en": {
+        "queryText": "vibrant flavor reminiscent of jasmine and lemon",
+        "inferencePath": "standard",
+        "embeddingLatencyMs": 169,
+        "dynamodb": {
+          "indexName": "byEmbeddingEn",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 70,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#DRIP-ETH-MIX-5P-V288",
+              "warehouseId": "WH-TOKYO",
+              "productName": "Drip bag Ethiopia mix 5 pack V288",
+              "category": "drip bag",
+              "origin": "Ethiopia",
+              "distance": 0.6605598330497742
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#DRIP-ETH-MIX-5P-V272",
+              "warehouseId": "WH-TOKYO",
+              "productName": "Drip bag Ethiopia mix 5 pack V272",
+              "category": "drip bag",
+              "origin": "Ethiopia",
+              "distance": 0.6612519025802612
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#DRIP-ETH-MIX-5P-V248",
+              "warehouseId": "WH-TOKYO",
+              "productName": "Drip bag Ethiopia mix 5 pack V248",
+              "category": "drip bag",
+              "origin": "Ethiopia",
+              "distance": 0.6614685654640198
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#DRIP-ETH-MIX-5P-V224",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Drip bag Ethiopia mix 5 pack V224",
+              "category": "drip bag",
+              "origin": "Ethiopia",
+              "distance": 0.6630527973175049
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#DRIP-ETH-MIX-5P-V152",
+              "warehouseId": "WH-OSAKA",
+              "productName": "Drip bag Ethiopia mix 5 pack V152",
+              "category": "drip bag",
+              "origin": "Ethiopia",
+              "distance": 0.6630769371986389
+            }
+          ]
+        },
+        "opensearch": {
+          "indexName": "inventory-vector",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 65,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#DRIP-ETH-MIX-5P-V288",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Drip bag Ethiopia mix 5 pack V288",
+              "category": "drip bag",
+              "origin": "Ethiopia",
+              "distance": 0.6605599
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#DRIP-ETH-MIX-5P-V272",
+              "warehouseId": "WH-TOKYO",
+              "productName": "Drip bag Ethiopia mix 5 pack V272",
+              "category": "drip bag",
+              "origin": "Ethiopia",
+              "distance": 0.6612518999999999
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#DRIP-ETH-MIX-5P-V248",
+              "warehouseId": "WH-OSAKA",
+              "productName": "Drip bag Ethiopia mix 5 pack V248",
+              "category": "drip bag",
+              "origin": "Ethiopia",
+              "distance": 0.6614685
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#DRIP-ETH-MIX-5P-V224",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Drip bag Ethiopia mix 5 pack V224",
+              "category": "drip bag",
+              "origin": "Ethiopia",
+              "distance": 0.6630528
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#DRIP-ETH-MIX-5P-V152",
+              "warehouseId": "WH-TOKYO",
+              "productName": "Drip bag Ethiopia mix 5 pack V152",
+              "category": "drip bag",
+              "origin": "Ethiopia",
+              "distance": 0.6630769999999999
+            }
+          ]
+        }
+      },
+      "languageOverlapTop5": {
+        "dynamodb": 0,
+        "opensearch": 0,
+        "identicalOrderDynamodb": false,
+        "identicalOrderOpensearch": false
+      }
+    },
+    {
+      "queryId": "q22",
+      "intent": "body",
+      "ja": {
+        "queryText": "重いボディでコクのあるフレンチロースト",
+        "inferencePath": "standard",
+        "embeddingLatencyMs": 151,
+        "dynamodb": {
+          "indexName": "byEmbeddingJa",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 79,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#BLEND-RICH-FRENCH-200G",
+              "warehouseId": "WH-TOKYO",
+              "productName": "ブレンド リッチ フレンチ 200g",
+              "category": "ブレンド",
+              "origin": "",
+              "distance": 0.5355636477470398
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#BLEND-ESPRESSO-FRENCH-200G",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "ブレンド エスプレッソ フレンチ 200g",
+              "category": "ブレンド",
+              "origin": "",
+              "distance": 0.5418400764465332
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#BLEND-ESPRESSO-FRENCH-200G-V523",
+              "warehouseId": "WH-OSAKA",
+              "productName": "ブレンド エスプレッソ フレンチ 200g V523",
+              "category": "ブレンド",
+              "origin": "",
+              "distance": 0.542728066444397
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#BLEND-RICH-FRENCH-100G",
+              "warehouseId": "WH-OSAKA",
+              "productName": "ブレンド リッチ フレンチ 100g",
+              "category": "ブレンド",
+              "origin": "",
+              "distance": 0.5429862141609192
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#BLEND-ESPRESSO-FRENCH-200G-V943",
+              "warehouseId": "WH-TOKYO",
+              "productName": "ブレンド エスプレッソ フレンチ 200g V943",
+              "category": "ブレンド",
+              "origin": "",
+              "distance": 0.5437686443328857
+            }
+          ]
+        },
+        "opensearch": {
+          "indexName": "inventory-vector",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 105,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#BLEND-RICH-FRENCH-200G",
+              "warehouseId": "WH-OSAKA",
+              "productName": "ブレンド リッチ フレンチ 200g",
+              "category": "ブレンド",
+              "origin": "",
+              "distance": 0.5355637
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#BLEND-ESPRESSO-FRENCH-200G",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "ブレンド エスプレッソ フレンチ 200g",
+              "category": "ブレンド",
+              "origin": "",
+              "distance": 0.5418400800000001
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#BLEND-ESPRESSO-FRENCH-200G-V523",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "ブレンド エスプレッソ フレンチ 200g V523",
+              "category": "ブレンド",
+              "origin": "",
+              "distance": 0.54272806
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#BLEND-RICH-FRENCH-100G",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "ブレンド リッチ フレンチ 100g",
+              "category": "ブレンド",
+              "origin": "",
+              "distance": 0.5429862000000001
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#BLEND-ESPRESSO-FRENCH-200G-V943",
+              "warehouseId": "WH-TOKYO",
+              "productName": "ブレンド エスプレッソ フレンチ 200g V943",
+              "category": "ブレンド",
+              "origin": "",
+              "distance": 0.5437685999999999
+            }
+          ]
+        }
+      },
+      "en": {
+        "queryText": "french roast with full body and rich depth",
+        "inferencePath": "standard",
+        "embeddingLatencyMs": 168,
+        "dynamodb": {
+          "indexName": "byEmbeddingEn",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 61,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#BLEND-RICH-FRENCH-200G",
+              "warehouseId": "WH-TOKYO",
+              "productName": "Blend Rich french roast 200g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.4437808692455292
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#BLEND-RICH-FRENCH-500G",
+              "warehouseId": "WH-TOKYO",
+              "productName": "Blend Rich french roast 500g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.4453718066215515
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#BLEND-RICH-FRENCH-100G",
+              "warehouseId": "WH-OSAKA",
+              "productName": "Blend Rich french roast 100g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.44552499055862427
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#BLEND-DEEP-FRENCH-200G",
+              "warehouseId": "WH-OSAKA",
+              "productName": "Blend Deep french roast 200g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.4755799472332001
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#BLEND-DEEP-FRENCH-100G",
+              "warehouseId": "WH-OSAKA",
+              "productName": "Blend Deep french roast 100g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.47818419337272644
+            }
+          ]
+        },
+        "opensearch": {
+          "indexName": "inventory-vector",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 62,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#BLEND-RICH-FRENCH-200G",
+              "warehouseId": "WH-OSAKA",
+              "productName": "Blend Rich french roast 200g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.4437808999999999
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#BLEND-RICH-FRENCH-500G",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Blend Rich french roast 500g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.44537186000000006
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#BLEND-RICH-FRENCH-100G",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Blend Rich french roast 100g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.44552499999999995
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#BLEND-DEEP-FRENCH-200G",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Blend Deep french roast 200g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.4755799999999999
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#BLEND-DEEP-FRENCH-100G",
+              "warehouseId": "WH-TOKYO",
+              "productName": "Blend Deep french roast 100g",
+              "category": "blend",
+              "origin": "",
+              "distance": 0.47818420000000006
+            }
+          ]
+        }
+      },
+      "languageOverlapTop5": {
+        "dynamodb": 2,
+        "opensearch": 2,
+        "identicalOrderDynamodb": false,
+        "identicalOrderOpensearch": false
+      }
+    },
+    {
+      "queryId": "q31",
+      "intent": "origin",
+      "ja": {
+        "queryText": "エチオピア産のベリー系の風味の豆",
+        "inferencePath": "standard",
+        "embeddingLatencyMs": 168,
+        "dynamodb": {
+          "indexName": "byEmbeddingJa",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 40,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#ETH-YIRG-G1-CITY-500G-V472",
+              "warehouseId": "WH-OSAKA",
+              "productName": "エチオピア イルガチェフェ G1 シティ 500g V472",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.550937831401825
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#ETH-SHB-G1-CITY-500G",
+              "warehouseId": "WH-TOKYO",
+              "productName": "エチオピア SHB G1 シティ 500g",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.5531375408172607
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#ETH-YIRG-SHB-CITY-500G",
+              "warehouseId": "WH-TOKYO",
+              "productName": "エチオピア イルガチェフェ SHB シティ 500g",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.5541197657585144
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#ETH-YIRG-G1-CITY-200G-V72",
+              "warehouseId": "WH-TOKYO",
+              "productName": "エチオピア イルガチェフェ G1 シティ 200g V72",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.5543503165245056
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#ETH-SHB-G2-CITY-1KG",
+              "warehouseId": "WH-TOKYO",
+              "productName": "エチオピア SHB G2 シティ 1kg",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.5551961660385132
+            }
+          ]
+        },
+        "opensearch": {
+          "indexName": "inventory-vector",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 54,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#ETH-YIRG-G1-CITY-500G-V472",
+              "warehouseId": "WH-TOKYO",
+              "productName": "エチオピア イルガチェフェ G1 シティ 500g V472",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.5509379000000001
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#ETH-SHB-G1-CITY-500G",
+              "warehouseId": "WH-TOKYO",
+              "productName": "エチオピア SHB G1 シティ 500g",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.5531375999999999
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#ETH-YIRG-SHB-CITY-500G",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "エチオピア イルガチェフェ SHB シティ 500g",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.5541198
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#ETH-YIRG-G1-CITY-200G-V72",
+              "warehouseId": "WH-OSAKA",
+              "productName": "エチオピア イルガチェフェ G1 シティ 200g V72",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.5543503999999999
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#ETH-SHB-G2-CITY-1KG",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "エチオピア SHB G2 シティ 1kg",
+              "category": "焙煎豆",
+              "origin": "エチオピア",
+              "distance": 0.5551961999999999
+            }
+          ]
+        }
+      },
+      "en": {
+        "queryText": "beans from Ethiopia with berry flavor",
+        "inferencePath": "standard",
+        "embeddingLatencyMs": 155,
+        "dynamodb": {
+          "indexName": "byEmbeddingEn",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 42,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#ETH-SANT-RAW",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Ethiopia Santos green beans",
+              "category": "green beans",
+              "origin": "Ethiopia",
+              "distance": 0.3766630291938782
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#ETH-SHB-G2-DARK-200G",
+              "warehouseId": "WH-TOKYO",
+              "productName": "Ethiopia SHB G2 dark roast 200g",
+              "category": "roasted beans",
+              "origin": "Ethiopia",
+              "distance": 0.3844132721424103
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#ETH-SANT-G2-LIGHT-1KG",
+              "warehouseId": "WH-TOKYO",
+              "productName": "Ethiopia Santos G2 light roast 1kg",
+              "category": "roasted beans",
+              "origin": "Ethiopia",
+              "distance": 0.38638564944267273
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#ETH-SANT-G2-DARK-1KG",
+              "warehouseId": "WH-OSAKA",
+              "productName": "Ethiopia Santos G2 dark roast 1kg",
+              "category": "roasted beans",
+              "origin": "Ethiopia",
+              "distance": 0.38744688034057617
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#ETH-SHB-RAW",
+              "warehouseId": "WH-OSAKA",
+              "productName": "Ethiopia SHB green beans",
+              "category": "green beans",
+              "origin": "Ethiopia",
+              "distance": 0.3876150846481323
+            }
+          ]
+        },
+        "opensearch": {
+          "indexName": "inventory-vector",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 42,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#ETH-SANT-RAW",
+              "warehouseId": "WH-TOKYO",
+              "productName": "Ethiopia Santos green beans",
+              "category": "green beans",
+              "origin": "Ethiopia",
+              "distance": 0.3766632000000001
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#ETH-SHB-G2-DARK-200G",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Ethiopia SHB G2 dark roast 200g",
+              "category": "roasted beans",
+              "origin": "Ethiopia",
+              "distance": 0.3844132
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#ETH-SANT-G2-LIGHT-1KG",
+              "warehouseId": "WH-OSAKA",
+              "productName": "Ethiopia Santos G2 light roast 1kg",
+              "category": "roasted beans",
+              "origin": "Ethiopia",
+              "distance": 0.38638568000000006
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#ETH-SANT-G2-DARK-1KG",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Ethiopia Santos G2 dark roast 1kg",
+              "category": "roasted beans",
+              "origin": "Ethiopia",
+              "distance": 0.38744687999999994
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#ETH-SHB-RAW",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Ethiopia SHB green beans",
+              "category": "green beans",
+              "origin": "Ethiopia",
+              "distance": 0.38761508
+            }
+          ]
+        }
+      },
+      "languageOverlapTop5": {
+        "dynamodb": 0,
+        "opensearch": 0,
+        "identicalOrderDynamodb": false,
+        "identicalOrderOpensearch": false
+      }
+    },
+    {
+      "queryId": "q53",
+      "intent": "material",
+      "ja": {
+        "queryText": "コーヒー豆を保存するためのバルブ付の袋",
+        "inferencePath": "standard",
+        "embeddingLatencyMs": 223,
+        "dynamodb": {
+          "indexName": "byEmbeddingJa",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 64,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#MAT-BAG-1KG-VALVE",
+              "warehouseId": "WH-OSAKA",
+              "productName": "資材 袋 1kg用 バルブ付",
+              "category": "資材",
+              "origin": "",
+              "distance": 0.3148884177207947
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#MAT-BAG-100G-VALVE-V1128",
+              "warehouseId": "WH-OSAKA",
+              "productName": "資材 袋 100g用 バルブ付 V1128",
+              "category": "資材",
+              "origin": "",
+              "distance": 0.31762319803237915
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#MAT-BAG-200G-VALVE",
+              "warehouseId": "WH-OSAKA",
+              "productName": "資材 袋 200g用 バルブ付",
+              "category": "資材",
+              "origin": "",
+              "distance": 0.31856095790863037
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#MAT-BAG-M-VALVE",
+              "warehouseId": "WH-OSAKA",
+              "productName": "資材 袋 M バルブ付",
+              "category": "資材",
+              "origin": "",
+              "distance": 0.3215588331222534
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#MAT-BAG-100G-VALVE",
+              "warehouseId": "WH-OSAKA",
+              "productName": "資材 袋 100g用 バルブ付",
+              "category": "資材",
+              "origin": "",
+              "distance": 0.3226955831050873
+            }
+          ]
+        },
+        "opensearch": {
+          "indexName": "inventory-vector",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 58,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#MAT-BAG-1KG-VALVE",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "資材 袋 1kg用 バルブ付",
+              "category": "資材",
+              "origin": "",
+              "distance": 0.31488848
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#MAT-BAG-100G-VALVE-V1128",
+              "warehouseId": "WH-TOKYO",
+              "productName": "資材 袋 100g用 バルブ付 V1128",
+              "category": "資材",
+              "origin": "",
+              "distance": 0.31762314
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#MAT-BAG-200G-VALVE",
+              "warehouseId": "WH-OSAKA",
+              "productName": "資材 袋 200g用 バルブ付",
+              "category": "資材",
+              "origin": "",
+              "distance": 0.31856108000000005
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#MAT-BAG-M-VALVE",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "資材 袋 M バルブ付",
+              "category": "資材",
+              "origin": "",
+              "distance": 0.32155899999999993
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#MAT-BAG-100G-VALVE",
+              "warehouseId": "WH-OSAKA",
+              "productName": "資材 袋 100g用 バルブ付",
+              "category": "資材",
+              "origin": "",
+              "distance": 0.3226957399999999
+            }
+          ]
+        }
+      },
+      "en": {
+        "queryText": "bag with valve for storing coffee beans",
+        "inferencePath": "standard",
+        "embeddingLatencyMs": 164,
+        "dynamodb": {
+          "indexName": "byEmbeddingEn",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 19,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#MAT-BAG-L-VALVE",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Packaging material bag L with valve",
+              "category": "packaging material",
+              "origin": "",
+              "distance": 0.3457537889480591
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#MAT-BAG-M-VALVE",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Packaging material bag M with valve",
+              "category": "packaging material",
+              "origin": "",
+              "distance": 0.34823867678642273
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#MAT-BAG-S-VALVE",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Packaging material bag S with valve",
+              "category": "packaging material",
+              "origin": "",
+              "distance": 0.3502565026283264
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#MAT-BAG-S-VALVE-V372",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Packaging material bag S with valve V372",
+              "category": "packaging material",
+              "origin": "",
+              "distance": 0.3539636433124542
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#MAT-BAG-S-VALVE-V876",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Packaging material bag S with valve V876",
+              "category": "packaging material",
+              "origin": "",
+              "distance": 0.3550362288951874
+            }
+          ]
+        },
+        "opensearch": {
+          "indexName": "inventory-vector",
+          "returnedCount": 30,
+          "distinctSkuCount": 10,
+          "searchLatencyMs": 59,
+          "topDistinctSkus": [
+            {
+              "rank": 1,
+              "itemId": "ITEM#MAT-BAG-L-VALVE",
+              "warehouseId": "WH-OSAKA",
+              "productName": "Packaging material bag L with valve",
+              "category": "packaging material",
+              "origin": "",
+              "distance": 0.34575365999999996
+            },
+            {
+              "rank": 4,
+              "itemId": "ITEM#MAT-BAG-M-VALVE",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Packaging material bag M with valve",
+              "category": "packaging material",
+              "origin": "",
+              "distance": 0.3482387
+            },
+            {
+              "rank": 7,
+              "itemId": "ITEM#MAT-BAG-S-VALVE",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Packaging material bag S with valve",
+              "category": "packaging material",
+              "origin": "",
+              "distance": 0.3502563999999999
+            },
+            {
+              "rank": 10,
+              "itemId": "ITEM#MAT-BAG-S-VALVE-V372",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Packaging material bag S with valve V372",
+              "category": "packaging material",
+              "origin": "",
+              "distance": 0.35396359999999993
+            },
+            {
+              "rank": 13,
+              "itemId": "ITEM#MAT-BAG-S-VALVE-V876",
+              "warehouseId": "WH-FUKUOKA",
+              "productName": "Packaging material bag S with valve V876",
+              "category": "packaging material",
+              "origin": "",
+              "distance": 0.35503613999999994
+            }
+          ]
+        }
+      },
+      "languageOverlapTop5": {
+        "dynamodb": 1,
+        "opensearch": 1,
+        "identicalOrderDynamodb": false,
+        "identicalOrderOpensearch": false
+      }
+    }
+  ],
+  "sessionContext": {
+    "task": "13.17（言語別 recall の測定）",
+    "mainReport": "docs/measurements/recall-2026-08-22.json",
+    "searchActivityWindowUtc": {
+      "start": "2026-08-22T00:45:13Z",
+      "end": "2026-08-22T03:35:53Z",
+      "evidence": "CloudWatch Logs の DescribeLogStreams による実測。kiro-vector-search-aoss の最初のイベント 2026-08-22T00:45:19.419Z（事前確認 1 件）、最後のイベント 2026-08-22T03:35:52.124Z。kiro-vector-search-ddb の最後のイベント 2026-08-22T03:35:53.293Z。",
+      "segments": [
+        {
+          "purpose": "事前確認（1 クエリ / ja / 両バックエンド / k 3 種）",
+          "startUtc": "2026-08-22T00:45:13Z",
+          "endUtc": "2026-08-22T00:45:40Z"
+        },
+        {
+          "purpose": "本測定（60 クエリ × 2 言語 × 2 バックエンド × k 3 種）",
+          "startUtc": "2026-08-22T03:15:23Z",
+          "endUtc": "2026-08-22T03:29:29Z"
+        },
+        {
+          "purpose": "観察例の取得（本ファイル）",
+          "startUtc": "2026-08-22T03:35:45Z",
+          "endUtc": "2026-08-22T03:36:02Z"
+        }
+      ],
+      "zeroOcuIntervalEnded": {
+        "interval": "2026-08-21T13:50:00Z 〜 2026-08-22T00:45:00Z",
+        "lengthMinutes": 655.0,
+        "endedBy": "本タスクの事前確認検索",
+        "note": "要件どおり許容した終了である。task 13.19 のアイドル 24 時間窓は 13.18 の完了後に開始する。"
+      }
+    },
+    "callAccounting": {
+      "method": "CloudWatch AWS/Lambda Invocations（2026-08-22T00:40:00Z 〜 03:45:00Z）と AWS/Bedrock Invocations / InvocationClientErrors による実測",
+      "embedRequests": 131,
+      "embedRequestBreakdown": {
+        "preCheck": 1,
+        "mainMeasurement": 120,
+        "observationCapture": 10
+      },
+      "dynamodbSearchCalls": 373,
+      "opensearchSearchCalls": 373,
+      "searchCallBreakdown": {
+        "preCheck": 3,
+        "mainMeasurement": 360,
+        "observationCapture": 10
+      },
+      "bedrockInvokeModelApiCalls": 262,
+      "bedrockInvokeModelClientErrors": 131,
+      "bedrockNote": "InvokeModel の API 呼び出しは埋め込み 1 件につき 2 回である（performanceConfigLatency: optimized の試行が ValidationException で失敗し、標準推論で 1 回だけ再試行する。要件 18.22 のフォールバック）。埋め込みを生成した呼び出しは 131 回であり、呼び出し回数台帳にはこの 131 を加算する。"
+    },
+    "cumulativeSpend": {
+      "asOfUtc": "2026-08-22T03:38:54Z",
+      "ocuHour": 6.8167,
+      "usd": 1.64,
+      "previousUsd": 1.39,
+      "deltaUsd": 0.25,
+      "capUsd": 20,
+      "command": "npm run vector:measure -- --watch-spend --no-write --hours 48"
+    }
+  }
+}

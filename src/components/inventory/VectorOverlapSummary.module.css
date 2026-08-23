@@ -1,0 +1,254 @@
+/* VectorOverlapSummary — 結果の重なりと順位差サマリー */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 8px;
+  background: var(--color-surface, #fff);
+  padding: 16px;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text, #1f2937);
+}
+
+.subTitle {
+  margin: 0 0 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text, #1f2937);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* 倉庫三つ組の注記 */
+.note {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary, #4a5568);
+  background: var(--color-bg, #f7fafc);
+  border-left: 3px solid var(--color-border, #e2e8f0);
+  border-radius: 4px;
+  padding: 8px 10px;
+}
+
+/* 重なり指標 */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 6px;
+  background: var(--color-bg, #f7fafc);
+  padding: 8px 10px;
+}
+
+.metricLabel {
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary, #4a5568);
+}
+
+.metricValue {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text, #1f2937);
+}
+
+/* 片側のみ / 保持一覧のブロック */
+.onlyBlock {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* テーブル */
+.tableWrapper {
+  overflow-x: auto;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 6px;
+}
+
+.tableWrapper:focus-visible {
+  outline: 2px solid var(--color-primary, #3182ce);
+  outline-offset: 1px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.caption {
+  text-align: left;
+  padding: 6px 10px;
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary, #4a5568);
+  background: var(--color-bg, #f7fafc);
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
+}
+
+.th {
+  text-align: left;
+  padding: 8px 10px;
+  font-weight: 600;
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary, #4a5568);
+  background: var(--color-bg, #f7fafc);
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
+  white-space: nowrap;
+}
+
+.rowHeader {
+  text-align: left;
+  padding: 6px 10px;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  color: var(--color-text, #1f2937);
+  white-space: nowrap;
+}
+
+.tr:not(:last-child) .td,
+.tr:not(:last-child) .rowHeader {
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
+}
+
+.td {
+  padding: 6px 10px;
+  color: var(--color-text, #1f2937);
+  white-space: nowrap;
+}
+
+.status {
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary, #4a5568);
+  white-space: nowrap;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.number {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+/* 判定バッジ。テキストが情報の担い手であり、色は補助のみ */
+.badge {
+  display: inline-block;
+  font-size: 0.6875rem;
+  border-radius: 4px;
+  padding: 1px 6px;
+  border: 1px solid var(--color-border, #e2e8f0);
+  background: var(--color-bg, #f7fafc);
+  color: var(--color-text-secondary, #4a5568);
+  white-space: nowrap;
+}
+
+.badge + .badge {
+  margin-left: 4px;
+}
+
+.badgeMatch {
+  color: var(--color-success, #15803d);
+  background: var(--color-success-bg, #f0fdf4);
+  border-color: var(--color-success-border, #86efac);
+}
+
+.badgeDiff {
+  color: var(--color-info, #1d4ed8);
+  background: var(--color-info-bg, #eff6ff);
+  border-color: var(--color-info-border, #93c5fd);
+}
+
+.badgeWarn {
+  color: var(--color-warning, #b45309);
+  background: var(--color-warning-bg, #fef3c7);
+  border-color: var(--color-warning-border, #fcd34d);
+}
+
+/* 算出不可 */
+.uncomputable {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: var(--color-warning, #b45309);
+  background: var(--color-warning-bg, #fef3c7);
+  border: 1px solid var(--color-warning-border, #fcd34d);
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.uncomputableTitle {
+  margin: 0;
+  font-weight: 600;
+}
+
+.uncomputableDetail {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.blockerList {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.blockerItem {
+  margin: 0;
+}
+
+.empty {
+  margin: 0;
+  text-align: center;
+  color: var(--color-text-secondary, #4a5568);
+  font-size: 0.8125rem;
+  padding: 16px 0;
+}
+
+/* レスポンシブ: 768px 以下 */
+@media (max-width: 768px) {
+  .metrics {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  .th,
+  .td,
+  .number,
+  .rowHeader,
+  .status {
+    padding: 6px 8px;
+    font-size: 0.75rem;
+  }
+}

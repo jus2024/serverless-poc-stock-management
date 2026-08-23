@@ -1,0 +1,447 @@
+{
+  "schemaVersion": 1,
+  "task": "13.18（段階 13：消費キャパシティと転送量、レイテンシの測定）",
+  "generatedAt": "2026-08-22T04:02:00Z",
+  "requirements": [
+    "8.11",
+    "8.12",
+    "9.7",
+    "9.8",
+    "12.1",
+    "12.2",
+    "12.3",
+    "12.4",
+    "12.5",
+    "12.6",
+    "12.7",
+    "14.7",
+    "14.8",
+    "18.2",
+    "18.3"
+  ],
+  "target": {
+    "region": "us-west-2",
+    "apiBaseUrl": "https://7x62kbhicg.execute-api.us-west-2.amazonaws.com/api",
+    "searchVectorsEndpoint": "https://search-dynamodb.us-west-2.api.aws",
+    "vectorTableName": "kiro-roasters-inventory-vector",
+    "indexes": ["byEmbeddingJa", "byEmbeddingEn"],
+    "opensearchIndexName": "inventory-vector",
+    "dimensions": 1024,
+    "distanceFunction": "COSINE / cosinesimil",
+    "recordCount": 15000,
+    "rowsPerSku": 3
+  },
+
+  "searchActivityWindowUtc": {
+    "purpose": "task 13.19（24 時間アイドル OCU 観測）の開始時点を決めるための必須出力。本タスクで検索が動いた区間である",
+    "start": "2026-08-22T03:50:01Z",
+    "end": "2026-08-22T03:56:32Z",
+    "segments": [
+      {
+        "purpose": "同一条件 100 回 × 2 言語（要件 14.7）。SearchVectors を署名付き HTTP で直接呼ぶ（Lambda を経由しない）",
+        "startUtc": "2026-08-22T03:50:01Z",
+        "endUtc": "2026-08-22T03:50:42Z",
+        "searchCalls": 200,
+        "backends": ["dynamodb"]
+      },
+      {
+        "purpose": "TopK 掃引（TopK 依存の観測）。同一条件 100 回の集合とは別集合である",
+        "startUtc": "2026-08-22T03:52:27Z",
+        "endUtc": "2026-08-22T03:52:38Z",
+        "searchCalls": 70,
+        "backends": ["dynamodb"]
+      },
+      {
+        "purpose": "両バックエンドのレイテンシ測定（API 経由）",
+        "startUtc": "2026-08-22T03:52:38Z",
+        "endUtc": "2026-08-22T03:53:38Z",
+        "searchCalls": 60,
+        "backends": ["dynamodb", "opensearch"]
+      },
+      {
+        "purpose": "UI 比較検証（重なり指標・機能制約比較表・言語切り替え）",
+        "startUtc": "2026-08-22T03:56:28Z",
+        "endUtc": "2026-08-22T03:56:32Z",
+        "searchCalls": 4,
+        "backends": ["dynamodb", "opensearch"]
+      }
+    ],
+    "totalSearchCalls": 334,
+    "note": "03:56:32Z 以降は検索を実行していない。task 13.19 のアイドル 24 時間窓はこの時刻を起点として開始できる。"
+  },
+
+  "consumedCapacity": {
+    "requirement": "14.7",
+    "condition": "同一クエリベクトル（決定論シード 20260101）/ TopK 30 / 言語ごとに 100 回 / 逐次実行",
+    "artifacts": [
+      "docs/measurements/measure-capacity-2026-08-22T03-50-16-540Z.json",
+      "docs/measurements/measure-capacity-2026-08-22T03-50-41-589Z.json"
+    ],
+    "ja": {
+      "indexName": "byEmbeddingJa",
+      "windowUtc": { "start": "2026-08-22T03:50:01.981Z", "end": "2026-08-22T03:50:16.540Z" },
+      "searchCount": 100,
+      "measuredCount": 100,
+      "failureCount": 0,
+      "missingCapacityCount": 0,
+      "averagePerSearchBytes": 77551.97,
+      "minimumPerSearchBytes": 76871,
+      "maximumPerSearchBytes": 77874,
+      "totalBytes": 7755197
+    },
+    "en": {
+      "indexName": "byEmbeddingEn",
+      "windowUtc": { "start": "2026-08-22T03:50:24.058Z", "end": "2026-08-22T03:50:41.589Z" },
+      "searchCount": 100,
+      "measuredCount": 100,
+      "failureCount": 0,
+      "missingCapacityCount": 0,
+      "averagePerSearchBytes": 86417.4,
+      "minimumPerSearchBytes": 85359,
+      "maximumPerSearchBytes": 87347,
+      "totalBytes": 8641740
+    },
+    "combined": {
+      "searchCount": 200,
+      "totalBytes": 16396937,
+      "averagePerSearchBytes": 81984.685
+    },
+    "observations": [
+      "同一条件でも 1 検索あたりの値は一定でない。ja は 76,871〜77,874 B（幅 1,003 B / 平均比 1.3%）、en は 85,359〜87,347 B（幅 1,988 B / 平均比 2.3%）。決定論的なクエリベクトルを同一 TopK で繰り返しても値が揺れるため、この量は要求内容だけで決まらない。",
+      "同一 TopK でもインデックスによって水準が違う（ja 平均 77,552 B / en 平均 86,417 B、差 8,865 B = 11.4%）。クエリベクトルは 2 本とも同一であるため、差はインデックス側（格納ベクトルの分布）に由来する。"
+    ]
+  },
+
+  "vectorSearchUnits": {
+    "requirement": "8.11",
+    "question": "VectorSearchUnits は常に VectorSearchRequestBytes と等しいか（task 13.15 から本タスクへ持ち越された疑問）",
+    "answer": "本タスクで観測した 270 件すべてで同値だった。食い違いは 1 件も観測していない",
+    "readPath": "SDK の VectorCapacity モデルに VectorSearchUnits は存在しないため、生応答の ConsumedCapacity から読んだ（scripts/vector-search/measure.ts の readVectorSearchUnits）",
+    "sameConditionSet": {
+      "ja": { "comparableCount": 100, "equalCount": 100, "divergentCount": 0 },
+      "en": { "comparableCount": 100, "equalCount": 100, "divergentCount": 0 }
+    },
+    "topKSweepSet": { "comparableCount": 70, "equalCount": 70, "divergentCount": 0 },
+    "totalComparableCount": 270,
+    "totalDivergentCount": 0,
+    "unitsAlwaysEqualRequestBytes": true,
+    "scopeCaveat": "観測は 1 テーブル / 2 インデックス / 1,024 次元 / COSINE / TopK 1〜100 / us-west-2 / 2026-08-22 の範囲である。この範囲で反例が無いことを示したのであり、API の仕様として常に同値であることを示したのではない。"
+  },
+
+  "topKDependence": {
+    "question": "61,318 B（task 13.13、TopK 1）は TopK 依存か",
+    "answer": "依存する。TopK に対して単調増加し、実測範囲では線形にきわめて近い",
+    "artifact": "docs/measurements/capacity-latency-2026-08-22T03-53-37-635Z.json",
+    "condition": "byEmbeddingJa / 言語 ja / 決定論シード 20260101 / TopK ごとに 10 回 / 同一クエリベクトル",
+    "measurements": [
+      { "topK": 1, "calls": 10, "averageBytes": 61307.3, "minimumBytes": 60586, "maximumBytes": 61512 },
+      { "topK": 3, "calls": 10, "averageBytes": 62257.5, "minimumBytes": 61705, "maximumBytes": 62629 },
+      { "topK": 10, "calls": 10, "averageBytes": 66194.3, "minimumBytes": 65647, "maximumBytes": 66600 },
+      { "topK": 30, "calls": 10, "averageBytes": 77278.0, "minimumBytes": 76887, "maximumBytes": 77873 },
+      { "topK": 50, "calls": 10, "averageBytes": 88856.8, "minimumBytes": 88184, "maximumBytes": 89158 },
+      { "topK": 99, "calls": 10, "averageBytes": 116474.8, "minimumBytes": 115932, "maximumBytes": 116868 },
+      { "topK": 100, "calls": 10, "averageBytes": 117243.8, "minimumBytes": 116479, "maximumBytes": 117461 }
+    ],
+    "linearFit": {
+      "model": "bytes ≈ intercept + slope × TopK",
+      "slopeBytesPerTopK": 565.51,
+      "interceptBytes": 60559.8,
+      "rSquared": 0.999967,
+      "maxAbsoluteResidualBytes": 247.0
+    },
+    "conclusions": [
+      "TopK 1 の実測平均 61,307 B は task 13.13 の 61,318 B と 0.02% 差で一致した。13.13 の値は TopK 1 の値であり、TopK を上げると増える。",
+      "TopK 100 では 117,244 B で TopK 1 の 1.91 倍になる。したがって『61,318 B は TopK に依存しない固定量』ではない。",
+      "フィールド名に反して要求サイズではない。1,024 次元 f32 のクエリは 4,096 B であり、TopK を変えても要求本文の大きさは変わらないが、実測値は TopK に応じて 61 KB → 117 KB まで動く。",
+      "実測範囲では TopK 非依存の大きな固定成分（約 60.6 KB）と TopK 比例成分（約 566 B / 件）に分解できる。"
+    ],
+    "notDetermined": [
+      "固定成分と比例成分がそれぞれ何を数えているのかは黒箱観測から確定できない。走査量（グラフ探索で触れたノード数やページ数）に対応する可能性は高いが、内部指標を観測する手段が無いため断定しない。",
+      "比例成分 565.5 B / 件が返却行のサイズに対応するかも確定できない。射影を指定しない要求で 1 件の応答本文が 1,125 B（task 13.13 の実測）であり、565.5 B はその半分程度である。応答バイト数とも一致しない。",
+      "同一条件でも値が揺れること（幅 1〜2%）と、同一 TopK でインデックスによって水準が違うこと（11.4%）は、この量が要求内容のみで決まらないことを示すが、揺れの原因（近似探索の経路差など）は特定していない。"
+    ]
+  },
+
+  "requestBytesMetric": {
+    "requirement": "14.8",
+    "metric": "AWS/DynamoDB / VectorSearchRequestBytes",
+    "dimensions": ["TableName", "VectorIndexName"],
+    "statistic": "Sum / SampleCount（period 60 秒）",
+    "measurementWindowUtc": {
+      "start": "2026-08-22T03:50:00Z",
+      "end": "2026-08-22T03:51:00Z",
+      "note": "同一条件 100 回 × 2 言語（03:50:01Z〜03:50:42Z）が収まる 1 分バケット。TopK 掃引（03:52）とレイテンシ測定（03:52〜03:53）と UI 検証（03:56）は別バケットに分離しているため混入しない"
+    },
+    "perIndexInMeasurementWindow": [
+      {
+        "indexName": "byEmbeddingJa",
+        "sampleCount": 100,
+        "totalBytes": 7755197,
+        "averagePerSearchBytes": 77551.97,
+        "minimumBytes": 76871,
+        "maximumBytes": 77874
+      },
+      {
+        "indexName": "byEmbeddingEn",
+        "sampleCount": 100,
+        "totalBytes": 8641740,
+        "averagePerSearchBytes": 86417.4,
+        "minimumBytes": 85359,
+        "maximumBytes": 87347
+      }
+    ],
+    "totalInMeasurementWindow": {
+      "sampleCount": 200,
+      "totalBytes": 16396937,
+      "averagePerSearchBytes": 81984.685
+    },
+    "crossValidation": {
+      "claim": "CloudWatch の VectorSearchRequestBytes（Sum）は同区間の ConsumedCapacity.VectorSearchRequestBytes の総和と完全一致した",
+      "byEmbeddingJa": { "cloudWatchSum": 7755197, "consumedCapacityTotal": 7755197, "difference": 0 },
+      "byEmbeddingEn": { "cloudWatchSum": 8641740, "consumedCapacityTotal": 8641740, "difference": 0 },
+      "sampleCountMatchesSearchCount": true,
+      "implication": "2 つの経路（応答の ConsumedCapacity と CloudWatch メトリクス）は同一の量を数えている。片方だけでコストを見積もっても差は出ない"
+    },
+    "wholeTaskWindow": {
+      "windowUtc": { "start": "2026-08-22T03:45:00Z", "end": "2026-08-22T04:10:00Z" },
+      "byEmbeddingJa": { "sampleCount": 186, "totalBytes": 15009944 },
+      "byEmbeddingEn": { "sampleCount": 116, "totalBytes": 9976242 },
+      "total": { "sampleCount": 302, "totalBytes": 24986186 },
+      "note": "本タスクの全 DynamoDB 検索 302 件（同一条件 200 / 掃引 70 / レイテンシ 30 / UI 2）の内訳と一致する"
+    }
+  },
+
+  "latency": {
+    "requirements": ["8.12", "9.7", "9.8"],
+    "artifact": "docs/measurements/capacity-latency-2026-08-22T03-53-37-635Z.json",
+    "condition": "Paired_Query_Set 5 件（q01 / q03 / q22 / q31 / q53）× 2 言語 × 3 回 = 30 試行 / バックエンド。要求 TopK 30。両バックエンドは同一 queryId（同一クエリベクトル）を共有する",
+    "windowUtc": { "start": "2026-08-22T03:52:37.865Z", "end": "2026-08-22T03:53:37.635Z" },
+    "note": "4 つの区間は互いに別の量である。バックエンド間で平均せず、区間名を保ったまま記録する",
+    "dynamodb": {
+      "searchLatencyMs": {
+        "definition": "SearchVectors 呼び出し直前〜レスポンス受信完了（要件 8.12）",
+        "trials": 30,
+        "minimum": 9,
+        "median": 19.5,
+        "maximum": 398,
+        "average": 44.0
+      },
+      "handlerLatencyMs": {
+        "definition": "ハンドラ開始〜レスポンス生成完了（要件 8.12）。queryId 解決と DescribeTable キャッシュ判定を含む",
+        "trials": 30,
+        "minimum": 15,
+        "median": 27.5,
+        "maximum": 687,
+        "average": 78.4
+      },
+      "excludingColdStart": {
+        "searchLatencyMs": { "trials": 29, "minimum": 9, "median": 19, "maximum": 240, "average": 31.8 },
+        "handlerLatencyMs": { "trials": 29, "minimum": 15, "median": 27, "maximum": 440, "average": 57.4 }
+      }
+    },
+    "opensearch": {
+      "took": {
+        "definition": "_search レスポンスの took（OpenSearch 内部の処理時間）",
+        "trials": 30,
+        "minimum": 92,
+        "median": 177,
+        "maximum": 18356,
+        "average": 844.6
+      },
+      "searchLatencyMs": {
+        "definition": "_search 呼び出し直前〜レスポンス受信完了（要件 9.8）。took に往復と署名を加えた区間",
+        "trials": 30,
+        "minimum": 116,
+        "median": 213,
+        "maximum": 18962,
+        "average": 895.7
+      },
+      "handlerLatencyMs": {
+        "definition": "参考値。ハンドラ開始〜レスポンス生成完了",
+        "trials": 30,
+        "minimum": 124,
+        "median": 222,
+        "maximum": 19202,
+        "average": 914.7
+      },
+      "excludingColdStart": {
+        "took": { "trials": 29, "minimum": 92, "median": 166, "maximum": 947, "average": 240.8 },
+        "searchLatencyMs": { "trials": 29, "minimum": 116, "median": 213, "maximum": 978, "average": 272.7 }
+      }
+    },
+    "coldStart": {
+      "count": 2,
+      "note": "両バックエンドの 1 回目（q01 / ja / repeat 1）がそれぞれ Cold_Start だった。各バックエンドの最大値は Cold_Start の 1 件が作っている",
+      "opensearch": {
+        "atUtc": "2026-08-22T03:53:00.976Z",
+        "took": 18356,
+        "searchLatencyMs": 18962,
+        "handlerLatencyMs": 19202,
+        "context": "直前のアイドルは 2026-08-22T03:36Z〜03:52Z（約 16 分）。task 13.15 の Cold_Start（took 19,349 ms / searchLatencyMs 19,879 ms）と同水準であり、要件 9.9 の打ち切り 30,000 ms 以内に収まった。18.4 秒のうち 18,356 ms が took（OpenSearch 内部）であるため、遅延は Lambda の初期化ではなく AOSS 側の起動である"
+      },
+      "dynamodb": {
+        "atUtc": "2026-08-22T03:52:40.802Z",
+        "searchLatencyMs": 398,
+        "handlerLatencyMs": 687,
+        "context": "Lambda 実行環境の初期化（SDK 読み込みと DescribeTable の初回取得）による。OpenSearch 側の Cold_Start（18.4 秒）とは桁が 2 つ違う"
+      }
+    },
+    "comparison": {
+      "medianRatioSearchLatency": "OpenSearch searchLatencyMs 中央値 213 ms ÷ DynamoDB searchLatencyMs 中央値 19.5 ms = 10.9 倍",
+      "caveat": "DynamoDB の searchLatencyMs は SearchVectors 1 往復のみ、OpenSearch の searchLatencyMs は _search 1 往復のみで、いずれも埋め込み生成を含まない。両者は同じ意味の区間だが、handlerLatencyMs との差の内訳（DynamoDB は DescribeTable キャッシュ、OpenSearch は署名と接続確立）は異なる"
+    },
+    "embeddingLatencyCaveat": {
+      "requirement": "18.3 / 18.22",
+      "inferencePath": "standard",
+      "embeddingLatencyMsObserved": [163, 172, 175, 176, 180, 183, 186, 187, 391],
+      "embeddingRequests": 10,
+      "embeddingLatencyNote": "10 回の埋め込みのうち相異なる値は 9 種。391 ms は 1 回目（query-embed Lambda の Cold_Start を含む）",
+      "note": "us-west-2 の amazon.titan-embed-text-v2:0 はレイテンシ最適化推論に非対応であり、最適化の試行が必ず ValidationException で失敗してから標準推論へフォールバックする。したがって embeddingLatencyMs には失敗した最適化往復が含まれており、標準推論のみの所要時間より大きい"
+    }
+  },
+
+  "uiComparison": {
+    "requirements": ["12.1", "12.2", "12.3", "12.4", "12.5", "12.6", "12.7", "18.2"],
+    "artifact": "docs/measurements/ui-comparison-2026-08-22T03-56-32-025Z.json",
+    "whatWasVerified": {
+      "overlapMetrics": {
+        "how": "UI と同一の共有関数 computeVectorOverlap（src/lib/inventory/vector-overlap.ts）へ実 API の hits を渡した。クエリ q22 / TopK 30 / 日英それぞれ",
+        "ja": {
+          "computable": true,
+          "commonCount": 30,
+          "unionCount": 30,
+          "dynamodbOnlyCount": 0,
+          "opensearchOnlyCount": 0,
+          "jaccardRounded": 1.0,
+          "overlapAtKRounded": 1.0,
+          "dynamodbRowCount": 30,
+          "opensearchRowCount": 30,
+          "distinctSkuCount": 10
+        },
+        "en": {
+          "computable": true,
+          "commonCount": 30,
+          "unionCount": 30,
+          "dynamodbOnlyCount": 0,
+          "opensearchOnlyCount": 0,
+          "jaccardRounded": 1.0,
+          "overlapAtKRounded": 1.0,
+          "dynamodbRowCount": 30,
+          "opensearchRowCount": 30,
+          "distinctSkuCount": 10
+        },
+        "observation": "(itemId, warehouseId) 集合が両バックエンドで完全一致した（Jaccard 1.000 / overlap@k 1.000）。task 13.17 の recall 720/720 と整合する。表示順は同一ベクトル 3 行の同値により入れ替わるが、集合としては一致する（要件 12.5〜12.7 の同値扱いと整合）"
+      },
+      "constraintTable": {
+        "how": "GET /vector-search/capabilities の実応答（比較表が描画する値の唯一の出所）を取得した",
+        "dynamodb": {
+          "maxTopK": 100,
+          "supportedFilterKinds": ["equality"],
+          "distanceFunctionMutable": false,
+          "maxDimensions": 4096,
+          "requiresOnDemandBilling": true,
+          "readableByQueryScanPartiQL": false
+        },
+        "opensearch": {
+          "maxTopK": null,
+          "supportedFilterKinds": ["equality", "range"],
+          "distanceFunctionMutable": false,
+          "maxDimensions": 16000,
+          "requiresOnDemandBilling": false,
+          "readableByQueryScanPartiQL": true
+        },
+        "discrepancy": "DynamoDB 側の filterKindsUnverified の文面が『実測で確定させる対象である』のまま公開されている。task 13.16 で範囲フィルタは『対応しない』と確定しており、range-filter-probe の followUp も『実測で非対応を確認済み』へ更新するよう指示している。supportedFilterKinds: ['equality'] は正しいので判定内容の矛盾ではないが、文面が確定済みの事実と食い違う。修正は amplify/functions/shared/vector/constraints.ts の変更とデプロイを要するため本タスクでは実施していない（13.16 の残作業）"
+      },
+      "languageSwitching": {
+        "how": "同一クエリ対を ja / en で埋め込み、両バックエンドの応答の language とインデックス選択を確認した",
+        "ja": {
+          "dynamodbIndexName": "byEmbeddingJa",
+          "opensearchVectorField": "embeddingJa",
+          "languageEchoMatchesRequest": true
+        },
+        "en": {
+          "dynamodbIndexName": "byEmbeddingEn",
+          "opensearchVectorField": "embeddingEn",
+          "languageEchoMatchesRequest": true
+        },
+        "observation": "言語指定に応じて DynamoDB はインデックス（byEmbeddingJa / byEmbeddingEn）を、OpenSearch はベクトルフィールド（embeddingJa / embeddingEn）を切り替えた。応答の language は両バックエンドで要求と一致した"
+      },
+      "componentTests": {
+        "command": "npx vitest --run src/components/inventory/VectorSearchComparisonView.test.tsx src/components/inventory/VectorConstraintTable.test.tsx src/lib/inventory/vector-overlap.test.ts",
+        "result": "3 ファイル / 17 テスト すべて成功",
+        "covers": [
+          "Property 30 / 31 / 32（無効入力時の不変・パネルの独立性・競合検索の最終一貫性）",
+          "Property 53 / 54（制約メタデータの描画追従性・制約比較表と注意書きの常時表示）",
+          "Property 57（結果行数・件数表示・全件のスコア・使用言語が応答と一致）",
+          "computeVectorOverlap の重なり指標の性質（対称性・3 分割の網羅と排他・件数保存・許容誤差 0.0010）",
+          "言語セレクターの初期選択が日本語であること"
+        ]
+      }
+    },
+    "notVerified": [
+      "ブラウザでの DOM 操作（言語セレクターのクリックによる ja → en 切り替え、検索ボタン押下、表のスクロール表示）は実施していない。実行環境にブラウザ操作の手段が無いため、UI の描画そのものは既存のコンポーネントテスト（jsdom）と、UI が読む値の出所（共有関数と capabilities 応答）の実測で代替した",
+      "UI 上の重なり指標の見た目（丸め表示・色分け・注意書きの文面）は jsdom のテストで確認した範囲に限る"
+    ]
+  },
+
+  "budget": {
+    "bedrockLedger": {
+      "successfulEmbedsBefore": 10141,
+      "successfulEmbedsAdded": 12,
+      "successfulEmbedsAfter": 10153,
+      "breakdown": { "latencyMeasurement": 10, "uiComparison": 2 },
+      "invokeModelApiCalls": 24,
+      "invokeModelClientErrors": 12,
+      "measurement": "CloudWatch AWS/Bedrock Invocations / InvocationClientErrors（ModelId=amazon.titan-embed-text-v2:0、2026-08-22T03:45:00Z〜04:05:00Z）",
+      "note": "埋め込み 1 件につき InvokeModel API 呼び出しは 2 回（最適化推論の試行が ValidationException で失敗し、標準推論で成功する）。台帳には成功した埋め込み 12 件のみを加算する。同一条件 100 回 × 2 言語と TopK 掃引は決定論シードのクエリベクトルを使うため Bedrock を呼んでいない"
+    },
+    "lambdaInvocations": {
+      "window": "2026-08-22T03:45:00Z〜04:05:00Z",
+      "kiro-vector-query-embed": 12,
+      "kiro-vector-search-ddb": 32,
+      "kiro-vector-search-aoss": 32,
+      "kiro-vector-capabilities": 1,
+      "note": "同一条件 200 回と TopK 掃引 70 回は署名付き HTTP で SearchVectors を直接呼ぶため Lambda を経由しない（CloudWatch の VectorSearchRequestBytes には計上される）"
+    },
+    "spend": {
+      "asOfUtc": "2026-08-22T04:00:00Z",
+      "ocuHour": 7.2167,
+      "usd": 1.73,
+      "previousUsd": 1.64,
+      "deltaUsd": 0.09,
+      "capUsd": 20,
+      "remainingUsd": 18.27,
+      "command": "npm run vector:measure -- --watch-spend --no-write --hours 48",
+      "lifetimeCheck": "--hours 120（2026-08-17T03:55Z 起点）でも 7.2167 OCU-hour と同値だった。Vector_Collection の作成が 2026-08-20 であるため、48 時間窓が通算をすでに覆っている",
+      "caveat": "積算対象は SearchOCU / IndexingOCU から導く OCU-hour のみである。OCU-hour に還元されない課金要素（ServerlessVectorAcceleration 等）は含まないため下限見積である"
+    }
+  },
+
+  "scaleToZeroContext": {
+    "note": "task 13.19 の前提となる観測。本タスク直前までのアイドル区間は 2026-08-21T13:50Z〜2026-08-22T00:45Z（655.0 分）で、13.17 の事前確認検索が終了させた。本タスク実行前の 03:15Z〜03:50Z も検索継続区間として計上されている",
+    "zeroOcuIntervalsInLast48h": { "count": 6, "totalMinutes": 2695.0, "longestMinutes": 1130.0 },
+    "zeroOcuIntervalsOver60Min": { "count": 4, "totalMinutes": 2665.0 },
+    "verdict": "適用可（本タスク時点の暫定。確定判定は task 13.19）"
+  },
+
+  "artifacts": [
+    "docs/measurements/measure-capacity-2026-08-22T03-50-16-540Z.json",
+    "docs/measurements/measure-capacity-2026-08-22T03-50-41-589Z.json",
+    "docs/measurements/capacity-latency-2026-08-22T03-53-37-635Z.json",
+    "docs/measurements/ui-comparison-2026-08-22T03-56-32-025Z.json"
+  ],
+
+  "verification": {
+    "performed": [
+      "npx vitest --run scripts/vector-search/measure.test.ts（70 テスト成功。readVectorSearchUnits と summarizeConsumedCapacity の一致判定を追加）",
+      "npx vitest --run src/components/inventory/VectorSearchComparisonView.test.tsx src/components/inventory/VectorConstraintTable.test.tsx src/lib/inventory/vector-overlap.test.ts（17 テスト成功）",
+      "npx tsc --noEmit（成功）",
+      "npx tsc --noEmit -p amplify/tsconfig.json（成功）",
+      "npm run lint（成功）"
+    ],
+    "notPerformed": [
+      "デプロイ（本タスクはコード変更をスクリプト層に限っており、Lambda / CDK の変更を含まない）",
+      "ブラウザでの UI 操作"
+    ]
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "mode": "watch-spend",
+  "generatedAt": "2026-08-18T21:10:51.279Z",
+  "region": "us-west-2",
+  "readOnly": true,
+  "warnings": [
+    "SearchOCU / IndexingOCU のデータ点が 0 件です。累積課金を評価できていません。Collection 名とリージョンを確認してください。"
+  ],
+  "notes": [
+    "累積 0.0000 OCU-hour × 0.24 USD = 0.00 USD で、上限 20 USD を超えていません。残り 20.00 USD です。",
+    "本モードは常駐しません。検証期間中に定期実行して累積を確認する運用です（設計「累積課金の監視」）。取得区間は直近 24 時間です。検証開始からの累積を見るには --hours で区間を広げてください。",
+    "本スクリプトは削除を実行しません。削除は検証担当者が行い、--teardown-check で確認します。"
+  ],
+  "collectionName": "kiro-inventory-vector",
+  "windowStart": "2026-08-17T21:10:00.000Z",
+  "windowEnd": "2026-08-18T21:15:00.000Z",
+  "periodSeconds": 300,
+  "spend": {
+    "hourlyUsd": 0.24,
+    "thresholdUsd": 20,
+    "periodSeconds": 300,
+    "points": [],
+    "totalOcuHours": 0,
+    "totalUsd": 0,
+    "warning": null,
+    "terminated": false,
+    "retainedSampleCount": 0,
+    "skippedSampleCount": 0
+  },
+  "analysis": {
+    "periodSeconds": 300,
+    "sampleCount": 0,
+    "startTime": null,
+    "endTime": null,
+    "searchOcu": {
+      "count": 0,
+      "minimum": null,
+      "average": null,
+      "maximum": null,
+      "startTime": null,
+      "endTime": null
+    },
+    "indexingOcu": {
+      "count": 0,
+      "minimum": null,
+      "average": null,
+      "maximum": null,
+      "startTime": null,
+      "endTime": null
+    },
+    "combinedOcu": {
+      "count": 0,
+      "minimum": null,
+      "average": null,
+      "maximum": null,
+      "startTime": null,
+      "endTime": null
+    },
+    "totalOcuHours": 0,
+    "zeroOcuIntervals": [],
+    "qualifyingZeroOcuIntervals": [],
+    "longestZeroOcuMinutes": 0,
+    "totalZeroOcuMinutes": 0,
+    "qualifyingZeroOcuMinutes": 0,
+    "scaleToZeroApplicable": false,
+    "activityPartition": [],
+    "searchActiveIntervals": [],
+    "idleIntervals": [],
+    "alwaysOnMonthlyUsd": null
+  }
+}

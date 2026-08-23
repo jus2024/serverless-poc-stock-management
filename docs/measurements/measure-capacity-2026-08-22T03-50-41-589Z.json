@@ -1,0 +1,973 @@
+{
+  "schemaVersion": 1,
+  "mode": "capacity",
+  "generatedAt": "2026-08-22T03:50:41.589Z",
+  "region": "us-west-2",
+  "readOnly": true,
+  "warnings": [],
+  "notes": [
+    "VectorSearchUnits は 100 件すべてで VectorSearchRequestBytes と同値でした（要件 8.11 の観測）。",
+    "byEmbeddingJa / byEmbeddingEn はデータ点が 0 件でした。CloudWatch へのメトリクス公開には数分の遅延があるため、しばらく待って再取得してください。検索を実行しなかったインデックス（今回は byEmbeddingEn 以外）は 0 件が正しい結果です。",
+    "100 回の検索はすべて同一条件（クエリ件数 1 / TopK 30 / 言語 en / インデックス byEmbeddingEn / シード 20260101）です。要件 14.7 が求める回数は 100 回です（一致）。",
+    "クエリベクトルは固定シードから決定論的に生成しています（Bedrock を呼ばないため埋め込み生成の課金が発生しません）。"
+  ],
+  "tableName": "kiro-roasters-inventory-vector",
+  "dimensions": 1024,
+  "vectorSeed": 20260101,
+  "consumedCapacity": {
+    "queryCount": 1,
+    "topK": 30,
+    "language": "en",
+    "indexName": "byEmbeddingEn",
+    "searchCount": 100,
+    "measuredCount": 100,
+    "failureCount": 0,
+    "missingCapacityCount": 0,
+    "averagePerSearch": 86417.4,
+    "minimumPerSearch": 85359,
+    "maximumPerSearch": 87347,
+    "total": 8641740,
+    "unitsMeasuredCount": 100,
+    "unitsAveragePerSearch": 86417.4,
+    "unitsMinimumPerSearch": 85359,
+    "unitsMaximumPerSearch": 87347,
+    "unitsTotal": 8641740,
+    "unitsEqualRequestBytesCount": 100,
+    "unitsDivergentCount": 0,
+    "unitsAlwaysEqualRequestBytes": true,
+    "unitsDivergences": [],
+    "measurementStartedAt": "2026-08-22T03:50:24.058Z",
+    "measurementEndedAt": "2026-08-22T03:50:41.589Z"
+  },
+  "samples": [
+    {
+      "attempt": 1,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 641,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 2,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87316,
+      "vectorSearchUnits": 87316,
+      "latencyMs": 144,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 3,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86483,
+      "vectorSearchUnits": 86483,
+      "latencyMs": 144,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 4,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85488,
+      "vectorSearchUnits": 85488,
+      "latencyMs": 142,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 5,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86439,
+      "vectorSearchUnits": 86439,
+      "latencyMs": 141,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 6,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86439,
+      "vectorSearchUnits": 86439,
+      "latencyMs": 1161,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 7,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 674,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 8,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86517,
+      "vectorSearchUnits": 86517,
+      "latencyMs": 406,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 9,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85398,
+      "vectorSearchUnits": 85398,
+      "latencyMs": 413,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 10,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86395,
+      "vectorSearchUnits": 86395,
+      "latencyMs": 273,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 11,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87318,
+      "vectorSearchUnits": 87318,
+      "latencyMs": 271,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 12,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 271,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 13,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85488,
+      "vectorSearchUnits": 85488,
+      "latencyMs": 274,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 14,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85449,
+      "vectorSearchUnits": 85449,
+      "latencyMs": 269,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 15,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 269,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 16,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86441,
+      "vectorSearchUnits": 86441,
+      "latencyMs": 271,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 17,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 275,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 18,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87347,
+      "vectorSearchUnits": 87347,
+      "latencyMs": 142,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 19,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87319,
+      "vectorSearchUnits": 87319,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 20,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86395,
+      "vectorSearchUnits": 86395,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 21,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86428,
+      "vectorSearchUnits": 86428,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 22,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86517,
+      "vectorSearchUnits": 86517,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 23,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87317,
+      "vectorSearchUnits": 87317,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 24,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 141,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 25,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85398,
+      "vectorSearchUnits": 85398,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 26,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87317,
+      "vectorSearchUnits": 87317,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 27,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86517,
+      "vectorSearchUnits": 86517,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 28,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86428,
+      "vectorSearchUnits": 86428,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 29,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 30,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85359,
+      "vectorSearchUnits": 85359,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 31,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 32,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 140,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 33,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 34,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 35,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85359,
+      "vectorSearchUnits": 85359,
+      "latencyMs": 139,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 36,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87319,
+      "vectorSearchUnits": 87319,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 37,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85449,
+      "vectorSearchUnits": 85449,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 38,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86517,
+      "vectorSearchUnits": 86517,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 39,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 40,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85449,
+      "vectorSearchUnits": 85449,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 41,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86395,
+      "vectorSearchUnits": 86395,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 42,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85449,
+      "vectorSearchUnits": 85449,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 43,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86395,
+      "vectorSearchUnits": 86395,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 44,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85449,
+      "vectorSearchUnits": 85449,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 45,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 139,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 46,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87317,
+      "vectorSearchUnits": 87317,
+      "latencyMs": 140,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 47,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85488,
+      "vectorSearchUnits": 85488,
+      "latencyMs": 140,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 48,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 141,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 49,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85359,
+      "vectorSearchUnits": 85359,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 50,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87317,
+      "vectorSearchUnits": 87317,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 51,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87319,
+      "vectorSearchUnits": 87319,
+      "latencyMs": 139,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 52,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 53,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85449,
+      "vectorSearchUnits": 85449,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 54,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85488,
+      "vectorSearchUnits": 85488,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 55,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85449,
+      "vectorSearchUnits": 85449,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 56,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85359,
+      "vectorSearchUnits": 85359,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 57,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86517,
+      "vectorSearchUnits": 86517,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 58,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86395,
+      "vectorSearchUnits": 86395,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 59,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 140,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 60,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 61,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86517,
+      "vectorSearchUnits": 86517,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 62,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86428,
+      "vectorSearchUnits": 86428,
+      "latencyMs": 140,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 63,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86428,
+      "vectorSearchUnits": 86428,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 64,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 139,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 65,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87317,
+      "vectorSearchUnits": 87317,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 66,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 67,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 139,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 68,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87278,
+      "vectorSearchUnits": 87278,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 69,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87318,
+      "vectorSearchUnits": 87318,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 70,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87278,
+      "vectorSearchUnits": 87278,
+      "latencyMs": 139,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 71,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86517,
+      "vectorSearchUnits": 86517,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 72,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86474,
+      "vectorSearchUnits": 86474,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 73,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85488,
+      "vectorSearchUnits": 85488,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 74,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86429,
+      "vectorSearchUnits": 86429,
+      "latencyMs": 139,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 75,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 76,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86517,
+      "vectorSearchUnits": 86517,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 77,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 78,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86441,
+      "vectorSearchUnits": 86441,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 79,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86439,
+      "vectorSearchUnits": 86439,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 80,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87317,
+      "vectorSearchUnits": 87317,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 81,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86439,
+      "vectorSearchUnits": 86439,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 82,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85398,
+      "vectorSearchUnits": 85398,
+      "latencyMs": 139,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 83,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85398,
+      "vectorSearchUnits": 85398,
+      "latencyMs": 139,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 84,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86517,
+      "vectorSearchUnits": 86517,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 85,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86439,
+      "vectorSearchUnits": 86439,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 86,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86428,
+      "vectorSearchUnits": 86428,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 87,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85449,
+      "vectorSearchUnits": 85449,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 88,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87345,
+      "vectorSearchUnits": 87345,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 89,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87317,
+      "vectorSearchUnits": 87317,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 90,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85489,
+      "vectorSearchUnits": 85489,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 91,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87318,
+      "vectorSearchUnits": 87318,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 92,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86517,
+      "vectorSearchUnits": 86517,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 93,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 94,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87278,
+      "vectorSearchUnits": 87278,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 95,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 85359,
+      "vectorSearchUnits": 85359,
+      "latencyMs": 138,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 96,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86517,
+      "vectorSearchUnits": 86517,
+      "latencyMs": 139,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 97,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 86484,
+      "vectorSearchUnits": 86484,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 98,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87345,
+      "vectorSearchUnits": 87345,
+      "latencyMs": 139,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 99,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87317,
+      "vectorSearchUnits": 87317,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    },
+    {
+      "attempt": 100,
+      "succeeded": true,
+      "vectorSearchRequestBytes": 87317,
+      "vectorSearchUnits": 87317,
+      "latencyMs": 137,
+      "errorType": null,
+      "errorMessage": null
+    }
+  ],
+  "latency": {
+    "count": 100,
+    "minimum": 137,
+    "average": 175.05,
+    "maximum": 1161,
+    "startTime": "2026-08-22T03:50:24.058Z",
+    "endTime": "2026-08-22T03:50:41.589Z"
+  },
+  "requestBytes": [
+    {
+      "tableName": "kiro-roasters-inventory-vector",
+      "indexName": "byEmbeddingJa",
+      "windowStart": "2026-08-22T03:50:00.000Z",
+      "windowEnd": "2026-08-22T03:55:00.000Z",
+      "dataPointCount": 0,
+      "totalBytes": 0,
+      "averagePerSearchBytes": null
+    },
+    {
+      "tableName": "kiro-roasters-inventory-vector",
+      "indexName": "byEmbeddingEn",
+      "windowStart": "2026-08-22T03:50:00.000Z",
+      "windowEnd": "2026-08-22T03:55:00.000Z",
+      "dataPointCount": 0,
+      "totalBytes": 0,
+      "averagePerSearchBytes": 0
+    }
+  ],
+  "requestBytesAvailable": true
+}

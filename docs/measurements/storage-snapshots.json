@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "snapshots": [
+    {
+      "label": "S1",
+      "field": "TableSizeBytes",
+      "target": "kiro-roasters-inventory-vector",
+      "value": 13402024,
+      "capturedAt": "2026-08-19T13:23:48.653Z",
+      "itemCount": null
+    },
+    {
+      "label": "S1",
+      "field": "TableSizeBytes",
+      "target": "kiro-roasters-inventory-vector",
+      "value": 13402024,
+      "capturedAt": "2026-08-19T20:22:03.815Z",
+      "itemCount": null
+    },
+    {
+      "label": "S2",
+      "field": "TableSizeBytes",
+      "target": "kiro-roasters-inventory-vector",
+      "value": 138127144,
+      "capturedAt": "2026-08-21T13:23:35.385Z",
+      "itemCount": null
+    },
+    {
+      "label": "S2",
+      "field": "IndexSizeBytes",
+      "target": "byEmbeddingEn",
+      "value": 74557051,
+      "capturedAt": "2026-08-21T13:23:35.385Z",
+      "itemCount": 14991
+    },
+    {
+      "label": "S2",
+      "field": "IndexSizeBytes",
+      "target": "byEmbeddingJa",
+      "value": 74557051,
+      "capturedAt": "2026-08-21T13:23:35.385Z",
+      "itemCount": 14991
+    },
+    {
+      "label": "INDEX",
+      "field": "TableSizeBytes",
+      "target": "kiro-roasters-inventory-vector",
+      "value": 138127144,
+      "capturedAt": "2026-08-21T13:24:10.692Z",
+      "itemCount": null
+    },
+    {
+      "label": "INDEX",
+      "field": "IndexSizeBytes",
+      "target": "byEmbeddingEn",
+      "value": 74557051,
+      "capturedAt": "2026-08-21T13:24:10.692Z",
+      "itemCount": 14991
+    },
+    {
+      "label": "INDEX",
+      "field": "IndexSizeBytes",
+      "target": "byEmbeddingJa",
+      "value": 74557051,
+      "capturedAt": "2026-08-21T13:24:10.692Z",
+      "itemCount": 14991
+    },
+    {
+      "label": "S2",
+      "field": "TableSizeBytes",
+      "target": "kiro-roasters-inventory-vector",
+      "value": 138202024,
+      "capturedAt": "2026-08-21T23:22:27.972Z",
+      "itemCount": null
+    },
+    {
+      "label": "S2",
+      "field": "IndexSizeBytes",
+      "target": "byEmbeddingEn",
+      "value": 74602024,
+      "capturedAt": "2026-08-21T23:22:27.972Z",
+      "itemCount": 15000
+    },
+    {
+      "label": "S2",
+      "field": "IndexSizeBytes",
+      "target": "byEmbeddingJa",
+      "value": 74602024,
+      "capturedAt": "2026-08-21T23:22:27.972Z",
+      "itemCount": 15000
+    },
+    {
+      "label": "INDEX",
+      "field": "TableSizeBytes",
+      "target": "kiro-roasters-inventory-vector",
+      "value": 138202024,
+      "capturedAt": "2026-08-21T23:22:51.651Z",
+      "itemCount": null
+    },
+    {
+      "label": "INDEX",
+      "field": "IndexSizeBytes",
+      "target": "byEmbeddingEn",
+      "value": 74602024,
+      "capturedAt": "2026-08-21T23:22:51.651Z",
+      "itemCount": 15000
+    },
+    {
+      "label": "INDEX",
+      "field": "IndexSizeBytes",
+      "target": "byEmbeddingJa",
+      "value": 74602024,
+      "capturedAt": "2026-08-21T23:22:51.651Z",
+      "itemCount": 15000
+    }
+  ]
+}

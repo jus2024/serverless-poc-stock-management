@@ -1,0 +1,481 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-21T23:43:31.870Z",
+  "openQuestion": "Q1",
+  "docsConflict": "DynamoDB Vector Search の開発者ガイドは SearchConditionExpression が等価条件（=）のみに対応し 比較・範囲・IN は未提供であると記述する。一方 SDK API リファレンスは SearchSchema の HASH 要素が = のみである一方 INLINE_FILTER 要素は比較演算子および範囲演算子に対応すると記述しており、両者の記述は矛盾している（前提 A3 / 設計 V3 / Open Question Q1）。",
+  "target": {
+    "region": "us-west-2",
+    "endpoint": "https://search-dynamodb.us-west-2.api.aws",
+    "tableName": "kiro-roasters-inventory-vector",
+    "indexName": "byEmbeddingJa",
+    "language": "ja",
+    "filterAttribute": "warehouseId",
+    "attributeType": "S",
+    "topK": 1,
+    "dimensions": 1024,
+    "vectorSeed": 20260101,
+    "equalityValue": "WH-TOKYO",
+    "lowerValue": "WH-A",
+    "upperValue": "WH-Z",
+    "inValues": [
+      "WH-TOKYO",
+      "WH-OSAKA",
+      "WH-FUKUOKA"
+    ],
+    "dryRun": false
+  },
+  "index": {
+    "tableFound": true,
+    "indexFound": true,
+    "indexStatus": "ACTIVE",
+    "backfilling": false,
+    "searchable": true,
+    "indexDimensions": 1024,
+    "vectorIndexCount": 2,
+    "remainingIndexSlots": 3,
+    "withinIndexLimit": true,
+    "vectorIndexNames": [
+      "byEmbeddingEn",
+      "byEmbeddingJa"
+    ],
+    "searchSchema": [
+      {
+        "AttributeName": "warehouseId",
+        "SearchSchemaElementType": "INLINE_FILTER"
+      }
+    ]
+  },
+  "disposableIndex": {
+    "probedExistingIndex": true,
+    "maxVectorIndexesPerTable": 5,
+    "observedVectorIndexCount": 2,
+    "withinIndexLimit": true,
+    "teardownRequirement": "探索対象は既存の本番インデックス（byEmbeddingJa）であり、使い捨てインデックスを作成していない。削除作業は不要である。"
+  },
+  "cases": [
+    {
+      "caseId": "control-equality",
+      "kinds": [
+        "="
+      ],
+      "bound": "none",
+      "control": true,
+      "description": "対照ケース。等価条件は開発者ガイドと SDK API リファレンスの双方が対応と記述しており、これが失敗する場合は探索対象属性が INLINE_FILTER 要素でないか、インデックスが検索可能状態でない。",
+      "searchConditionExpression": "#f = :eq",
+      "request": {
+        "TableName": "kiro-roasters-inventory-vector",
+        "IndexName": "byEmbeddingJa",
+        "TopK": 1,
+        "SearchConditionExpression": "#f = :eq",
+        "ExpressionAttributeNames": {
+          "#f": "warehouseId"
+        },
+        "ExpressionAttributeValues": {
+          ":eq": {
+            "S": "WH-TOKYO"
+          }
+        },
+        "ReturnConsumedCapacity": "INDEXES",
+        "SearchVector": {
+          "omitted": true,
+          "dimensions": 1024,
+          "seed": 20260101,
+          "generator": "mulberry32 / 単位ベクトルへ正規化後に float32 へ丸め"
+        }
+      },
+      "response": {
+        "httpStatus": 200,
+        "rawBodyExcerpt": "{\"ConsumedCapacity\":{\"VectorSearchRequestBytes\":61484.0,\"VectorSearchUnits\":61484.0},\"SearchResults\":[{\"Item\":{\"quantity\":{\"N\":\"694\"},\"warehouseId\":{\"S\":\"WH-TOKYO\"},\"location\":{\"S\":\"A-05-05\"},\"metaEn\":{\"M\":{\"roastLevel\":{\"S\":\"\"},\"acidity\":{\"S\":\"\"},\"origin\":{\"S\":\"\"},\"description\":{\"S\":\"Tag attached to a product to convey information. Size M. Material kraft.\"},\"brewingRecommendation\":{\"S\":\"used for gift personalization and blend labeling.\"},\"category\":{\"S\":\"packaging material\"},\"flavorNotes\":{\"S\":\"\"},\"body\":{\"S\":\"\"},\"productName\":{\"S\":\"Packaging material tag M kraft V693\"}}},\"metaJa\":{\"M\":{\"roastLevel\":{\"S\":\"\"},\"acidity\":{\"S\":\"\"},\"origin\":{\"S\":\"\"},\"description\":{\"S\":\"商品に取り付けて情報を伝えるタグ。 サイズはM。 素材はクラフト。\"},\"brewingRecommendation\":{\"S\":\"ギフトの名入れや銘柄表示に使う。\"},\"category\":{\"S\":\"資材\"},\"flavorNotes\":{\"S\":\"\"},\"body\":{\"S\":\"\"},\"productName\":{\"S\":\"資材 タグ M クラフト V693\"}}},\"unitPrice\":{\"N\":\"80\"},\"itemId\":{\"S\":\"ITEM#MAT-TAG-M-KRAFT-V693\"},\"itemName\":{\"S\":\"資材 タグ M クラフト V693\"}},\"Score\":0.9396041035652161}]}",
+        "errorType": "",
+        "errorMessage": "",
+        "resultCount": 1,
+        "consumedCapacity": {
+          "VectorSearchRequestBytes": 61484,
+          "VectorSearchUnits": 61484
+        },
+        "transportError": null
+      },
+      "outcome": "accepted"
+    },
+    {
+      "caseId": "lower-only-greater-than",
+      "kinds": [
+        ">"
+      ],
+      "bound": "lower",
+      "control": false,
+      "description": "下限のみ（境界を含まない比較演算子）。",
+      "searchConditionExpression": "#f > :lo",
+      "request": {
+        "TableName": "kiro-roasters-inventory-vector",
+        "IndexName": "byEmbeddingJa",
+        "TopK": 1,
+        "SearchConditionExpression": "#f > :lo",
+        "ExpressionAttributeNames": {
+          "#f": "warehouseId"
+        },
+        "ExpressionAttributeValues": {
+          ":lo": {
+            "S": "WH-A"
+          }
+        },
+        "ReturnConsumedCapacity": "INDEXES",
+        "SearchVector": {
+          "omitted": true,
+          "dimensions": 1024,
+          "seed": 20260101,
+          "generator": "mulberry32 / 単位ベクトルへ正規化後に float32 へ丸め"
+        }
+      },
+      "response": {
+        "httpStatus": 400,
+        "rawBodyExcerpt": "{\"__type\":\"com.amazon.coral.validate#ValidationException\",\"message\":\"Invalid SearchConditionExpression: Invalid comparator used in SearchConditionExpression\"}",
+        "errorType": "ValidationException",
+        "errorMessage": "Invalid SearchConditionExpression: Invalid comparator used in SearchConditionExpression",
+        "resultCount": null,
+        "consumedCapacity": null,
+        "transportError": null
+      },
+      "outcome": "rejected_validation"
+    },
+    {
+      "caseId": "lower-only-greater-than-or-equal",
+      "kinds": [
+        ">="
+      ],
+      "bound": "lower",
+      "control": false,
+      "description": "下限のみ（境界を含む比較演算子）。",
+      "searchConditionExpression": "#f >= :lo",
+      "request": {
+        "TableName": "kiro-roasters-inventory-vector",
+        "IndexName": "byEmbeddingJa",
+        "TopK": 1,
+        "SearchConditionExpression": "#f >= :lo",
+        "ExpressionAttributeNames": {
+          "#f": "warehouseId"
+        },
+        "ExpressionAttributeValues": {
+          ":lo": {
+            "S": "WH-A"
+          }
+        },
+        "ReturnConsumedCapacity": "INDEXES",
+        "SearchVector": {
+          "omitted": true,
+          "dimensions": 1024,
+          "seed": 20260101,
+          "generator": "mulberry32 / 単位ベクトルへ正規化後に float32 へ丸め"
+        }
+      },
+      "response": {
+        "httpStatus": 400,
+        "rawBodyExcerpt": "{\"__type\":\"com.amazon.coral.validate#ValidationException\",\"message\":\"Invalid SearchConditionExpression: Invalid comparator used in SearchConditionExpression\"}",
+        "errorType": "ValidationException",
+        "errorMessage": "Invalid SearchConditionExpression: Invalid comparator used in SearchConditionExpression",
+        "resultCount": null,
+        "consumedCapacity": null,
+        "transportError": null
+      },
+      "outcome": "rejected_validation"
+    },
+    {
+      "caseId": "upper-only-less-than",
+      "kinds": [
+        "<"
+      ],
+      "bound": "upper",
+      "control": false,
+      "description": "上限のみ（境界を含まない比較演算子）。",
+      "searchConditionExpression": "#f < :hi",
+      "request": {
+        "TableName": "kiro-roasters-inventory-vector",
+        "IndexName": "byEmbeddingJa",
+        "TopK": 1,
+        "SearchConditionExpression": "#f < :hi",
+        "ExpressionAttributeNames": {
+          "#f": "warehouseId"
+        },
+        "ExpressionAttributeValues": {
+          ":hi": {
+            "S": "WH-Z"
+          }
+        },
+        "ReturnConsumedCapacity": "INDEXES",
+        "SearchVector": {
+          "omitted": true,
+          "dimensions": 1024,
+          "seed": 20260101,
+          "generator": "mulberry32 / 単位ベクトルへ正規化後に float32 へ丸め"
+        }
+      },
+      "response": {
+        "httpStatus": 400,
+        "rawBodyExcerpt": "{\"__type\":\"com.amazon.coral.validate#ValidationException\",\"message\":\"Invalid SearchConditionExpression: Invalid comparator used in SearchConditionExpression\"}",
+        "errorType": "ValidationException",
+        "errorMessage": "Invalid SearchConditionExpression: Invalid comparator used in SearchConditionExpression",
+        "resultCount": null,
+        "consumedCapacity": null,
+        "transportError": null
+      },
+      "outcome": "rejected_validation"
+    },
+    {
+      "caseId": "upper-only-less-than-or-equal",
+      "kinds": [
+        "<="
+      ],
+      "bound": "upper",
+      "control": false,
+      "description": "上限のみ（境界を含む比較演算子）。",
+      "searchConditionExpression": "#f <= :hi",
+      "request": {
+        "TableName": "kiro-roasters-inventory-vector",
+        "IndexName": "byEmbeddingJa",
+        "TopK": 1,
+        "SearchConditionExpression": "#f <= :hi",
+        "ExpressionAttributeNames": {
+          "#f": "warehouseId"
+        },
+        "ExpressionAttributeValues": {
+          ":hi": {
+            "S": "WH-Z"
+          }
+        },
+        "ReturnConsumedCapacity": "INDEXES",
+        "SearchVector": {
+          "omitted": true,
+          "dimensions": 1024,
+          "seed": 20260101,
+          "generator": "mulberry32 / 単位ベクトルへ正規化後に float32 へ丸め"
+        }
+      },
+      "response": {
+        "httpStatus": 400,
+        "rawBodyExcerpt": "{\"__type\":\"com.amazon.coral.validate#ValidationException\",\"message\":\"Invalid SearchConditionExpression: Invalid comparator used in SearchConditionExpression\"}",
+        "errorType": "ValidationException",
+        "errorMessage": "Invalid SearchConditionExpression: Invalid comparator used in SearchConditionExpression",
+        "resultCount": null,
+        "consumedCapacity": null,
+        "transportError": null
+      },
+      "outcome": "rejected_validation"
+    },
+    {
+      "caseId": "both-bounds-between",
+      "kinds": [
+        "BETWEEN"
+      ],
+      "bound": "both",
+      "control": false,
+      "description": "両方（BETWEEN 演算子）。",
+      "searchConditionExpression": "#f BETWEEN :lo AND :hi",
+      "request": {
+        "TableName": "kiro-roasters-inventory-vector",
+        "IndexName": "byEmbeddingJa",
+        "TopK": 1,
+        "SearchConditionExpression": "#f BETWEEN :lo AND :hi",
+        "ExpressionAttributeNames": {
+          "#f": "warehouseId"
+        },
+        "ExpressionAttributeValues": {
+          ":lo": {
+            "S": "WH-A"
+          },
+          ":hi": {
+            "S": "WH-Z"
+          }
+        },
+        "ReturnConsumedCapacity": "INDEXES",
+        "SearchVector": {
+          "omitted": true,
+          "dimensions": 1024,
+          "seed": 20260101,
+          "generator": "mulberry32 / 単位ベクトルへ正規化後に float32 へ丸め"
+        }
+      },
+      "response": {
+        "httpStatus": 400,
+        "rawBodyExcerpt": "{\"__type\":\"com.amazon.coral.validate#ValidationException\",\"message\":\"Invalid SearchConditionExpression: Invalid operator used in SearchConditionExpression\"}",
+        "errorType": "ValidationException",
+        "errorMessage": "Invalid SearchConditionExpression: Invalid operator used in SearchConditionExpression",
+        "resultCount": null,
+        "consumedCapacity": null,
+        "transportError": null
+      },
+      "outcome": "rejected_validation"
+    },
+    {
+      "caseId": "both-bounds-compound",
+      "kinds": [
+        ">=",
+        "<="
+      ],
+      "bound": "both",
+      "control": false,
+      "description": "両方（比較演算子 2 つの AND 連結）。BETWEEN が非対応でもこの形が通る可能性があるため別ケースとして投げる。",
+      "searchConditionExpression": "#f >= :lo AND #f <= :hi",
+      "request": {
+        "TableName": "kiro-roasters-inventory-vector",
+        "IndexName": "byEmbeddingJa",
+        "TopK": 1,
+        "SearchConditionExpression": "#f >= :lo AND #f <= :hi",
+        "ExpressionAttributeNames": {
+          "#f": "warehouseId"
+        },
+        "ExpressionAttributeValues": {
+          ":lo": {
+            "S": "WH-A"
+          },
+          ":hi": {
+            "S": "WH-Z"
+          }
+        },
+        "ReturnConsumedCapacity": "INDEXES",
+        "SearchVector": {
+          "omitted": true,
+          "dimensions": 1024,
+          "seed": 20260101,
+          "generator": "mulberry32 / 単位ベクトルへ正規化後に float32 へ丸め"
+        }
+      },
+      "response": {
+        "httpStatus": 400,
+        "rawBodyExcerpt": "{\"__type\":\"com.amazon.coral.validate#ValidationException\",\"message\":\"Invalid SearchConditionExpression: Invalid comparator used in SearchConditionExpression\"}",
+        "errorType": "ValidationException",
+        "errorMessage": "Invalid SearchConditionExpression: Invalid comparator used in SearchConditionExpression",
+        "resultCount": null,
+        "consumedCapacity": null,
+        "transportError": null
+      },
+      "outcome": "rejected_validation"
+    },
+    {
+      "caseId": "membership-in",
+      "kinds": [
+        "IN"
+      ],
+      "bound": "none",
+      "control": false,
+      "description": "IN 演算子。範囲演算子ではないが、開発者ガイドが「未提供」と名指ししている演算子であるため併せて記録する。",
+      "searchConditionExpression": "#f IN (:in0, :in1, :in2)",
+      "request": {
+        "TableName": "kiro-roasters-inventory-vector",
+        "IndexName": "byEmbeddingJa",
+        "TopK": 1,
+        "SearchConditionExpression": "#f IN (:in0, :in1, :in2)",
+        "ExpressionAttributeNames": {
+          "#f": "warehouseId"
+        },
+        "ExpressionAttributeValues": {
+          ":in0": {
+            "S": "WH-TOKYO"
+          },
+          ":in1": {
+            "S": "WH-OSAKA"
+          },
+          ":in2": {
+            "S": "WH-FUKUOKA"
+          }
+        },
+        "ReturnConsumedCapacity": "INDEXES",
+        "SearchVector": {
+          "omitted": true,
+          "dimensions": 1024,
+          "seed": 20260101,
+          "generator": "mulberry32 / 単位ベクトルへ正規化後に float32 へ丸め"
+        }
+      },
+      "response": {
+        "httpStatus": 400,
+        "rawBodyExcerpt": "{\"__type\":\"com.amazon.coral.validate#ValidationException\",\"message\":\"Invalid SearchConditionExpression: Invalid operator used in SearchConditionExpression\"}",
+        "errorType": "ValidationException",
+        "errorMessage": "Invalid SearchConditionExpression: Invalid operator used in SearchConditionExpression",
+        "resultCount": null,
+        "consumedCapacity": null,
+        "transportError": null
+      },
+      "outcome": "rejected_validation"
+    }
+  ],
+  "verdicts": [
+    {
+      "kind": "=",
+      "verdict": "supported",
+      "reason": "1 件のケースすべてが HTTP 200 で受理された。",
+      "caseIds": [
+        "control-equality"
+      ]
+    },
+    {
+      "kind": "<",
+      "verdict": "unsupported",
+      "reason": "1 件のケースすべてが ValidationException で拒否された（Invalid SearchConditionExpression: Invalid comparator used in SearchConditionExpression）。",
+      "caseIds": [
+        "upper-only-less-than"
+      ]
+    },
+    {
+      "kind": "<=",
+      "verdict": "unsupported",
+      "reason": "2 件のケースすべてが ValidationException で拒否された（Invalid SearchConditionExpression: Invalid comparator used in SearchConditionExpression）。",
+      "caseIds": [
+        "upper-only-less-than-or-equal",
+        "both-bounds-compound"
+      ]
+    },
+    {
+      "kind": ">",
+      "verdict": "unsupported",
+      "reason": "1 件のケースすべてが ValidationException で拒否された（Invalid SearchConditionExpression: Invalid comparator used in SearchConditionExpression）。",
+      "caseIds": [
+        "lower-only-greater-than"
+      ]
+    },
+    {
+      "kind": ">=",
+      "verdict": "unsupported",
+      "reason": "2 件のケースすべてが ValidationException で拒否された（Invalid SearchConditionExpression: Invalid comparator used in SearchConditionExpression）。",
+      "caseIds": [
+        "lower-only-greater-than-or-equal",
+        "both-bounds-compound"
+      ]
+    },
+    {
+      "kind": "BETWEEN",
+      "verdict": "unsupported",
+      "reason": "1 件のケースすべてが ValidationException で拒否された（Invalid SearchConditionExpression: Invalid operator used in SearchConditionExpression）。",
+      "caseIds": [
+        "both-bounds-between"
+      ]
+    },
+    {
+      "kind": "IN",
+      "verdict": "unsupported",
+      "reason": "1 件のケースすべてが ValidationException で拒否された（Invalid SearchConditionExpression: Invalid operator used in SearchConditionExpression）。",
+      "caseIds": [
+        "membership-in"
+      ]
+    }
+  ],
+  "rangeFilterVerdict": "対応しない",
+  "rangeFilterSupported": false,
+  "followUp": "constraints.ts は現状のまま（supportedFilterKinds は equality のみ）で正しい。filterKindsUnverified の 文面を「実測で非対応を確認済み」へ更新し、本レポートの ValidationException のメッセージを docs/vector-search-comparison.md へ転記する。",
+  "capabilitiesSnapshot": {
+    "backend": "dynamodb",
+    "maxTopK": 100,
+    "supportedFilterKinds": [
+      "equality"
+    ],
+    "distanceFunctionMutable": false,
+    "distanceFunction": "COSINE",
+    "maxDimensions": 4096,
+    "requiresOnDemandBilling": true,
+    "readableByQueryScanPartiQL": false,
+    "supportsFullTextCombination": false,
+    "supportsAggregation": false,
+    "supportsGeoQuery": false,
+    "supportsNestedQuery": false,
+    "filterKindsUnverified": "範囲条件（大小比較・BETWEEN）の対応可否は公式ドキュメント間で矛盾しており（開発者ガイドは等価条件のみ、SDK API リファレンスは INLINE_FILTER 要素が比較・範囲演算子に対応と記述）、実測で確定させる対象である。確定までの実装既定は等価条件のみで、範囲条件を含むフィルタ要求は SearchVectors を呼ばずに拒否する。"
+  }
+}

@@ -59,6 +59,12 @@ notes/
 agents/.bedrock_agentcore.yaml
 agents/.bedrock_agentcore/
 
+# Vector Search 比較検証: Ground_Truth キャッシュ
+# Vector_Table の全件スキャン（約 28,500 RRU）から再生成できるローカルキャッシュ。
+# 1 ファイル約 104 MiB（合計約 208 MiB）あり、git 履歴に入れる価値がないため除外する。
+# 再生成: npm run vector:recall -- --refresh-ground-truth（この行を削除しないこと）
+docs/measurements/ground-truth/
+
 # Load Generator CDK
 load-generator/cdk/cdk.out/
 load-generator/cdk/cdk.context.json

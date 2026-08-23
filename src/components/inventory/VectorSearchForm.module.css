@@ -1,0 +1,158 @@
+/* ベクトル検索比較の検索フォーム。既存 SearchForm.module.css のトークンと寸法を踏襲する */
+
+.form {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  padding: 20px;
+}
+
+/* Row 1: 自然言語クエリ入力欄（1 行いっぱい） */
+.queryRow {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.queryGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Row 2: 検索言語 / 倉庫 / TopK / 検索ボタン */
+.controlRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 160px;
+  flex: 0 1 auto;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.select {
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.8125rem;
+  font-family: var(--font-sans);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 2px var(--color-brand-light);
+}
+
+.input {
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.8125rem;
+  font-family: var(--font-sans);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 2px var(--color-brand-light);
+}
+
+.input[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+/* クエリの文字数カウンタ */
+.counter {
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary);
+  align-self: flex-end;
+}
+
+/* TopK の範囲エラー。色だけに依存せずテキストで許容範囲を示す */
+.error {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--color-danger);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.submitGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* ラベル行のぶん下げて他の入力欄とベースラインを揃える */
+  padding-top: 18px;
+}
+
+.searchBtn {
+  background: var(--color-brand);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 20px;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+  height: fit-content;
+}
+
+.searchBtn:hover:not(:disabled) {
+  background: var(--color-brand-hover);
+}
+
+.searchBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 実行中表示 */
+.status {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .fieldGroup {
+    min-width: 100%;
+  }
+
+  .spacer {
+    display: none;
+  }
+
+  .submitGroup {
+    width: 100%;
+    padding-top: 4px;
+  }
+
+  .searchBtn {
+    flex: 1;
+  }
+}

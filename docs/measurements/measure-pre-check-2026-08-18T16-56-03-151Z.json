@@ -1,0 +1,236 @@
+{
+  "schemaVersion": 1,
+  "mode": "pre-check",
+  "generatedAt": "2026-08-18T16:56:03.151Z",
+  "region": "us-west-2",
+  "readOnly": true,
+  "warnings": [],
+  "notes": [
+    "このスナップショットは task 13.20（デプロイ後の再確認）と task 15.1（撤収確認）の比較基準です。Good_Table に対しては DescribeTable / DescribeContinuousBackups / Scan（Limit 付き）のみを実行しています（要件 1.4）。"
+  ],
+  "pipelineName": "kiro-inventory-pipeline",
+  "pipelineStatus": "STOPPED",
+  "pipelineStopped": true,
+  "goodTableName": "kiro-roasters-inventory-good",
+  "goodTableSnapshot": {
+    "schemaVersion": 2,
+    "tableName": "kiro-roasters-inventory-good",
+    "region": "us-west-2",
+    "capturedAt": "2026-08-18T16:56:03.151Z",
+    "keySchema": [
+      "itemId:HASH",
+      "warehouseId:RANGE"
+    ],
+    "globalSecondaryIndexes": [
+      {
+        "indexName": "byLocation",
+        "keySchema": [
+          "warehouseId:HASH",
+          "location:RANGE"
+        ],
+        "projectionType": "ALL",
+        "nonKeyAttributes": []
+      },
+      {
+        "indexName": "byUnitPrice",
+        "keySchema": [
+          "warehouseId:HASH",
+          "unitPrice:RANGE"
+        ],
+        "projectionType": "ALL",
+        "nonKeyAttributes": []
+      },
+      {
+        "indexName": "byWarehouse",
+        "keySchema": [
+          "warehouseId:HASH",
+          "itemId:RANGE"
+        ],
+        "projectionType": "ALL",
+        "nonKeyAttributes": []
+      }
+    ],
+    "streamEnabled": true,
+    "streamViewType": "NEW_AND_OLD_IMAGES",
+    "pointInTimeRecoveryStatus": "ENABLED",
+    "itemCount": 15000,
+    "sampleItems": [
+      {
+        "key": "ITEM#BLEND-CLASSIC-MEDIUM-200G#WH-FUKUOKA",
+        "itemId": "ITEM#BLEND-CLASSIC-MEDIUM-200G",
+        "warehouseId": "WH-FUKUOKA",
+        "attributeNames": [
+          "itemId",
+          "itemName",
+          "lastUpdated",
+          "location",
+          "lotNumber",
+          "quantity",
+          "unitPrice",
+          "warehouseId"
+        ],
+        "itemSizeBytes": 214
+      },
+      {
+        "key": "ITEM#BLEND-CLASSIC-MEDIUM-200G#WH-OSAKA",
+        "itemId": "ITEM#BLEND-CLASSIC-MEDIUM-200G",
+        "warehouseId": "WH-OSAKA",
+        "attributeNames": [
+          "itemId",
+          "itemName",
+          "lastUpdated",
+          "location",
+          "lotNumber",
+          "quantity",
+          "unitPrice",
+          "warehouseId"
+        ],
+        "itemSizeBytes": 212
+      },
+      {
+        "key": "ITEM#BLEND-CLASSIC-MEDIUM-200G#WH-TOKYO",
+        "itemId": "ITEM#BLEND-CLASSIC-MEDIUM-200G",
+        "warehouseId": "WH-TOKYO",
+        "attributeNames": [
+          "itemId",
+          "itemName",
+          "lastUpdated",
+          "location",
+          "lotNumber",
+          "quantity",
+          "unitPrice",
+          "warehouseId"
+        ],
+        "itemSizeBytes": 212
+      },
+      {
+        "key": "ITEM#BLEND-ESPRESSO-FRENCH-100G-V603#WH-FUKUOKA",
+        "itemId": "ITEM#BLEND-ESPRESSO-FRENCH-100G-V603",
+        "warehouseId": "WH-FUKUOKA",
+        "attributeNames": [
+          "itemId",
+          "itemName",
+          "lastUpdated",
+          "location",
+          "lotNumber",
+          "quantity",
+          "unitPrice",
+          "warehouseId"
+        ],
+        "itemSizeBytes": 225
+      },
+      {
+        "key": "ITEM#BLEND-ESPRESSO-FRENCH-100G-V603#WH-OSAKA",
+        "itemId": "ITEM#BLEND-ESPRESSO-FRENCH-100G-V603",
+        "warehouseId": "WH-OSAKA",
+        "attributeNames": [
+          "itemId",
+          "itemName",
+          "lastUpdated",
+          "location",
+          "lotNumber",
+          "quantity",
+          "unitPrice",
+          "warehouseId"
+        ],
+        "itemSizeBytes": 223
+      },
+      {
+        "key": "ITEM#BLEND-ESPRESSO-FRENCH-100G-V603#WH-TOKYO",
+        "itemId": "ITEM#BLEND-ESPRESSO-FRENCH-100G-V603",
+        "warehouseId": "WH-TOKYO",
+        "attributeNames": [
+          "itemId",
+          "itemName",
+          "lastUpdated",
+          "location",
+          "lotNumber",
+          "quantity",
+          "unitPrice",
+          "warehouseId"
+        ],
+        "itemSizeBytes": 223
+      },
+      {
+        "key": "ITEM#BLEND-PREMIUM-CITY-100G-V402#WH-FUKUOKA",
+        "itemId": "ITEM#BLEND-PREMIUM-CITY-100G-V402",
+        "warehouseId": "WH-FUKUOKA",
+        "attributeNames": [
+          "itemId",
+          "itemName",
+          "lastUpdated",
+          "location",
+          "lotNumber",
+          "quantity",
+          "unitPrice",
+          "warehouseId"
+        ],
+        "itemSizeBytes": 216
+      },
+      {
+        "key": "ITEM#BLEND-PREMIUM-CITY-500G-V302#WH-FUKUOKA",
+        "itemId": "ITEM#BLEND-PREMIUM-CITY-500G-V302",
+        "warehouseId": "WH-FUKUOKA",
+        "attributeNames": [
+          "itemId",
+          "itemName",
+          "lastUpdated",
+          "location",
+          "lotNumber",
+          "quantity",
+          "unitPrice",
+          "warehouseId"
+        ],
+        "itemSizeBytes": 216
+      },
+      {
+        "key": "ITEM#BLEND-PREMIUM-CITY-500G-V302#WH-OSAKA",
+        "itemId": "ITEM#BLEND-PREMIUM-CITY-500G-V302",
+        "warehouseId": "WH-OSAKA",
+        "attributeNames": [
+          "itemId",
+          "itemName",
+          "lastUpdated",
+          "location",
+          "lotNumber",
+          "quantity",
+          "unitPrice",
+          "warehouseId"
+        ],
+        "itemSizeBytes": 214
+      },
+      {
+        "key": "ITEM#BLEND-PREMIUM-CITY-500G-V302#WH-TOKYO",
+        "itemId": "ITEM#BLEND-PREMIUM-CITY-500G-V302",
+        "warehouseId": "WH-TOKYO",
+        "attributeNames": [
+          "itemId",
+          "itemName",
+          "lastUpdated",
+          "location",
+          "lotNumber",
+          "quantity",
+          "unitPrice",
+          "warehouseId"
+        ],
+        "itemSizeBytes": 214
+      }
+    ]
+  },
+  "snapshotPath": "docs/measurements/good-table-snapshot-pre-check.json",
+  "baselinePreserved": true,
+  "checklist": [
+    {
+      "id": "pipeline-stopped",
+      "description": "OSIS kiro-inventory-pipeline が STOPPED である（要件 6.9 / 6.10）",
+      "status": "pass",
+      "detail": "取得した状態: STOPPED"
+    },
+    {
+      "id": "good-table-snapshot",
+      "description": "Good_Table のスナップショットを取得した（要件 1.5）",
+      "status": "pass",
+      "detail": "PK/SK: itemId:HASH, warehouseId:RANGE / GSI 3 本 / Streams: NEW_AND_OLD_IMAGES / PITR: ENABLED / ItemCount: 15,000 / 抽出 10 件"
+    }
+  ]
+}

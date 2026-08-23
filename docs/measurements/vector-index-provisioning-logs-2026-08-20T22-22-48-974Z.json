@@ -1,0 +1,270 @@
+{
+  "schemaVersion": 1,
+  "mode": "vector-index-provisioning-logs",
+  "generatedAt": "2026-08-20T22:22:48.974Z",
+  "region": "us-west-2",
+  "readOnly": true,
+  "taskIds": ["13.8", "13.9", "13.10"],
+  "provenance": {
+    "kind": "cloudwatch-logs-retrospective",
+    "realtimeObservation": false,
+    "statement": "本レポートの値は **リアルタイム観測ではなく、デプロイ後に CloudWatch Logs と CloudFormation スタックイベントから事後回収したもの** である。13.7（Stage B デプロイ）の実行中にタスク 13.8 / 13.9 / 13.10 のリアルタイム観測を行う機会が失われたため、Logs の保持期間内に残っていた記録から時刻と経過秒を再構成した。",
+    "sources": [
+      {
+        "type": "cloudwatch-logs",
+        "logGroup": "/aws/lambda/amplify-awsamplifygen2-ok-VectorIndexOnEventFuncti-BZEkXLI9fyPN",
+        "role": "onEvent（UpdateTable を発行する側）",
+        "note": "アプリケーションログは 1 行も無い。on-event.ts は console.log を持たないため、UpdateTable の発行時刻は Lambda の START / END / REPORT レコードからのみ特定できる。"
+      },
+      {
+        "type": "cloudwatch-logs",
+        "logGroup": "/aws/lambda/amplify-awsamplifygen2-ok-VectorIndexIsCompleteFun-h1S0WLb1D647",
+        "role": "isComplete（ポーリング側）",
+        "note": "`vector-index-create-pending` の構造化ログが 18 行残っていた（ja 9 行 / en 9 行）。この出力は今回のデプロイで初めて入った修正であり、実際に出ていることを確認した。"
+      },
+      {
+        "type": "cloudwatch-logs",
+        "logGroups": [
+          "/aws/lambda/amplify-awsamplifygen2-ok-VectorIndexProviderframe-lv6xHuQM82CI",
+          "/aws/lambda/amplify-awsamplifygen2-ok-VectorIndexProviderframe-pZqLCaHjfkh8"
+        ],
+        "role": "CDK Provider framework（isComplete ラッパ / onEvent ラッパ）",
+        "note": "platform.* レコードのみで、イベントペイロードや戻り値のアプリケーションログは残っていない。したがって onEvent の戻り値 `Data.AlreadyExisted` は Logs から直接読めない。"
+      },
+      {
+        "type": "cloudformation-stack-events",
+        "stackName": "amplify-awsamplifygen2-okamasa-sandbox-04afa3c270-InventoryStackC85C9EEA-2L5DBVZUL17P",
+        "role": "カスタムリソース単位の CREATE_IN_PROGRESS / CREATE_COMPLETE 時刻",
+        "note": "Logs 側の時刻を独立に裏付ける第 2 の出典として使った。"
+      }
+    ],
+    "scannedWindow": {
+      "start": "2026-08-20T20:45:00.000Z",
+      "end": "2026-08-20T22:00:00.000Z",
+      "note": "指定された 20:55Z〜22:00Z より 10 分広く取り、直前のロールバック（21:00〜21:05）まで含めて走査した。"
+    },
+    "commandsUsed": [
+      "aws logs describe-log-groups --log-group-name-prefix ...",
+      "aws logs filter-log-events --log-group-name ... --start-time ... --end-time ...",
+      "aws cloudformation describe-stack-events --stack-name ...",
+      "aws dynamodb describe-table --table-name kiro-roasters-inventory-vector"
+    ],
+    "mutatingCallsMade": []
+  },
+  "warnings": [
+    "onEvent（on-event.ts）は console.log を持たないため、`UpdateTable` の発行そのものを示すアプリケーションログは存在しない。本レポートの「UpdateTable 発行時刻」は onEvent Lambda の START〜END 区間として記録しており、その区間内のどの時点で API が発行されたかは特定できない（区間幅は ja 513 ms / en 522 ms）。",
+    "onEvent の戻り値に含まれる `AlreadyExisted` は Provider framework のログにも残っていないため **直接は取得不能**。本レポートでは間接証拠から false と判定しているが、判定であり実測値ではない。",
+    "13.9（Q6）の観測条件は今回のデプロイでは成立していない。判定は「判定不能」である（詳細は tasks.q6 を参照）。",
+    "本環境の aws-cli 2.35.9 は `DescribeTable` のレスポンスに `VectorIndexDescription` を含めない（サービスモデルが未対応）。2 本の次元数 1024 / 距離関数 COSINE / SearchSchema / Projection の同一性は利用者が別途 SDK 経由で確認済みの事実として引き継ぎ、本作業では再取得していない。"
+  ],
+  "notes": [
+    "`isComplete` のポーリング間隔は 60 秒（amplify/custom/vector-index.ts の INDEX_POLL_INTERVAL）。したがって ACTIVE への実際の遷移時刻は「最後に CREATING を観測した時刻」と「ACTIVE を判定した時刻」の間にあり、最大 60 秒の不確かさがある。本レポートの「ACTIVE 到達までの経過秒」は **isComplete が ACTIVE と判定した時刻** を基準とした値である。",
+    "`isComplete` は未完了のときだけ `vector-index-create-pending` を出し、ACTIVE のときは何も出さずに `IsComplete: true` を返す（is-complete.ts）。したがって「pending ログを出さずに終了した最初の呼び出し」が ACTIVE 判定時刻である。CloudFormation の CREATE_COMPLETE がその数秒後に続くことで裏付けが取れている。",
+    "onEvent は `ResourceInUseException` を最大 8 回・15 秒間隔で再試行する（on-event.ts の MAX_TABLE_BUSY_ATTEMPTS = 8 / TABLE_BUSY_RETRY_DELAY_MS = 15_000）。今回の onEvent 実行時間は ja 512.18 ms / en 521.10 ms であり、再試行が 1 回でもあれば 15 秒以上になる。よって **両方とも 1 回目の `UpdateTable` で成功しており、再試行の痕跡は無い**。",
+    "2 本のカスタムリソースは単一の Provider を共有し、`resource.node.addDependency(previous)` で逐次化されている（amplify/custom/vector-index.ts）。そのため onEvent / isComplete のログは 1 組の Lambda に ja と en が混在する。",
+    "設計の既定は逐次（英語側カスタムリソースが日本語側に依存）であり、本観測の結果によらず実装は変更していない（タスク 13.9 の指示どおり）。"
+  ],
+  "deployment": {
+    "tableName": "kiro-roasters-inventory-vector",
+    "stageBDeployWindowUtc": { "start": "2026-08-20T21:10:28.373Z", "end": "2026-08-20T21:32:45.546Z" },
+    "aossIndexCreateCompleteUtc": "2026-08-20T21:13:01.306Z",
+    "pollIntervalSeconds": 60,
+    "pollTotalTimeoutHours": 2,
+    "onEventResourceInUseRetry": { "maxAttempts": 8, "delaySeconds": 15 }
+  },
+  "priorRollbackContext": {
+    "summary": "同日 21:00 の先行デプロイで `byEmbeddingJa` のカスタムリソースが CREATE_FAILED し、ロールバックが走っている。今回の 21:12 の Create が「既存インデックスの流用」経路を通ったかどうかを判定するために記録する。",
+    "events": [
+      { "utc": "2026-08-20T21:00:08.432Z", "resource": "VectorIndexVectorIndexJa59FED304", "status": "CREATE_IN_PROGRESS" },
+      { "utc": "2026-08-20T21:00:10.748Z", "resource": "onEvent(dl22LCghq8wn)", "status": "START", "note": "この呼び出しで byEmbeddingJa の Create UpdateTable が発行された（Duration 541.37 ms、再試行なし）" },
+      { "utc": "2026-08-20T21:00:14.660Z", "resource": "VectorIndexVectorIndexJa59FED304", "status": "CREATE_FAILED", "reason": "Received response status [FAILED] from custom resource. Message returned: Error: \"Data\" is not allowed if \"IsComplete\" is \"False\"" },
+      { "utc": "2026-08-20T21:01:01.374Z", "resource": "onEvent(dl22LCghq8wn)", "status": "START", "note": "ロールバックの Delete。Duration 134.80 ms" },
+      { "utc": "2026-08-20T21:01:03.332Z", "resource": "VectorIndexVectorIndexJa59FED304", "status": "DELETE_FAILED", "reason": "Received response status [FAILED] from custom resource. Message returned: Error: \"Data\" is not allowed if \"IsComplete\" is \"False\"" },
+      { "utc": "2026-08-20T21:05:23.364Z", "resource": "VectorIndexVectorIndexJa59FED304", "status": "DELETE_SKIPPED", "reason": "Custom resource deletion skipped. The associated Lambda function does not exist." }
+    ],
+    "interpretation": "CloudFormation は削除の完了を確認できていない（DELETE_FAILED → DELETE_SKIPPED）。ただし Delete の `UpdateTable` 自体は 21:01:01 に発行され、onEvent はエラーなく完了している。21:12 の Create で観測された状態（下記 tasks['13.8'].alreadyExisted）から、21:12:53 の時点で残存インデックスは無かったと判定している。"
+  },
+  "tasks": {
+    "13.8": {
+      "indexName": "byEmbeddingJa",
+      "firstUpdateTableIssued": {
+        "onEventInvocationStartUtc": "2026-08-20T21:12:53.689Z",
+        "onEventInvocationEndUtc": "2026-08-20T21:12:54.202Z",
+        "onEventDurationMs": 512.18,
+        "requestId": "bdb3b11d-2322-4b60-af55-c525b4e8567c",
+        "precision": "onEvent 呼び出し区間として特定。API 発行そのもののログは存在しない",
+        "retryObserved": false
+      },
+      "activeDetected": {
+        "isCompleteInvocationStartUtc": "2026-08-20T21:21:59.850Z",
+        "isCompleteInvocationEndUtc": "2026-08-20T21:21:59.896Z",
+        "requestId": "174126ac-5a50-408e-97c3-471b272f33de",
+        "evidence": "この呼び出しだけ `vector-index-create-pending` を出さずに終了している（is-complete.ts では ACTIVE のときのみ無出力）。直後の CloudFormation CREATE_COMPLETE 2026-08-20T21:22:04.679Z が裏付け"
+      },
+      "secondsToActive": {
+        "value": 546,
+        "lowerBoundSeconds": 545.648,
+        "upperBoundSeconds": 546.207,
+        "basis": "onEvent 区間（UpdateTable 発行）から isComplete が ACTIVE と判定した時刻まで",
+        "actualTransitionBracketSeconds": { "min": 485.414, "max": 546.207 },
+        "bracketNote": "最後に CREATING を観測したのは 21:20:59.616Z。実際の ACTIVE 遷移はその後 21:21:59.850Z までの間に起きている（ポーリング間隔 60 秒ぶんの不確かさ）",
+        "isThisDeploymentMeasurement": true
+      },
+      "cloudFormationResourceSeconds": {
+        "value": 553.179,
+        "startUtc": "2026-08-20T21:12:51.500Z",
+        "completeUtc": "2026-08-20T21:22:04.679Z",
+        "note": "カスタムリソース単位の所要時間。onEvent 起動前のプロバイダ呼び出しオーバーヘッドを含む"
+      },
+      "alreadyExisted": {
+        "loggedValue": null,
+        "retrievable": false,
+        "retrievabilityReason": "on-event.ts は console.log を持たず、Provider framework のログにもイベント/戻り値のアプリケーションログが残っていない。したがって `Data.AlreadyExisted` の実値は取得不能",
+        "determination": false,
+        "determinationBasis": [
+          "21:12:56.791Z（UpdateTable から約 2.6 秒後）の観測が `IndexStatus: \"CREATING\", Backfilling: false`。既存 ACTIVE インデックスを流用した場合は初回ポーリングで ACTIVE になる",
+          "その後 21:13:57.351Z〜21:20:59.616Z の 8 回すべてが `IndexStatus: \"CREATING\"` で、CREATING → ACTIVE の遷移全体が今回のデプロイ時間窓の中に収まっている",
+          "CloudFormation 側も 21:12:51.500Z → 21:22:04.679Z と 553 秒かかっており、即時完了（既存流用）ではない",
+          "onEvent の実行時間 512.18 ms に 15 秒単位の待機が含まれないため、`ResourceInUseException` 経路（既存インデックス判定の入口）を通っていない"
+        ],
+        "consequence": "「ACTIVE 到達までの経過秒（546 秒）」は今回のデプロイの実測値である。前回ロールバック時の残存インデックスを流用した値ではない。"
+      },
+      "pollObservations": [
+        { "utc": "2026-08-20T21:12:56.791Z", "IndexStatus": "CREATING", "Backfilling": false },
+        { "utc": "2026-08-20T21:13:57.351Z", "IndexStatus": "CREATING", "Backfilling": true },
+        { "utc": "2026-08-20T21:14:57.952Z", "IndexStatus": "CREATING", "Backfilling": true },
+        { "utc": "2026-08-20T21:15:58.173Z", "IndexStatus": "CREATING", "Backfilling": true },
+        { "utc": "2026-08-20T21:16:58.633Z", "IndexStatus": "CREATING", "Backfilling": true },
+        { "utc": "2026-08-20T21:17:58.883Z", "IndexStatus": "CREATING", "Backfilling": true },
+        { "utc": "2026-08-20T21:18:59.114Z", "IndexStatus": "CREATING", "Backfilling": true },
+        { "utc": "2026-08-20T21:19:59.364Z", "IndexStatus": "CREATING", "Backfilling": true },
+        { "utc": "2026-08-20T21:20:59.616Z", "IndexStatus": "CREATING", "Backfilling": true }
+      ],
+      "pendingPollCount": 9,
+      "unavailable": [
+        {
+          "item": "AlreadyExisted の実値",
+          "reason": "onEvent と Provider framework のいずれにもアプリケーションログが残っていない（推定値で埋めず、間接判定として別項に記録した）"
+        },
+        {
+          "item": "ACTIVE への実際の遷移時刻（秒精度）",
+          "reason": "ポーリング間隔が 60 秒であり、21:20:59.616Z〜21:21:59.850Z の区間までしか絞れない"
+        },
+        {
+          "item": "13.8 の `SearchVectors` TopK 1 の生レスポンス（Q5 の距離スコアのフィールド名確定）",
+          "reason": "本作業の範囲外（読み取り専用でも新規 API 呼び出しは行わない方針）。かつ当時のレスポンスはログに残っていない。タスク 13.13 に持ち越す"
+        }
+      ]
+    },
+    "13.9": {
+      "question": "Q6: 1 本目のインデックスがまだ ACTIVE でない状態で 2 本目の `UpdateTable` が受理されるか",
+      "firstUpdateTableUtc": {
+        "start": "2026-08-20T21:12:53.689Z",
+        "end": "2026-08-20T21:12:54.202Z",
+        "indexName": "byEmbeddingJa"
+      },
+      "secondUpdateTableUtc": {
+        "start": "2026-08-20T21:22:07.446Z",
+        "end": "2026-08-20T21:22:07.968Z",
+        "indexName": "byEmbeddingEn",
+        "requestId": "2c15dfaa-ddc4-4f12-9cdc-b21019669773",
+        "durationMs": 521.10
+      },
+      "gapBetweenUpdateTablesSeconds": 553.757,
+      "firstIndexStatusAtSecondUpdateTable": {
+        "value": "ACTIVE",
+        "source": "isComplete が 2026-08-20T21:21:59.850Z に byEmbeddingJa を ACTIVE と判定し、CloudFormation が 21:22:04.679Z に CREATE_COMPLETE を記録している。2 本目の UpdateTable はその 7.550 秒後（21:22:07.446Z）に発行された",
+        "note": "`vector-index-create-pending` ログには IndexStatus が実際に出力されていた（今回のデプロイで入った修正が機能していることを確認済み）。ただし ACTIVE 到達時の呼び出しは仕様上ログを出さないため、ACTIVE という値はログの不在と CFN イベントから導いている"
+      },
+      "firstIndexBackfillingAtSecondUpdateTable": {
+        "value": null,
+        "retrievable": false,
+        "reason": "ACTIVE 判定時の `Backfilling` は `Data` に載るだけでログには出ない。取得不能"
+      },
+      "tableStatusAtSecondUpdateTable": {
+        "value": null,
+        "retrievable": false,
+        "reason": "`TableStatus` を記録するログ出力が存在しない。取得不能"
+      },
+      "exceptionsObserved": {
+        "resourceInUseException": false,
+        "limitExceededException": false,
+        "evidence": "onEvent(BZEkXLI9fyPN) の 2 回目の呼び出しは Duration 521.10 ms で正常終了しており、ERROR ログも無い。`ResourceInUseException` を 1 回でも受けていれば 15 秒待機が入って Duration が 15 秒を超える（MAX_TABLE_BUSY_ATTEMPTS = 8 / TABLE_BUSY_RETRY_DELAY_MS = 15_000）",
+        "retryTraceFound": false
+      },
+      "verdict": "判定不能",
+      "verdictReason": "Q6 が問う条件（1 本目が非 ACTIVE のまま 2 本目の `UpdateTable` を発行する）が今回のデプロイでは一度も成立していない。`VectorIndexConstruct` は `resource.node.addDependency(previous)` で 2 本を逐次化しているため、2 本目のカスタムリソースは 1 本目の CREATE_COMPLETE（= IndexStatus ACTIVE）を待ってから開始する。実際に CloudFormation は byEmbeddingJa の CREATE_COMPLETE（21:22:04.679Z）の 0.506 秒後に byEmbeddingEn の CREATE_IN_PROGRESS（21:22:05.185Z）を記録し、2 本目の `UpdateTable` は 1 本目が ACTIVE になった 7.550 秒後に発行されている。したがって「テーブル更新中に 2 本目が受理されるか」は観測されていない。再試行の痕跡が無いことは『並行受理可能』の証拠にはならない（並行状態そのものが作られていないため）。",
+      "whatWasObservedInstead": "1 本目が ACTIVE 到達済みであれば、2 本目の `UpdateTable` は 1 回目の試行で即時受理される（`ResourceInUseException` / `LimitExceededException` なし）。ただしこの時点で 1 本目がバックフィル中だったかは取得不能なため、『ACTIVE かつバックフィル中でも受理される』とまでは言えない。",
+      "scheduleImpact": "Q6 が判定不能のため、デプロイ所要時間の見積りは設計の既定（逐次・約 360 分側）を維持する。段階 7 と 8 を 1 段にまとめる判断はできない。",
+      "implementationChanged": false,
+      "howToDetermineLater": "判定するには、逐次化の依存を外した専用の検証（1 本目が CREATING の間に 2 本目の `UpdateTable` を明示的に発行する）が必要。現行の実装のままでは構造上観測できない。本レポートは読み取り専用のため実施していない。"
+    },
+    "13.10": {
+      "indexName": "byEmbeddingEn",
+      "secondUpdateTableIssued": {
+        "onEventInvocationStartUtc": "2026-08-20T21:22:07.446Z",
+        "onEventInvocationEndUtc": "2026-08-20T21:22:07.968Z",
+        "onEventDurationMs": 521.10,
+        "requestId": "2c15dfaa-ddc4-4f12-9cdc-b21019669773",
+        "retryObserved": false
+      },
+      "activeDetected": {
+        "isCompleteInvocationStartUtc": "2026-08-20T21:31:10.296Z",
+        "isCompleteInvocationEndUtc": "2026-08-20T21:31:10.309Z",
+        "requestId": "24cad94c-14c7-433c-97d3-f1ebd908b6af",
+        "evidence": "`vector-index-create-pending` を出さずに終了した最初の呼び出し。直後の CloudFormation CREATE_COMPLETE 2026-08-20T21:31:18.265Z が裏付け"
+      },
+      "secondsToActive": {
+        "value": 542,
+        "lowerBoundSeconds": 542.328,
+        "upperBoundSeconds": 542.863,
+        "basis": "onEvent 区間（UpdateTable 発行）から isComplete が ACTIVE と判定した時刻まで",
+        "actualTransitionBracketSeconds": { "min": 482.133, "max": 542.863 },
+        "bracketNote": "最後に CREATING を観測したのは 21:30:10.101Z",
+        "isThisDeploymentMeasurement": true
+      },
+      "cloudFormationResourceSeconds": {
+        "value": 553.08,
+        "startUtc": "2026-08-20T21:22:05.185Z",
+        "completeUtc": "2026-08-20T21:31:18.265Z"
+      },
+      "pollObservations": [
+        { "utc": "2026-08-20T21:22:08.378Z", "IndexStatus": "CREATING", "Backfilling": false },
+        { "utc": "2026-08-20T21:23:08.637Z", "IndexStatus": "CREATING", "Backfilling": true },
+        { "utc": "2026-08-20T21:24:08.846Z", "IndexStatus": "CREATING", "Backfilling": true },
+        { "utc": "2026-08-20T21:25:09.047Z", "IndexStatus": "CREATING", "Backfilling": true },
+        { "utc": "2026-08-20T21:26:09.228Z", "IndexStatus": "CREATING", "Backfilling": true },
+        { "utc": "2026-08-20T21:27:09.469Z", "IndexStatus": "CREATING", "Backfilling": true },
+        { "utc": "2026-08-20T21:28:09.670Z", "IndexStatus": "CREATING", "Backfilling": true },
+        { "utc": "2026-08-20T21:29:09.871Z", "IndexStatus": "CREATING", "Backfilling": true },
+        { "utc": "2026-08-20T21:30:10.101Z", "IndexStatus": "CREATING", "Backfilling": true }
+      ],
+      "pendingPollCount": 9,
+      "dimensionsAndDistanceFunction": {
+        "dimensions": 1024,
+        "distanceFunction": "COSINE",
+        "identicalAcrossBothIndexes": true,
+        "source": "利用者が本作業の前に `DescribeTable` で確認済み（SearchSchema 1 件 / Projection INCLUDE 6 属性も 2 本で同一）。タスク指示により再確認は行っていない。本環境の aws-cli 2.35.9 は `VectorIndexDescription` を返さないため、CLI からは再取得できない",
+        "reverifiedInThisReport": false
+      },
+      "unavailable": [
+        {
+          "item": "ACTIVE への実際の遷移時刻（秒精度）",
+          "reason": "ポーリング間隔が 60 秒であり、21:30:10.101Z〜21:31:10.296Z の区間までしか絞れない"
+        }
+      ]
+    }
+  },
+  "comparison": {
+    "secondsToActiveJa": 546,
+    "secondsToActiveEn": 542,
+    "differenceSeconds": 4,
+    "note": "2 本ともポーリング 10 回目で ACTIVE を判定しており（pending 9 回 + ACTIVE 1 回）、CloudFormation のカスタムリソース所要時間も 553.179 秒 / 553.080 秒でほぼ一致する。ベクトル未投入のテーブル（15,000 件・埋め込み属性なし）に対するインデックス作成時間は 2 本で同等だった。"
+  },
+  "currentState": {
+    "tableStatus": "ACTIVE",
+    "tableStatusSource": "aws dynamodb describe-table（2026-08-20T22:22Z 時点、読み取り専用）",
+    "vectorIndexDescriptionAvailableViaCli": false,
+    "note": "`byEmbeddingJa` / `byEmbeddingEn` が 2 本とも IndexStatus ACTIVE かつ Backfilling フィールド不在であることは利用者が本作業の前に確認済み。本作業では CLI 制約により再取得できていない。なお 13.11（埋め込みバッチ）の書き込みでバックフィルが再度走るため、13.12 で再確認が必要である。"
+  }
+}

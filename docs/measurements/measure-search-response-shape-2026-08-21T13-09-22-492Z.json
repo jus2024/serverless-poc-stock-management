@@ -1,0 +1,249 @@
+{
+  "schemaVersion": 1,
+  "mode": "search-response-shape",
+  "generatedAt": "2026-08-21T13:09:22.492Z",
+  "region": "us-west-2",
+  "readOnly": true,
+  "task": "13.13",
+  "openQuestion": "Q5",
+  "requirement": "8.9",
+  "endpoint": "https://search-dynamodb.us-west-2.api.aws",
+  "target": {
+    "tableName": "kiro-roasters-inventory-vector",
+    "indexName": "byEmbeddingJa",
+    "language": "ja",
+    "topK": 1,
+    "dimensions": 1024,
+    "vectorSeed": 20260101
+  },
+  "tableStatus": "ACTIVE",
+  "vectorIndexes": [
+    {
+      "indexName": "byEmbeddingJa",
+      "indexStatus": "ACTIVE",
+      "dimensions": 1024,
+      "distanceFunction": "COSINE"
+    },
+    {
+      "indexName": "byEmbeddingEn",
+      "indexStatus": "ACTIVE",
+      "dimensions": 1024,
+      "distanceFunction": "COSINE"
+    }
+  ],
+  "attempts": [
+    {
+      "attemptId": "attribute-value-form",
+      "description": "ハンドラ（amplify/functions/vector-search-ddb/handler.ts）と同一の送信形。SDK モデル SearchVectorsInput.SearchVector: AttributeValue[] に一致する",
+      "searchVectorWireForm": "AttributeValue[] ([{\"N\":\"...\"}])",
+      "requestBodyShape": {
+        "TableName": "kiro-roasters-inventory-vector",
+        "IndexName": "byEmbeddingJa",
+        "SearchVector": {
+          "__redacted": "query vector",
+          "wireForm": "AttributeValue[] ([{\"N\":\"...\"}])",
+          "elementCount": 1024,
+          "seed": 20260101,
+          "generator": "buildDeterministicQueryVector (mulberry32 → 正規化 → float32 丸め)",
+          "first5": [
+            {
+              "N": "-0.026626011356711388"
+            },
+            {
+              "N": "0.010134484618902206"
+            },
+            {
+              "N": "0.03330769017338753"
+            },
+            {
+              "N": "0.05100538581609726"
+            },
+            {
+              "N": "0.02501242235302925"
+            }
+          ]
+        },
+        "TopK": 1,
+        "ProjectionExpression": "#p0, #p1, #p2, #p3, #p4, #p5, #p6, #p7",
+        "ExpressionAttributeNames": {
+          "#p0": "itemId",
+          "#p1": "warehouseId",
+          "#p2": "itemName",
+          "#p3": "metaJa",
+          "#p4": "metaEn",
+          "#p5": "quantity",
+          "#p6": "location",
+          "#p7": "unitPrice"
+        },
+        "ReturnConsumedCapacity": "INDEXES"
+      },
+      "httpStatus": 200,
+      "latencyMs": 617,
+      "responseBody": {
+        "ConsumedCapacity": {
+          "VectorSearchRequestBytes": 61318,
+          "VectorSearchUnits": 61318
+        },
+        "SearchResults": [
+          {
+            "Item": {
+              "itemId": {
+                "S": "ITEM#MAT-TAG-M-KRAFT-V693"
+              },
+              "itemName": {
+                "S": "資材 タグ M クラフト V693"
+              },
+              "location": {
+                "S": "A-05-05"
+              },
+              "metaEn": {
+                "M": {
+                  "roastLevel": {
+                    "S": ""
+                  },
+                  "acidity": {
+                    "S": ""
+                  },
+                  "origin": {
+                    "S": ""
+                  },
+                  "description": {
+                    "S": "Tag attached to a product to convey information. Size M. Material kraft."
+                  },
+                  "brewingRecommendation": {
+                    "S": "used for gift personalization and blend labeling."
+                  },
+                  "category": {
+                    "S": "packaging material"
+                  },
+                  "flavorNotes": {
+                    "S": ""
+                  },
+                  "body": {
+                    "S": ""
+                  },
+                  "productName": {
+                    "S": "Packaging material tag M kraft V693"
+                  }
+                }
+              },
+              "metaJa": {
+                "M": {
+                  "roastLevel": {
+                    "S": ""
+                  },
+                  "acidity": {
+                    "S": ""
+                  },
+                  "origin": {
+                    "S": ""
+                  },
+                  "description": {
+                    "S": "商品に取り付けて情報を伝えるタグ。 サイズはM。 素材はクラフト。"
+                  },
+                  "brewingRecommendation": {
+                    "S": "ギフトの名入れや銘柄表示に使う。"
+                  },
+                  "category": {
+                    "S": "資材"
+                  },
+                  "flavorNotes": {
+                    "S": ""
+                  },
+                  "body": {
+                    "S": ""
+                  },
+                  "productName": {
+                    "S": "資材 タグ M クラフト V693"
+                  }
+                }
+              },
+              "quantity": {
+                "N": "694"
+              },
+              "unitPrice": {
+                "N": "80"
+              },
+              "warehouseId": {
+                "S": "WH-FUKUOKA"
+              }
+            },
+            "Score": 0.9396041035652161
+          }
+        ]
+      },
+      "responseBodyBytes": 1125,
+      "responseTopLevelKeys": [
+        "ConsumedCapacity",
+        "SearchResults"
+      ],
+      "responseHeaders": {
+        "connection": "keep-alive",
+        "content-length": "1125",
+        "content-type": "application/x-amz-json-1.0",
+        "date": "Fri, 21 Aug 2026 13:09:21 GMT",
+        "server": "Server",
+        "x-amz-crc32": "463440596",
+        "x-amzn-requestid": "5113SE3KSAKVNPFLD2DONJSKUVVV4KQNSO5AEMVJF66Q9ASUAAJG"
+      }
+    },
+    {
+      "attemptId": "plain-number-form",
+      "description": "measure.ts の createSearchVectorsProbe と同一の送信形（素の数値配列）。SDK モデルとは食い違う",
+      "searchVectorWireForm": "number[] (素の数値配列)",
+      "requestBodyShape": {
+        "TableName": "kiro-roasters-inventory-vector",
+        "IndexName": "byEmbeddingJa",
+        "SearchVector": {
+          "__redacted": "query vector",
+          "wireForm": "number[] (素の数値配列)",
+          "elementCount": 1024,
+          "seed": 20260101,
+          "generator": "buildDeterministicQueryVector (mulberry32 → 正規化 → float32 丸め)",
+          "first5": [
+            -0.026626011356711388,
+            0.010134484618902206,
+            0.03330769017338753,
+            0.05100538581609726,
+            0.02501242235302925
+          ]
+        },
+        "TopK": 1,
+        "ProjectionExpression": "#p0, #p1, #p2, #p3, #p4, #p5, #p6, #p7",
+        "ExpressionAttributeNames": {
+          "#p0": "itemId",
+          "#p1": "warehouseId",
+          "#p2": "itemName",
+          "#p3": "metaJa",
+          "#p4": "metaEn",
+          "#p5": "quantity",
+          "#p6": "location",
+          "#p7": "unitPrice"
+        },
+        "ReturnConsumedCapacity": "INDEXES"
+      },
+      "httpStatus": 400,
+      "latencyMs": 550,
+      "responseBody": {
+        "__type": "com.amazon.coral.service#SerializationException"
+      },
+      "responseBodyBytes": 60,
+      "responseTopLevelKeys": [
+        "__type"
+      ],
+      "responseHeaders": {
+        "connection": "keep-alive",
+        "content-length": "60",
+        "content-type": "application/x-amz-json-1.0",
+        "date": "Fri, 21 Aug 2026 13:09:22 GMT",
+        "server": "Server",
+        "x-amz-crc32": "3948637019",
+        "x-amzn-requestid": "Q7RIMUO7I7P4DS3UUOMPCQTFUNVV4KQNSO5AEMVJF66Q9ASUAAJG"
+      }
+    }
+  ],
+  "vectorBodyFieldsInResponse": [
+    [],
+    []
+  ]
+}

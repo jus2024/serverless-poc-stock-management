@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 1,
+  "mode": "embed-inference-path",
+  "generatedAt": "2026-08-21T23:34:07.000Z",
+  "region": "us-west-2",
+  "accountId": "992382598974",
+  "task": "18.3",
+  "requirements": [
+    "10.1",
+    "10.5",
+    "10.13",
+    "16.10",
+    "18.22"
+  ],
+  "design": "デプロイ順序とゲート条件 / 段階 11b",
+  "latencyNote": "**ここに記録した embeddingLatencyMs は標準推論（standard）の値である**（要件 18.22）。us-west-2 の amazon.titan-embed-text-v2:0 はレイテンシ最適化推論に未対応であり、全リクエストでフォールバックが発生する。したがって task 13.18 が測るクエリ埋め込みレイテンシもレイテンシ最適化推論の値ではない。さらに、この値には**失敗したレイテンシ最適化推論の 1 回目の往復が含まれる**（elapsedMs は generate() の開始から計測されるため）。純粋な標準推論単体の所要時間より大きい側に振れる。",
+  "endpoint": {
+    "method": "POST",
+    "url": "https://7x62kbhicg.execute-api.us-west-2.amazonaws.com/api/vector-search/embed",
+    "lambda": "kiro-vector-query-embed",
+    "lambdaLastModified": "2026-08-21T23:01:28.000Z",
+    "lambdaCodeSha256": "6DFcA5Z+4iupjkIvcLLbPLILqXTSQLQ00TYveUhyKnY=",
+    "deployNote": "18.1 / 18.2 を含む再デプロイは利用者が本タスクの直前に実行済み。LastModified が 18.1 / 18.2 の実装後であることをもって反映を確認した。"
+  },
+  "model": {
+    "id": "amazon.titan-embed-text-v2:0",
+    "dimensions": 1024,
+    "normalize": true
+  },
+  "results": [
+    {
+      "language": "ja",
+      "queryId": "c31c45a0-9512-421f-8db8-25c6d32b710c",
+      "query": "花のような香りで酸味の強い浅煎りの豆",
+      "querySource": "scripts/vector-search/paired-queries.ts q01 (ja)",
+      "httpStatus": 200,
+      "inferencePath": "standard",
+      "embeddingLatencyMs": 446,
+      "dimensions": 1024,
+      "model": "amazon.titan-embed-text-v2:0",
+      "cacheHit": false,
+      "vectorInResponse": false,
+      "responseBody": {
+        "queryId": "c31c45a0-9512-421f-8db8-25c6d32b710c",
+        "embeddingLatencyMs": 446,
+        "dimensions": 1024,
+        "model": "amazon.titan-embed-text-v2:0",
+        "language": "ja",
+        "inferencePath": "standard",
+        "cacheHit": false
+      },
+      "cloudWatch": {
+        "requestId": "fb012d26-72b4-40a2-b075-9b3be9f1964e",
+        "logStream": "2026/08/21/[$LATEST]466ececbb7064415a33a37b7fd38919f",
+        "warnLine": "2026-08-21T23:34:09.200Z\tfb012d26-72b4-40a2-b075-9b3be9f1964e\tWARN\tvector-query-embed: fell back to standard inference. { inferencePath: 'standard', calls: 2, embeddingLatencyMs: 446 }",
+        "lambdaDurationMs": 712.57,
+        "initDurationMs": 390.53
+      }
+    },
+    {
+      "language": "en",
+      "queryId": "e200b5b3-811e-4c6b-bb52-6f75b64e10cd",
+      "query": "light roast beans with floral aroma and bright acidity",
+      "querySource": "scripts/vector-search/paired-queries.ts q01 (en)",
+      "httpStatus": 200,
+      "inferencePath": "standard",
+      "embeddingLatencyMs": 207,
+      "dimensions": 1024,
+      "model": "amazon.titan-embed-text-v2:0",
+      "cacheHit": false,
+      "vectorInResponse": false,
+      "responseBody": {
+        "queryId": "e200b5b3-811e-4c6b-bb52-6f75b64e10cd",
+        "embeddingLatencyMs": 207,
+        "dimensions": 1024,
+        "model": "amazon.titan-embed-text-v2:0",
+        "language": "en",
+        "inferencePath": "standard",
+        "cacheHit": false
+      },
+      "cloudWatch": {
+        "requestId": "117016e6-0275-4037-ac5c-f5f3ccc4ef58",
+        "logStream": "2026/08/21/[$LATEST]466ececbb7064415a33a37b7fd38919f",
+        "warnLine": "2026-08-21T23:34:15.663Z\t117016e6-0275-4037-ac5c-f5f3ccc4ef58\tWARN\tvector-query-embed: fell back to standard inference. { inferencePath: 'standard', calls: 2, embeddingLatencyMs: 207 }",
+        "lambdaDurationMs": 290.77,
+        "initDurationMs": null
+      }
+    }
+  ],
+  "inferencePathObservation": {
+    "expected": "standard",
+    "observed": {
+      "ja": "standard",
+      "en": "standard"
+    },
+    "conclusion": "両言語で standard。us-west-2 の amazon.titan-embed-text-v2:0 がレイテンシ最適化推論に未対応である状況（V17 / A21）は本測定時点でも変わっていない。latency_optimized は 1 件も観測していない。",
+    "ifLatencyOptimizedHadReturned": "モデルまたはリージョンの対応状況が変わったことを意味するため記録対象だが、本測定では発生していない。"
+  },
+  "fallbackEvidence": {
+    "source": "CloudWatch Logs /aws/lambda/kiro-vector-query-embed",
+    "signal": "handler の console.warn（'vector-query-embed: fell back to standard inference.'）が 2 リクエストとも 1 行だけ出ている。同じ行の calls: 2 は InvokeModel の試行回数であり、内訳は「レイテンシ最適化推論 1 回（失敗）＋ 標準推論 1 回（成功）」である。",
+    "singleAttempt": "calls が 2 で止まっており 3 以上にならない。embedding-generator.ts の分岐条件が `!state.latencyFallbackUsed` を含むため、フォールバックは 1 要求につき最大 1 回である（Property 59）。標準推論の再呼び出しが繰り返された形跡はない。",
+    "retriesNotConsumed": "スロットリング再試行（クエリ側上限 3 回）は 0 回。フォールバックは state.retries を増やさない別系統であり（要件 10.15）、成功応答が返っているため THROTTLED 経路には入っていない。",
+    "fallbackCauseMessage": "Latency performance configuration is not supported for amazon.titan-embed-text-v2:0 in us-west-2",
+    "fallbackCauseMessageProvenance": "上記の本文は task 18 の A/B プローブ（同一モデル・同一リージョン・同一本文で performanceConfigLatency の有無だけを変えた 2 回）で実測した値であり、V17 / A21 として設計書に記録済みである。**本測定の CloudWatch Logs には当該本文自体は現れない。**embedding-generator.ts はフォールバック分岐で例外を記録せずに continue するため、失敗した 1 回目のエラー本文はどこにも出力されない。実環境で本文を再確認したい場合は Bedrock を直接叩くプローブが別途必要になる（本タスクでは Bedrock 呼び出しを増やさない判断で実施していない）。",
+    "priorBehaviorForContrast": {
+      "logStream": "2026/08/21/[$LATEST]e159bb0482504bfd9e321c117cdaf75a",
+      "line": "2026-08-21T13:28:58.687Z\t58ba51cd-ac0a-453f-9169-00a852146c24\tERROR\tvector-query-embed embedding failed: { errorCode: 'INVALID_QUERY', throttlingExhausted: false, calls: 1, retries: 0, embeddingLatencyMs: 274 }",
+      "note": "修正前（同日 13:28 UTC）の同一 Lambda のログ。calls: 1 で打ち切られ errorCode が INVALID_QUERY になっている。修正後は calls: 2 で成功しており、フォールバックが実際に追加されたことが同一ロググループ内で対比できる。"
+    }
+  },
+  "errorClassificationCheck": {
+    "requirement": "16.10 / 16.11（task 18.2 の是正が実環境で効いていること）",
+    "positiveCases": {
+      "description": "正常クエリ（ja / en）で INVALID_QUERY が返らないこと",
+      "result": "両方とも HTTP 200。errorCode を持つ応答は返っていない。修正前は同一の入力で HTTP 400 / INVALID_QUERY だった。"
+    },
+    "negativeCases": [
+      {
+        "request": { "query": "", "language": "ja" },
+        "httpStatus": 400,
+        "responseBody": {
+          "stage": "EMBEDDING",
+          "errorCode": "INVALID_QUERY",
+          "message": "クエリ文字列が空、または空白文字のみです。 クエリ文字列を 1 文字以上（空白文字以外を含む形で）指定してください。",
+          "retryable": false
+        },
+        "cloudWatch": {
+          "requestId": "0f1cd603-7451-4619-b2cb-9365f1f03189",
+          "lambdaDurationMs": 8.0,
+          "bedrockCalled": false,
+          "note": "ログに WARN / ERROR が一切なく Duration 8 ms。ハンドラの入力検証で即座に返っており Bedrock を呼んでいない。"
+        }
+      },
+      {
+        "request": { "query": "   ", "language": "ja" },
+        "httpStatus": 400,
+        "responseBody": {
+          "stage": "EMBEDDING",
+          "errorCode": "INVALID_QUERY",
+          "message": "クエリ文字列が空、または空白文字のみです。 クエリ文字列を 1 文字以上（空白文字以外を含む形で）指定してください。",
+          "retryable": false
+        },
+        "cloudWatch": {
+          "requestId": "f985e01b-9647-4721-9117-256c6f84028f",
+          "lambdaDurationMs": 1.71,
+          "bedrockCalled": false,
+          "note": "同上。Duration 1.71 ms。"
+        }
+      }
+    ],
+    "conclusion": "INVALID_QUERY はハンドラの入力検証（空文字 / 空白のみ）のみが付与する状態になっている。定型文「クエリ文字列が空、または空白文字のみです。」は**実際に空文字・空白のみだった場合にだけ**現れており、下位サービスのエラーに付くことはなくなった。修正前に観測された「INVALID_QUERY + 定型文 + Bedrock の Latency performance configuration ... の連結」は再現しない。"
+  },
+  "bedrockCalls": {
+    "attempts": 4,
+    "billableSuccesses": 2,
+    "breakdown": [
+      "ja: InvokeModel 2 回（performanceConfigLatency=optimized で ValidationException 1 回 → 指定なしで成功 1 回）",
+      "en: InvokeModel 2 回（同上）",
+      "空文字クエリ 2 件: 0 回（入力検証で弾かれ Bedrock に到達しない）"
+    ],
+    "note": "ValidationException で拒否された 2 回は推論に到達していないためトークン課金は発生しない。課金対象の成功は 2 回。task 14.1 の累計に加算する値は **成功 2 回 / 試行 4 回** である。",
+    "cumulativeAfterThisTask": {
+      "before": 10006,
+      "addedSuccesses": 2,
+      "after": 10008,
+      "beforeNote": "10,000（13.11 の埋め込みバッチ）+ 6（13.13 / 13.15 の補償分）"
+    }
+  },
+  "queryIdUsability": {
+    "note": "検索エンドポイントを叩かずに queryId が使える状態であることを確認した（AOSS の SearchOCU を消費しないため）。Query_Vector_Cache を GetItem で直接読み、両検索 Lambda が参照する項目が揃っていることを確かめた。",
+    "table": "kiro-vector-query-cache",
+    "items": [
+      {
+        "queryId": "c31c45a0-9512-421f-8db8-25c6d32b710c",
+        "found": true,
+        "language": "ja",
+        "dimensions": 1024,
+        "model": "amazon.titan-embed-text-v2:0",
+        "expiresAt": 1787355549,
+        "vectorAttribute": { "present": true, "dynamoType": "L", "length": 1024 }
+      },
+      {
+        "queryId": "e200b5b3-811e-4c6b-bb52-6f75b64e10cd",
+        "found": true,
+        "language": "en",
+        "dimensions": 1024,
+        "model": "amazon.titan-embed-text-v2:0",
+        "expiresAt": 1787355555,
+        "vectorAttribute": { "present": true, "dynamoType": "L", "length": 1024 }
+      }
+    ],
+    "vectorValuesNotRecorded": "ベクトルの成分そのものは記録しない（要件 10.3 の趣旨に沿って本レポートにも載せない）。存在と長さ 1024 のみを確認した。",
+    "ttlCaveat": "expiresAt は発行から 300 秒後である。この 2 件は既に失効しているため、13.17 / 13.18 では改めて queryId を発行する。"
+  },
+  "notMeasured": [
+    {
+      "item": "発行した queryId で POST /vector-search/dynamodb と POST /vector-search/opensearch が実行できること",
+      "reason": "本タスクの実行時点で検索エンドポイントの呼び出しを禁止している。OpenSearch の検索は SearchOCU を消費し、task 13.19（24 時間アイドル OCU 観測）の測定条件を汚すため。**queryId の発行そのものは回復している**（HTTP 200 で queryId が返り、Query_Vector_Cache への PutItem も成功している。失敗していればハンドラは queryId を返さず 5xx/4xx になる）ので、13.17 / 13.18 の前提は満たされている。検索の実行確認は 13.17 / 13.18 の本体で行う。",
+      "carriedTo": ["13.17", "13.18"]
+    },
+    {
+      "item": "フォールバックの根拠となったエラー本文を本測定の実環境ログから再取得すること",
+      "reason": "embedding-generator.ts がフォールバック分岐で例外を記録せずに再試行するため、失敗した 1 回目の本文は CloudWatch Logs に出力されない。本文は task 18 の A/B プローブで実測済み（V17 / A21）であり、それを転記している。実環境から再取得するには Bedrock を直接叩くプローブで 1 回追加の呼び出しが必要になるため実施しなかった。"
+    }
+  ],
+  "reproduction": {
+    "steps": [
+      "1. curl -sS -X POST https://7x62kbhicg.execute-api.us-west-2.amazonaws.com/api/vector-search/embed -H 'Content-Type: application/json' -d '{\"query\":\"花のような香りで酸味の強い浅煎りの豆\",\"language\":\"ja\"}'",
+      "2. 同 URL に {\"query\":\"light roast beans with floral aroma and bright acidity\",\"language\":\"en\"} を POST",
+      "3. 同 URL に {\"query\":\"\",\"language\":\"ja\"} と {\"query\":\"   \",\"language\":\"ja\"} を POST（Bedrock を呼ばない負例）",
+      "4. CloudWatch Logs /aws/lambda/kiro-vector-query-embed の最新ストリームで 'fell back to standard inference' の行と calls の値を確認する"
+    ],
+    "writes": "Query_Vector_Cache（kiro-vector-query-cache）へ 2 件の PutItem が発生する（埋め込み Lambda の通常動作）。TTL 300 秒で自動失効するため恒久的な状態変更を残さない。Vector_Table / Good_Table / Vector_Collection / OSIS への書き込みはない。"
+  }
+}
