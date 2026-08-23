@@ -40,6 +40,7 @@
     "@aws-sdk/client-osis": "3.1112.0",
     "@aws-sdk/util-dynamodb": "^3.996.5",
     "@eslint/eslintrc": "^3.3.5",
+    "@opensearch-project/opensearch": "2.13.0",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.2",
     "@types/node": "^22.19.15",
