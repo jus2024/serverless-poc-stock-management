@@ -120,6 +120,8 @@ export interface VectorSearchHit {
   distance: number;
   /** バックエンドが返した生スコア。DynamoDB は距離そのもの、OpenSearch は knn score */
   rawScore: number;
+  /** 検索言語に対応する説明文。ベクトル化対象テキストの一部 */
+  description: string;
   /** 正規化距離が 0〜2 を外れた場合 true（要件 9.12） */
   distanceBasisMismatch?: boolean;
 }

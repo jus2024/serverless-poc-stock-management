@@ -56,6 +56,7 @@ function makeHit(seed: HitSeed): VectorSearchHit {
     rank: seed.rank,
     distance: seed.distance,
     rawScore: seed.distance,
+    description: "",
   };
 }
 

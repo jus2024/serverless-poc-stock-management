@@ -588,8 +588,6 @@ export default function VectorSearchComparisonView() {
     <div className={styles.container}>
       <VectorSearchForm onSearch={handleSearch} isSearching={isSearching} />
 
-      <EmbeddingSummary state={embedState} />
-
       <LatencyComparison
         dynamodbLatencyMs={
           dynamodbState.searchLatencyMs === null ? null : Math.round(dynamodbState.searchLatencyMs)
@@ -606,6 +604,8 @@ export default function VectorSearchComparisonView() {
         opensearchState={opensearchState}
         dynamodbNotice={dynamodbNotice}
       />
+
+      <EmbeddingSummary state={embedState} />
 
       <VectorOverlapSummary input={overlapInput} />
 
