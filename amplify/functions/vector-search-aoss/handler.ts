@@ -148,6 +148,7 @@ interface VectorSearchHit {
   rank: number;
   distance: number;
   rawScore: number;
+  description: string;
   distanceBasisMismatch?: boolean;
 }
 
@@ -530,6 +531,7 @@ function toSearchHit(
     origin: readString(source, `origin${metadataSuffix}`),
     roastLevel: readString(source, `roastLevel${metadataSuffix}`),
     flavorNotes: readString(source, `flavorNotes${metadataSuffix}`),
+    description: readString(source, `description${metadataSuffix}`),
     quantity: readNumber(source, 'quantity'),
     location: readString(source, 'location'),
     unitPrice: readNumber(source, 'unitPrice'),

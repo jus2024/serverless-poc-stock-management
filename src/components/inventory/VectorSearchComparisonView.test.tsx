@@ -192,6 +192,7 @@ function buildHits(prefix: string, seeds: readonly HitSeed[]): VectorSearchHit[]
     rank: index + 1,
     distance: seed.distance,
     rawScore: seed.rawScore,
+    description: "",
   }));
 }
 
@@ -594,8 +595,8 @@ describe("Property 30: 無効入力時の結果状態の不変", () => {
           opensearchCalls: seam.requests.opensearch.length,
         };
         // 前提: 直前の状態は「結果あり」である（不変性の観測対象が空でない）
-        expect(before.dynamodb).toContain("DDB-ITEM-0");
-        expect(before.opensearch).toContain("AOSS-ITEM-0");
+        expect(before.dynamodb).toContain("DDB 商品 0");
+        expect(before.opensearch).toContain("AOSS 商品 0");
 
         // 無効な TopK を入れて検索を試みる
         fireEvent.change(topKInput(), { target: { value: raw } });
@@ -720,11 +721,11 @@ describe("Property 31: パネルの独立性", () => {
             expect(metaValueOf(ddbPanel, "検索言語")).toBe("English");
             expect(hitRowCountOf(ddbPanel)).toBe(ddbHits.length);
             ddbHits.forEach((hit) => {
-              expect(ddbText).toContain(hit.itemId);
+              expect(ddbText).toContain(hit.productName);
             });
           }
           // 他方の結果・レイテンシ・エラーが混入しない
-          expect(ddbText).not.toContain("AOSS-ITEM-");
+          expect(ddbText).not.toContain("AOSS 商品 ");
           expect(ddbText).not.toContain(OPENSEARCH_ERROR_CODE);
           expect(ddbText).not.toContain(`${AOSS_LATENCY} ms`);
 
@@ -738,10 +739,10 @@ describe("Property 31: パネルの独立性", () => {
             expect(metaValueOf(aossPanel, "検索言語")).toBe("English");
             expect(hitRowCountOf(aossPanel)).toBe(aossHits.length);
             aossHits.forEach((hit) => {
-              expect(aossText).toContain(hit.itemId);
+              expect(aossText).toContain(hit.productName);
             });
           }
-          expect(aossText).not.toContain("DDB-ITEM-");
+          expect(aossText).not.toContain("DDB 商品 ");
           expect(aossText).not.toContain(DYNAMODB_ERROR_CODE);
           expect(aossText).not.toContain(`${DDB_LATENCY} ms`);
 
@@ -771,11 +772,11 @@ describe("Property 31: パネルの独立性", () => {
             // 正常終了した側の結果一覧は破棄されない
             if (ddbOutcome.kind === "success") {
               expect(overlapText).toContain("DynamoDB 側の結果一覧（保持）");
-              expect(overlapText).toContain(ddbHits[0].itemId);
+              expect(overlapText).toContain(ddbHits[0].productName);
             }
             if (aossOutcome.kind === "success") {
               expect(overlapText).toContain("OpenSearch 側の結果一覧（保持）");
-              expect(overlapText).toContain(aossHits[0].itemId);
+              expect(overlapText).toContain(aossHits[0].productName);
             }
           } else {
             expect(overlapText).not.toContain("算出不可");
@@ -801,7 +802,7 @@ describe("Property 31: パネルの独立性", () => {
     startSearch("チョコレートのような甘み");
     await flush();
 
-    expect(textOf(panelOf("dynamodb"))).toContain("DDB-ITEM-0");
+    expect(textOf(panelOf("dynamodb"))).toContain("DDB 商品 0");
     expect(textOf(panelOf("opensearch"))).toContain("検索中");
 
     await act(async () => {
@@ -867,8 +868,8 @@ describe("Property 32: 競合検索の最終一貫性", () => {
 
           // 新しい検索を開始した時点で、直前の検索の結果は表示から消えている
           if (index > 0) {
-            const previous = `S${index - 1}-ITEM-`;
-            const previousOpensearch = `S${index - 1}O-ITEM-`;
+            const previous = `S${index - 1} 商品 `;
+            const previousOpensearch = `S${index - 1}O 商品 `;
             expect(textOf(panelOf("dynamodb"))).not.toContain(previous);
             expect(textOf(panelOf("opensearch"))).not.toContain(previousOpensearch);
             expect(textOf(panelOf("dynamodb"))).toContain("検索中");
@@ -920,13 +921,13 @@ describe("Property 32: 競合検索の最終一貫性", () => {
         const aossText = textOf(aossPanel);
 
         // 最終的な表示状態は最後に開始した検索の結果と等しい
-        expect(ddbText).toContain(`S${lastIndex}-ITEM-0`);
+        expect(ddbText).toContain(`S${lastIndex} 商品 0`);
         expect(metaValueOf(ddbPanel, "検索レイテンシ")).toBe(`${10 + lastIndex} ms`);
         expect(metaValueOf(ddbPanel, "結果件数")).toBe("3 件");
         expect(hitRowCountOf(ddbPanel)).toBe(3);
         expect(metaValueOf(ddbPanel, "検索言語")).toBe(expectedLanguageLabel);
 
-        expect(aossText).toContain(`S${lastIndex}O-ITEM-0`);
+        expect(aossText).toContain(`S${lastIndex}O 商品 0`);
         expect(metaValueOf(aossPanel, "検索レイテンシ")).toBe(`${200 + lastIndex} ms`);
         expect(metaValueOf(aossPanel, "結果件数")).toBe("2 件");
         expect(hitRowCountOf(aossPanel)).toBe(2);
@@ -934,9 +935,9 @@ describe("Property 32: 競合検索の最終一貫性", () => {
 
         // それ以前に開始した検索の応答は表示に反映されない
         for (let index = 0; index < lastIndex; index += 1) {
-          expect(ddbText).not.toContain(`S${index}-ITEM-`);
+          expect(ddbText).not.toContain(`S${index} 商品 `);
           expect(ddbText).not.toContain(`${10 + index} ms`);
-          expect(aossText).not.toContain(`S${index}O-ITEM-`);
+          expect(aossText).not.toContain(`S${index}O 商品 `);
           expect(aossText).not.toContain(`${200 + index} ms`);
         }
       }),
@@ -977,9 +978,9 @@ describe("Property 32: 競合検索の最終一貫性", () => {
 
     const ddbPanel = panelOf("dynamodb");
     const aossPanel = panelOf("opensearch");
-    expect(textOf(ddbPanel)).toContain("SECOND-ITEM-0");
-    expect(textOf(ddbPanel)).not.toContain("FIRST-ITEM-0");
-    expect(textOf(aossPanel)).toContain("SECONDO-ITEM-0");
+    expect(textOf(ddbPanel)).toContain("SECOND 商品 0");
+    expect(textOf(ddbPanel)).not.toContain("FIRST 商品 0");
+    expect(textOf(aossPanel)).toContain("SECONDO 商品 0");
     expect(textOf(aossPanel)).not.toContain(OPENSEARCH_ERROR_CODE);
     expect(textOf(aossPanel)).not.toContain("35 秒以内に応答がありませんでした");
   });
@@ -1103,6 +1104,7 @@ const hitSeedsArb = fc.array(
   fc.record({
     distance: fc.double({ min: 0, max: 2, noNaN: true }),
     rawScore: fc.double({ min: -1, max: 1, noNaN: true }),
+    description: fc.constant(""),
     quantity: fc.integer({ min: 0, max: 9_999 }),
     unitPrice: fc.integer({ min: 0, max: 99_999 }),
   }),
@@ -1157,7 +1159,7 @@ describe("Property 57: 結果表示の網羅性", () => {
             hits.forEach((hit) => {
               expect(panelText).toContain(hit.rawScore.toFixed(6));
               expect(panelText).toContain(hit.distance.toFixed(4));
-              expect(panelText).toContain(hit.itemId);
+              expect(panelText).toContain(hit.productName);
             });
           });
         }

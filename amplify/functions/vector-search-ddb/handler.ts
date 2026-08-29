@@ -214,6 +214,8 @@ export interface VectorSearchHitBody {
   distance: number;
   /** バックエンドが返した生スコア。DynamoDB では距離そのもの（設計「スコア正規化」） */
   rawScore: number;
+  /** 検索言語に対応する description（埋め込みテキストの一部。視覚的な一致感の確認用） */
+  description: string;
 }
 
 /**
@@ -790,6 +792,7 @@ export function toHits(
         rank: 0,
         distance: score,
         rawScore: score,
+        description: readMetaField(meta, 'description'),
       } satisfies VectorSearchHitBody;
     })
     .sort((a, b) => a.distance - b.distance)

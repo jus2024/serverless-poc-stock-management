@@ -263,15 +263,6 @@ function HitTable({ hits, captionId }: { hits: VectorSearchHit[]; captionId: str
         <thead>
           <tr>
             <th scope="col" className={styles.th}>
-              順位
-            </th>
-            <th scope="col" className={styles.th}>
-              商品ID
-            </th>
-            <th scope="col" className={styles.th}>
-              倉庫ID
-            </th>
-            <th scope="col" className={styles.th}>
               商品名
             </th>
             <th scope="col" className={styles.th}>
@@ -281,24 +272,13 @@ function HitTable({ hits, captionId }: { hits: VectorSearchHit[]; captionId: str
               生スコア
             </th>
             <th scope="col" className={styles.th}>
-              数量
-            </th>
-            <th scope="col" className={styles.th}>
-              ロケーション
-            </th>
-            <th scope="col" className={styles.th}>
-              単価
+              説明
             </th>
           </tr>
         </thead>
         <tbody>
           {hits.map((hit) => (
             <tr key={`${hit.itemId}-${hit.warehouseId}-${hit.rank}`} className={styles.tr}>
-              <th scope="row" className={`${styles.td} ${styles.rank}`}>
-                {hit.rank}
-              </th>
-              <td className={`${styles.td} ${styles.mono}`}>{hit.itemId}</td>
-              <td className={`${styles.td} ${styles.mono}`}>{hit.warehouseId}</td>
               <td className={styles.td}>{hit.productName}</td>
               <td className={`${styles.td} ${styles.number}`}>
                 {formatDistance(hit.distance)}
@@ -307,9 +287,7 @@ function HitTable({ hits, captionId }: { hits: VectorSearchHit[]; captionId: str
                 )}
               </td>
               <td className={`${styles.td} ${styles.number}`}>{formatRawScore(hit.rawScore)}</td>
-              <td className={`${styles.td} ${styles.number}`}>{hit.quantity}</td>
-              <td className={`${styles.td} ${styles.mono}`}>{hit.location}</td>
-              <td className={`${styles.td} ${styles.number}`}>{formatPrice(hit.unitPrice)}</td>
+              <td className={styles.td}>{hit.description || "—"}</td>
             </tr>
           ))}
         </tbody>
